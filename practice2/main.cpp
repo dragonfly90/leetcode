@@ -1510,6 +1510,402 @@ void testSolution_mergeSortedArray()
     for(vector<int>::iterator temp=a.begin();temp!=a.end();temp++)
         cout<<*temp<<endl;
 }
+
+class SolutionsearchMatrix {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m=int(matrix.size());
+        if(m==0)return false;
+        int n=int(matrix[0].size());
+        if(n==0) return false;
+        int left,right,middle;
+        int row,col;
+        
+        left=0;
+        right=m*n-1;
+        middle=(left+right)/2;
+        while(left<=right)
+        {
+            row=middle/n;
+            col=middle%n;
+            if(matrix[row][col]<target)
+            {
+                if(middle<right)
+                    left=middle+1;
+                else
+                    return false;
+                middle=(left+right)/2;
+            }
+            else
+            {
+                if(matrix[row][col]>target)
+                {
+                    if(middle>left)
+                        right=middle-1;
+                    else
+                        return false;
+                    middle=(left+right)/2;
+                }
+                else
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+    
+};
+
+void testSolutionsearchMatrix()
+{
+    SolutionsearchMatrix solution;
+    vector<vector<int> > nums;
+    nums.resize(3);
+    /*
+     [
+     [1,   3,  5,  7],
+     [10, 11, 16, 20],
+     [23, 30, 34, 50]
+     ]
+     */
+    nums[0].push_back(1);
+    nums[0].push_back(3);
+    nums[0].push_back(5);
+    nums[0].push_back(7);
+    
+    nums[1].push_back(10);
+    nums[1].push_back(11);
+    nums[1].push_back(16);
+    nums[1].push_back(20);
+    
+    nums[2].push_back(23);
+    nums[2].push_back(30);
+    nums[2].push_back(34);
+    nums[2].push_back(50);
+    
+    vector<vector<int> > nums2;
+    nums2.resize(1);
+    nums2[0].push_back(1);
+    nums2[0].push_back(1);
+    
+    bool findnumber=solution.searchMatrix(nums, 22);
+    
+    cout<<findnumber<<endl;
+}
+
+
+/**
+ * Definition for binary tree with next pointer.
+**/
+struct TreeLinkNode {
+   int val;
+   TreeLinkNode *left, *right, *next;
+   TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+};
+
+class SolutionTreeLinkNode {
+public:
+    void connect(TreeLinkNode *root) {
+        if(root==NULL)return;
+        queue<TreeLinkNode*> myqueue;
+        queue<int> myqueuelevel;
+        int currentlevel,previouslevel;
+        TreeLinkNode* currentTreeLinkNode,*previousTreeLinkNode;
+        myqueue.push(root);
+        myqueuelevel.push(0);
+        root->next=NULL;
+        currentlevel=0;
+        currentTreeLinkNode=root;
+        
+        while(!myqueue.empty())
+        {
+            previouslevel=currentlevel;
+            previousTreeLinkNode=currentTreeLinkNode;
+            currentTreeLinkNode=myqueue.front();
+            currentlevel=myqueuelevel.front();
+            currentTreeLinkNode->next=NULL;
+            
+            myqueue.pop();
+            myqueuelevel.pop();
+            
+            if(previouslevel==currentlevel&&previousTreeLinkNode!=currentTreeLinkNode)
+                previousTreeLinkNode->next=currentTreeLinkNode;
+            
+            if(currentTreeLinkNode->left!=NULL)
+            {
+                myqueue.push(currentTreeLinkNode->left);
+                myqueuelevel.push(currentlevel+1);
+            }
+            
+            if(currentTreeLinkNode->right!=NULL)
+            {
+                myqueue.push(currentTreeLinkNode->right);
+                myqueuelevel.push(currentlevel+1);
+            }
+                
+            
+        }
+    }
+};
+
+void testSolutionTreeLinkNode()
+{
+    SolutionTreeLinkNode solution;
+    TreeLinkNode* root;
+    TreeLinkNode a1(1),a2(2),a3(3),a4(4),a5(5),a6(6),a7(7);
+    a1.left=&a2;
+    a1.right=&a3;
+    a2.left=&a4;
+    a2.right=&a5;
+    a3.left=&a6;
+    a3.right=&a7;
+    root=&a1;
+    
+    solution.connect(root);
+    
+    TreeLinkNode* a2l,*a3l,*a4l,*a5l,*a6l,*a7l;
+    a2l=&a2;
+    a3l=&a3;
+    a4l=&a4;
+    a5l=&a5;
+    a6l=&a6;
+    a7l=&a7;
+    
+    
+    if(a1.next==NULL&&a3.next==NULL&&a7.next==NULL)
+        cout<<'1'<<endl;
+    
+    if((a1.next==NULL)&&(a2.next==a3l)&&a3.next==NULL&&a4.next==a5l&&a5.next==a6l&&a6.next==a7l&&a7.next==NULL)
+        cout<<"1"<<endl;
+    else
+        cout<<'0'<<endl;
+    
+}
+
+
+class Solution_uniquebinary {
+public:
+    int numTrees(int n) {
+        if(n==1) return 1;
+        if(n==2) return 2;
+        vector<int> uniquenumber;
+        
+        uniquenumber.resize(n+1);
+        
+        uniquenumber[0]=1;
+        uniquenumber[1]=1;
+        uniquenumber[2]=2;
+        for(int i=3;i<=n;i++)
+        {
+            uniquenumber[i]=0;
+            for(int j=0;j<i;j++)
+                uniquenumber[i]+=uniquenumber[j]*uniquenumber[i-1-j];
+            
+        }
+        
+        return uniquenumber[n];
+    }
+};
+
+void testSolution_uniquebinary(){
+    Solution_uniquebinary solution;
+    int numtemp=solution.numTrees(11);
+    cout<<numtemp<<endl;
+}
+
+
+class SolutiontotalNQueens {
+public:
+    int totalNQueens(int n) {
+    
+        vector<int> cols;
+        
+        int totalSolution=findSolution(n,0,cols);
+        return totalSolution;
+    }
+    
+    int findSolution(int n,int current,vector<int>& cols)
+    {
+        //cout<<current<<endl;
+        int i=0;
+        if(current==n)
+        {
+   
+            return 1;
+            //for(i=0;i<int(cols.size());i++)
+            //    cout<<i<<','<<cols[i]<<endl;
+        }
+        
+        int sum=0;
+        for(i=0;i<n;i++)
+        {
+           if(noconflict(cols,i))
+           {
+               cols.push_back(i);
+               sum+=findSolution(n, current+1 , cols);
+               cols.pop_back();
+           }
+        }
+        return sum;
+    }
+    
+    bool noconflict(vector<int>& cols,int newint)
+    {
+        int j=0;
+        int tempsize=int(cols.size());
+        for(j=0;j<tempsize;j++)
+        {
+            if(abs(newint-cols[j])==abs(tempsize-j)||newint==cols[j])
+                return false;
+        }
+        
+        return true;
+    }
+};
+
+void testSolutiontotalNQueens()
+{
+    SolutiontotalNQueens solution;
+    int solutionnumber=solution.totalNQueens(4);
+    cout<<solutionnumber<<endl;
+}
+
+
+class SolutionSearchInsert {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int numsize=int(nums.size());
+        int left;
+        int right,middle;
+        left=0;
+        right=numsize-1;
+        middle=(left+right)/2;
+        while(left<right)
+        {
+            if(target>nums[middle])
+            {
+                left=middle+1;
+                middle=(left+right)/2;
+            }
+            else
+            {
+                if(target<nums[middle])
+                {
+                    right=middle-1;
+                    middle=(left+right)/2;
+                }
+                else
+                {
+                    cout<<middle<<endl;
+                    return middle;
+                }
+            }
+        }
+        
+        if(target<nums[left])
+        {
+        
+            return left;
+        }
+        else
+        {
+            if(target>nums[left])
+            return left+1;
+            else
+                return left;
+        }
+    }
+};
+
+void testSolutionSearchInsert()
+{
+    SolutionSearchInsert solution;
+    vector<int> testint;
+    //1,3,5,6
+    testint.push_back(1);
+    //testint.push_back(3);
+    //testint.push_back(5);
+    //testint.push_back(6);
+    int position=solution.searchInsert(testint, 1);
+    cout<<position<<endl;
+}
+
+class SolutionclimbStairs {
+public:
+    int climbStairs(int n) {
+        vector<int> solutionnumbers;
+        solutionnumbers.resize(n+1);
+        solutionnumbers[0]=1;
+        solutionnumbers[1]=1;
+        if(n<2) return 1;
+        for(int i=2;i<=n;i++)
+            solutionnumbers[i]=solutionnumbers[i-1]+solutionnumbers[i-2];
+        return solutionnumbers[n];
+        
+    }
+};
+
+class SolutionmaxSubArray {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int nsize=int(nums.size());
+        
+        int max=nums[0];
+        int sum=0;
+        for(int i=0;i<nsize;i++)
+        {
+            if(sum>0)
+                sum+=nums[i];
+            else
+            {
+                sum=nums[i];
+            }
+            if(sum>max)
+                max=sum;
+        }
+        return max;
+    }
+};
+
+void testSolutionmaxSubArray()
+{
+    SolutionmaxSubArray solution;
+    vector<int> arraynumber;
+    int myints[] = {-2,1,-3,4,-1,2,1,-5,4};
+  
+    arraynumber.assign(myints,myints+9);
+    int sum=solution.maxSubArray(arraynumber);
+    cout<<sum<<endl;
+    //[−2,1,−3,4,−1,2,1,−5,4];
+}
+
+class SolutionmyAtoi {
+public:
+    int myAtoi(string str) {
+        return 1;
+    }
+};
+
+void testString2int(){
+    std::string str_dec = "2001, A Space Odyssey";
+    std::string str_hex = "40c3";
+    std::string str_bin = "-10010110001";
+    std::string str_auto = "0x7f";
+    
+    std::string::size_type sz;   // alias of size_t
+    
+    int i_dec = std::stoi (str_dec,&sz);
+    int i_hex = std::stoi (str_hex,nullptr,16);
+    int i_bin = std::stoi (str_bin,nullptr,2);
+    int i_auto = std::stoi (str_auto,nullptr,0);
+    
+    std::cout << str_dec << ": " << i_dec << " and [" << str_dec.substr(sz) << "]\n";
+    std::cout << str_hex << ": " << i_hex << '\n';
+    std::cout << str_bin << ": " << i_bin << '\n';
+    std::cout << str_auto << ": " << i_auto << '\n';
+    cout<<INT_MAX<<','<<INT_MIN<<endl;
+}
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -1528,6 +1924,13 @@ int main(int argc, const char * argv[]) {
     //testZigZag();
     //testRegularExpressionMatching();
     //testSolutionthreeSumClosest();
-    testSolution_mergeSortedArray();
+    //testSolution_mergeSortedArray();
+    //testSolutionsearchMatrix();
+    //testSolutionTreeLinkNode();
+    //testSolution_uniquebinary();
+    //testSolutiontotalNQueens();
+    //testSolutionSearchInsert();
+    //testSolutionmaxSubArray();
+    testString2int();
     return 1;
 }

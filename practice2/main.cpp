@@ -1882,10 +1882,111 @@ void testSolutionmaxSubArray()
 class SolutionmyAtoi {
 public:
     int myAtoi(string str) {
-        return 1;
+        string::iterator tempiterator;
+        bool positivenumber=true;
+        long numbervalue=0;
+        tempiterator=str.begin();
+        while((tempiterator!=str.end())&&*tempiterator==' ')
+            tempiterator++;
+        if(tempiterator==str.end()) return 0;
+        
+        if(*tempiterator=='+')
+        {
+            positivenumber=true;
+            tempiterator++;
+        }
+        else
+            if(*tempiterator=='-')
+            {
+                positivenumber=false;
+                tempiterator++;
+            }
+            else
+                if(*tempiterator>='0'&&*tempiterator<='9')
+                {
+                    numbervalue+=*tempiterator-'0';
+                    tempiterator++;
+                }
+                else
+                {
+                    return 0;
+                }
+        
+        
+        
+        while(tempiterator!=str.end())
+        {
+            if((*tempiterator>='0')&&(*tempiterator<='9'))
+                numbervalue=10*numbervalue+(*tempiterator-'0');
+            else
+                break;
+            
+            if(numbervalue>INT_MAX&&positivenumber)return INT_MAX;
+            else
+                if(numbervalue>-long(INT_MIN)&&positivenumber==false) return INT_MIN;
+            tempiterator++;
+        }
+        
+        
+                    
+        if(positivenumber)
+            return int(numbervalue);
+        else
+            return -int(numbervalue);
     }
 };
 
+void testSolutionmyAtoi()
+{
+    SolutionmyAtoi solution;
+    int num=solution.myAtoi("-1");
+    
+    cout<<num<<endl;
+}
+
+class SolutionheightbalancedBST {
+public:
+    TreeNode* sortedArrayToBST(vector<int>& nums) {
+        return newNode(nums, 0, int(nums.size()-1));
+    }
+    
+    TreeNode* newNode(vector<int>& nums, int left, int right)
+    {
+        if(left==right)
+        {
+            TreeNode* currentNode=new TreeNode(nums[left]);
+            return currentNode;
+        }
+        else
+        if(left<right)
+        {
+            int middle=(left+right)/2;
+            TreeNode* currentNode=new TreeNode(nums[middle]);
+            currentNode->left=newNode(nums,left,middle-1);
+            currentNode->right=newNode(nums,middle+1,right);
+            return currentNode;
+        }
+        else
+            return NULL;
+            
+            
+    }
+};
+
+
+void testSolutionheightbalancedBST(){
+    int a[]={1,2,3,4,5,6,7};
+    vector<int> nums;
+    nums.assign(a,a+7);
+    SolutionheightbalancedBST solution;
+    TreeNode* root=solution.sortedArrayToBST(nums);
+    SolutionTraversalInoder solution2;
+    vector<int> newnums=solution2.inorderTraversal(root);
+    for(int i=0;i<newnums.size();i++)
+        cout<<newnums[i]<<endl;
+    
+    
+}
 void testString2int(){
     std::string str_dec = "2001, A Space Odyssey";
     std::string str_hex = "40c3";
@@ -1904,6 +2005,44 @@ void testString2int(){
     std::cout << str_bin << ": " << i_bin << '\n';
     std::cout << str_auto << ": " << i_auto << '\n';
     cout<<INT_MAX<<','<<INT_MIN<<endl;
+}
+
+class SolutionUniquePath {
+public:
+    int uniquePaths(int m, int n) {
+        int i,j;
+        vector<vector<int> > uniquePaths;
+        uniquePaths.resize(m);
+        for(i=0;i<m;i++)
+            uniquePaths[i].resize(n);
+        
+        for(i=0;i<m;i++)
+            uniquePaths[i][0]=1;
+        for(i=0;i<n;i++)
+            uniquePaths[0][i]=1;
+        if(m<=1||n<=1)
+            return uniquePaths[m-1][n-1];
+        cout<<'1'<<endl;
+        for(i=1;i<m;i++)
+            for(j=1;j<n;j++)
+                uniquePaths[i][j]=uniquePaths[i-1][j]+uniquePaths[i][j-1];
+        return uniquePaths[m-1][n-1];
+        
+    }
+};
+
+
+class SolutionSortedList {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        
+    }
+};
+
+void testSolutionUniquePath(){
+    SolutionUniquePath solution;
+    int numbersolution=solution.uniquePaths(1, 2);
+    cout<<numbersolution<<endl;
 }
 
 int main(int argc, const char * argv[]) {
@@ -1931,6 +2070,9 @@ int main(int argc, const char * argv[]) {
     //testSolutiontotalNQueens();
     //testSolutionSearchInsert();
     //testSolutionmaxSubArray();
-    testString2int();
+    //testString2int();
+    //testSolutionmyAtoi();
+    //testSolutionheightbalancedBST();
+    testSolutionUniquePath();
     return 1;
 }

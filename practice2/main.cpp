@@ -2031,19 +2031,342 @@ public:
     }
 };
 
-
-class SolutionSortedList {
-public:
-    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-        
-    }
-};
-
 void testSolutionUniquePath(){
     SolutionUniquePath solution;
     int numbersolution=solution.uniquePaths(1, 2);
     cout<<numbersolution<<endl;
 }
+
+class SolutionSortedList {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        ListNode* head1,* head2,* head,*temp;
+        head1=l1;
+        head2=l2;
+        if(l1==NULL&&l2==NULL)
+            return NULL;
+        else
+            if(l1==NULL)
+                return l2;
+            else
+                if(l2==NULL)
+                    return l1;
+        
+        if(l1->val<l2->val)
+        {
+            head=l1;
+            temp=l1;
+            head1=l1->next;
+        }
+        else
+        {
+            head=l2;
+            temp=l2;
+            head2=l2->next;
+        }
+            
+        while(head1!=NULL&&head2!=NULL)
+        {
+            if(head1->val<head2->val)
+            {
+                temp->next=head1;
+                temp=temp->next;
+                head1=head1->next;
+            }
+            else
+            {
+                temp->next=head2;
+                temp=temp->next;
+                head2=head2->next;
+            }
+        }
+        if(head1!=NULL)
+            temp->next=head1;
+        else
+            if(head2!=NULL)
+                temp->next=head2;
+        return head;
+    }
+};
+
+void testSolutionSortedList(){
+    SolutionSortedList solution;
+    ListNode* l1,*l2,* head;
+    l1=new ListNode(1);
+    l2=new ListNode(1);
+    ListNode a(3),b(5),c(2),d(7);
+    l1->next=&c;
+    c.next=&b;
+    l2->next=&a;
+    a.next=&d;
+    
+    head=solution.mergeTwoLists(l1, l2);
+    
+    while(head!=NULL)
+    {
+        cout<<head->val;
+        head=head->next;
+    }
+    
+    
+}
+
+
+class SolutiongrayCode {
+public:
+    vector<int> grayCode(int n) {
+        vector<int> grayc;
+        grayc.push_back(0);
+        
+      
+        for(int i=0;i<n;i++)
+        {
+            int highestbit=1<<i;
+            for(int j=int(grayc.size())-1;j>=0;j--)
+                grayc.push_back(highestbit+grayc[j]);
+        }
+      
+        return grayc;
+    }
+};
+
+void testSolutiongrayCode()
+{
+    SolutiongrayCode solution;
+    vector<int> temp=solution.grayCode(2);
+    for(vector<int>::iterator current=temp.begin();current!=temp.end();current++)
+        cout<<*current<<endl;
+}
+
+
+class SolutionremoveElement {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        vector<int>::iterator current;
+        vector<int>::iterator inser;
+        current=nums.begin();
+        inser=nums.begin();
+        while(current!=nums.end())
+        {
+            if(*current!=val)
+            {
+                *inser=*current;
+                inser++;
+                current++;
+            }
+            else
+                current++;
+        }
+        nums.erase(inser,nums.end());
+        return int(nums.size());
+        
+    }
+};
+
+void testSolutionremoveElement()
+{
+    SolutionremoveElement solution;
+    int a[]={1,2,3,5,1,4,1};
+    vector<int> nums;
+    nums.assign(a,a+7);
+
+    int nsize=solution.removeElement(nums,1);
+    for(int i=0;i<nums.size();i++)
+        cout<<nums[i]<<endl;
+    cout<<nsize<<endl;
+}
+
+class SolutioncomputeArea {
+public:
+    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+        int width=0;
+        int height=0;
+        if(C<=E||G<=A)
+            return (C-A)*(D-B)+(G-E)*(H-F);
+        else
+            if(C<G)
+            {
+                if(E<A)
+                    width=C-A;
+                else
+                    width=C-E;
+            }
+            else
+            {
+                if(E<A)
+                    width=G-A;
+                else
+                    width=G-E;
+            }
+        if(F>=D||B>=H)
+           return  (C-A)*(D-B)+(G-E)*(H-F) ;
+        else
+            if(D>H)
+            {
+                if(B>F)
+                    height=H-B;
+                else
+                    height=H-F;
+                    
+            }
+        else
+        {
+            if (B<F)
+                height=D-F;
+            
+            else
+                height=D-B;
+        }
+
+        return (C-A)*(D-B)+(G-E)*(H-F)-height*width;
+    }
+};
+
+void testSolutioncomputeArea(){
+    SolutioncomputeArea solution;
+    int areaa=solution.computeArea(-3, 0, 3, 4, 0, -1, 9, 2);
+    std::cout<<areaa;
+}
+
+class SolutionminPathSum {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+        int m=int(grid.size());
+        if(m<1) return 0;
+        int n=int(grid[0].size());
+        if(n<1) return 0;
+        
+        int i,j;
+        vector<vector<int> >sum;
+        sum.resize(m);
+        for(i=0;i<m;i++)
+            sum[i].resize(n);
+        
+        sum[0][0]=grid[0][0];
+        for(i=1;i<m;i++)
+            sum[i][0]=grid[i][0]+sum[i-1][0];
+        for(j=1;j<n;j++)
+            sum[0][j]=grid[0][j]+sum[0][j-1];
+        
+        for(i=1;i<m;i++)
+            for(j=1;j<n;j++)
+                sum[i][j]=min(sum[i-1][j]+grid[i][j],sum[i][j-1]+grid[i][j]);
+        
+        return sum[m-1][n-1];
+        
+    }
+};
+
+void testSolutionminPathSum()
+{
+    SolutionminPathSum solution;
+    vector<vector<int>> grid;
+    grid.resize(1);
+    grid[0].push_back(0);
+    int path=solution.minPathSum(grid);
+    cout<<path<<endl;
+}
+
+
+class SolutionBalancedBinaryTree  {
+public:
+    bool isBalanced(TreeNode* root) {
+        int nleft,nright;
+        bool banlance=true;
+        if(root==NULL)return true;
+        if(root->left!=NULL)
+            nleft=height(root->left,banlance);
+        else
+            nleft=0;
+        
+        if(root->right!=NULL)
+            nright=height(root->right,banlance);
+        else
+            nright=0;
+        
+        if(banlance==false||abs(nleft-nright)>1)
+            return false;
+        else
+            return true;
+    }
+                           
+    int height(TreeNode* tempTreeNode, bool& banlance)
+    {
+      if(tempTreeNode==NULL)
+          return 0;
+      else
+      {
+          int lefth=height(tempTreeNode->left,banlance);
+          int righth=height(tempTreeNode->right,banlance);
+          
+          if(banlance&&abs(lefth-righth)>1)
+              banlance=false;
+              
+          return max(lefth,righth)+1;
+      }
+        
+    }
+};
+
+void testSolutionBalancedBinaryTree()
+{
+    SolutionBalancedBinaryTree solution;
+    TreeNode* root;
+    TreeNode a(1),b(2),c(3);
+    root=&a;
+    root->right=&b;
+    b.right=&c;
+    bool isbalance=solution.isBalanced(root);
+    cout<<isbalance<<endl;
+}
+
+class SolutionPermutations {// interesting
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int> > allpermutation;
+        if(nums.empty()) return allpermutation;
+        allpermutation.push_back(vector<int>(1,nums[0]));
+        
+        for(int i=1;i<nums.size();i++)
+        {
+            int n=(int)allpermutation.size();
+            for(int j=0;j<n;j++)
+            {
+                for(int k=0;k<allpermutation[j].size();k++)
+                {
+                    vector<int> per=allpermutation[j];
+                    per.insert(per.begin()+k,nums[i]);
+                    allpermutation.push_back(per);
+                }
+                
+                allpermutation[j].push_back(nums[i]);
+            }
+        }
+        
+        return allpermutation;
+        
+    }
+};
+
+void testSolutionPermutations()
+{
+    SolutionPermutations solution;
+    vector<vector<int> > permutation;
+    vector<int> nums;
+    nums.push_back(1);
+    nums.push_back(2);
+    nums.push_back(3);
+    nums.push_back(4);
+    permutation=solution.permute(nums);
+    
+    for(int i=0;i<permutation.size();i++)
+    {
+        for (int j=0; j<permutation[0].size(); j++)
+            cout<<permutation[i][j];
+        cout<<endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
@@ -2073,6 +2396,13 @@ int main(int argc, const char * argv[]) {
     //testString2int();
     //testSolutionmyAtoi();
     //testSolutionheightbalancedBST();
-    testSolutionUniquePath();
+    //testSolutionUniquePath();
+    //testSolutionSortedList();
+    //testSolutiongrayCode();
+    //testSolutionremoveElement();
+    //testSolutioncomputeArea();
+    //testSolutionminPathSum();
+    //testSolutionBalancedBinaryTree();
+    testSolutionPermutations();
     return 1;
 }

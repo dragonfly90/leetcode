@@ -2367,6 +2367,145 @@ void testSolutionPermutations()
     }
 }
 
+class SolutionSymmetricTree  {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if(root==NULL) return false;
+        return isSymmetric(root->left,root->right);
+        
+    }
+    
+    bool isSymmetric(TreeNode* left, TreeNode* right)
+    {
+        if(left==NULL&&right==NULL) return true;
+        
+        if(left==NULL||right==NULL) return false;
+        
+        if(left->val==right->val)
+            return isSymmetric(left->left,right->right)&&isSymmetric(left->right,right->left);
+        else
+            return false;
+    }
+};
+
+
+class Solutionrotate {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        for(int i=0;i<matrix.size();i++)
+        {
+            for(int j=i+1;j<matrix.size();j++)
+                swap(matrix[i][j],matrix[j][i]);
+        }
+        
+        for(int i=0;i<matrix.size();i++)
+            reverse(matrix[i].begin(),matrix[i].end());
+                
+    }
+};
+
+/*
+ 1 2
+ 4 3
+ */
+
+/* 
+ 1 2 3
+ 8 9 4
+ 7 6 5
+ */
+
+/*
+ 1 2  3   4
+12 13 14  5
+11 16 15  6
+10 9  8   7
+ */
+
+class SolutionSpiralMatrix {
+public:
+    vector<vector<int>> generateMatrix(int n) {
+        vector<vector<int> > newMatrix;
+        newMatrix.resize(n);
+        for(int i=0;i<n;i++)
+            newMatrix[i].resize(n);
+        
+        int left=0;
+        int right=n-1;
+        int current=1;
+        
+        while(left<right)
+        {
+            visitMatrix(newMatrix,current,left,right);
+            left++;
+            right--;
+        }
+        
+        if(left==right)newMatrix[left][left]=current;
+        
+        return newMatrix;
+    }
+    
+    void visitMatrix(vector<vector<int> >& newMatrix,int& start,int left,int right)
+    {
+        int k=left;
+        while(k<right)
+            newMatrix[left][k++]=start++;
+        k=left;
+        while(k<right)
+            newMatrix[k++][right]=start++;
+        k=right;
+        while(k>left)
+            newMatrix[right][k--]=start++;
+        k=right;
+        while(k>left)
+            newMatrix[k--][left]=start++;
+        
+    }
+    
+};
+
+void testSolutionSpiralMatrix(){
+    SolutionSpiralMatrix solution;
+    vector<vector<int> > spiralMatrix=solution.generateMatrix(5);
+    for(int i=0;i<spiralMatrix.size();i++)
+    {
+        for(int j=0;j<spiralMatrix[i].size();j++)
+            cout<<spiralMatrix[i][j]<<',';
+        cout<<endl;
+    }
+}
+
+
+class SolutionremoveDuplicates {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int i;
+        int j;
+        if(nums.size()==0)return 0;
+        if(nums.size()==1)return 1;
+        j=1;
+        for(i=1;i<nums.size();i++)
+        {
+            if(nums[i]!=nums[j-1])
+                nums[j++]=nums[i];
+        }
+        nums.erase(nums.begin()+j,nums.end());
+        return j;
+    }
+};
+
+void testremoveDuplicates()
+{
+    SolutionremoveDuplicates solution;
+    int a[]={1,1,2,2,2,3};
+    vector<int> temp;
+    temp.assign(a,a+6);
+    int length=solution.removeDuplicates(temp);
+    for(int i=0;i<temp.size();i++)
+        cout<<temp[i]<<endl;
+    cout<<"length:"<<length<<endl;
+}
 
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
@@ -2403,6 +2542,8 @@ int main(int argc, const char * argv[]) {
     //testSolutioncomputeArea();
     //testSolutionminPathSum();
     //testSolutionBalancedBinaryTree();
-    testSolutionPermutations();
+    //testSolutionPermutations();
+    //testSolutionSpiralMatrix();
+    testremoveDuplicates();
     return 1;
 }

@@ -2402,7 +2402,8 @@ public:
             reverse(matrix[i].begin(),matrix[i].end());
                 
     }
-};
+    
+  };
 
 /*
  1 2
@@ -2507,6 +2508,309 @@ void testremoveDuplicates()
     cout<<"length:"<<length<<endl;
 }
 
+//33
+class SolutionRotatedSortedArray {
+public:
+    int search(vector<int>& nums, int target) {
+        if(nums.size()<1) return -1;
+        int pos=-1;
+        int min=findMin(nums,pos);
+        
+        int k=search(nums,target,0,pos);
+        if(k!=-1)
+            return k;
+        k=search(nums,target,pos,(int)nums.size());
+        return k;
+        
+        
+    }
+    
+    int search(vector<int>& nums, int target,int left,int right)
+    {
+        int middle;
+        if(left>right)
+            return -1;
+        if(left==right)
+        {
+            if(target==nums[left])
+                return left;
+            else
+                return -1;
+        }
+        
+        middle=(left+right)/2;
+        if(nums[middle]==target)return middle;
+        else
+            if(nums[middle]>target)
+                return search(nums,target,left,middle-1);
+            else
+                return search(nums,target,middle+1,right);
+                
+                
+            
+    }
+    
+    int findMin(vector<int>& nums, int& position) {
+        if(nums.size()<2)
+        {
+            position=0;
+            return nums[0];
+        }
+        return findMin(nums,0,int(nums.size())-1,position);
+    }
+    
+    int findMin(vector<int>& nums, int left,int right,int &position)
+    {
+        if(left==right)
+        {
+            position=left;
+            return nums[left];
+        }
+        if((right-left)==1)
+        {
+            position=nums[left]>nums[right]?right:left;
+            return nums[left]>nums[right]?nums[right]:nums[left];
+        }
+        int mintemp=nums[left];
+        
+        int middle=(left+right)/2;
+        if(nums[left]>nums[middle])
+        {
+            mintemp=findMin(nums,left,middle-1,position);
+            if(nums[middle]<mintemp)
+            {
+                mintemp=nums[middle];
+                position=middle;
+            }
+           // mintemp=min(findMin(nums,left,middle-1),nums[middle]);
+        }
+        else
+        {
+            mintemp=findMin(nums,middle+1,right,position);
+            if(nums[left]<mintemp)
+            {
+                mintemp=nums[left];
+                position=left;
+            }
+            //mintemp=min(nums[left],findMin(nums,middle+1,right));
+        }
+        
+        //cout<<left<<','<<right<<','<<mintemp<<endl;
+        return mintemp;
+    }
+};
+
+//search in sorted array with duplicate
+class SolutionRotatedSortedArray2 {
+public:
+    bool search(vector<int>& nums, int target) {
+        int start=0;
+        int end=(int)nums.size()-1;
+        while(start<=end)
+        {
+            int mid=(start+end)/2;
+            if(nums[mid]==target)return true;
+            if(nums[start]<nums[mid])
+            {
+                if(target>=nums[start]&&target<nums[mid])
+                    end=mid-1;
+                else
+                    start=mid+1;
+            }
+            else
+                if(nums[start]>nums[mid])
+                {
+                    if(target>nums[mid]&&target<=nums[end])
+                        start=mid+1;
+                    else
+                        end=mid-1;
+                }
+            else
+                start++;
+        }
+        
+        return false;
+    }
+    
+ 
+};
+
+void testSolutionRotatedSortedArray(){
+    SolutionRotatedSortedArray solution;
+    int a[]={1,3};
+    vector<int> testa;
+    testa.assign(a,a+2);
+    int pos=solution.search(testa, 3);
+    cout<<pos<<endl;
+}
+
+void testSolutionRotatedSortedArray2(){
+    SolutionRotatedSortedArray2 solution;
+    int a[]={1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1};
+    vector<int> testa;
+    testa.assign(a,a+20);
+    int pos=solution.search(testa, 2);
+    cout<<pos<<endl;
+}
+
+class SolutionsetZeroes {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int i,j;
+        if(matrix.empty())
+            return;
+        int m=(int)matrix.size();
+        if(matrix[0].empty())
+            return;
+        int n=(int)matrix[0].size();
+        
+        int temp1=1,temp2=1;
+        for(i=0;i<m;i++)if(matrix[i][0]==0)temp1=0;
+        for(i=0;i<n;i++)if(matrix[0][i]==0)temp2=0;
+        
+        for(i=1;i<m;i++)
+        {
+            for(j=1;j<n;j++)
+            {
+                if(matrix[i][j]==0)
+                {
+                    matrix[i][0]=0;
+                    matrix[0][j]=0;
+                }
+            }
+        }
+        
+        
+        for(i=1;i<m;i++)
+        {
+            
+            if(matrix[i][0]==0)
+            {
+            for(j=1;j<n;j++)
+            {
+               matrix[i][j]=0;
+            }
+                
+            }
+        }
+        
+        for(j=1;j<n;j++)
+        {
+            if(matrix[0][j]==0)
+            {
+            for(i=1;i<m;i++)
+               matrix[i][j]=0;
+            }
+        }
+        
+        for(i=0;i<m;i++)if(temp1==0)matrix[i][0]=0;
+        for(i=0;i<n;i++)if(temp2==0)matrix[0][i]=0;
+
+        
+        
+        return;
+    }
+};
+
+
+void testSolutionsetZeroes()
+{
+    SolutionsetZeroes solution;
+    vector<vector<int> > nums;
+    nums.resize(1);
+    nums[0].push_back(0);
+    nums[0].push_back(1);
+    
+    solution.setZeroes(nums);
+    for(int i=0;i<nums.size();i++)
+        for(int j=0;j<nums[0].size();j++)
+        {
+            cout<<nums[i][j]<<',';
+            cout<<endl;
+        }
+    
+}
+
+class SolutionCombinations {
+public:
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int> > allcombinations;
+        vector<int> currentcombination;
+        vector<bool> boolput;
+        boolput.assign(n,false);
+        searchcom(allcombinations,currentcombination,boolput,k);
+        return allcombinations;
+    }
+    void searchcom(vector<vector<int> >& allcombinations, vector<int>& currentcombination,vector<bool> search, int k)
+    {
+        if(k==0)
+        {
+            allcombinations.push_back(currentcombination);
+            return;
+        }
+        for(int i=0;i<search.size();i++)
+        {
+            if(search[i]==false)
+            {
+                search[i]=true;
+                currentcombination.push_back(i+1);
+                searchcom(allcombinations,currentcombination,search,k-1);
+                currentcombination.pop_back();
+            }
+        }
+    }
+};
+
+void testSolutionCombinations()
+{
+    vector<vector<int> >allcombinations;
+    SolutionCombinations solution;
+    allcombinations=solution.combine(4,3);
+    for(int i=0;i<allcombinations.size();i++)
+    {
+        for(int j=0;j<allcombinations[0].size();j++)
+        {
+            cout<<allcombinations[i][j]<<',';
+        }
+        cout<<endl;
+    }
+}
+
+
+class SolutionremoveDuplicates2 {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int repeatimes=0;
+        if(nums.empty())return 0;
+        if(nums.size()==1) return 1;
+        
+        int i=1;
+        int j=1;
+        for(j=1;j<nums.size();j++)
+        {
+            if(nums[j]==nums[i-1])
+                repeatimes++;
+            else
+                repeatimes=0;
+            
+            if(repeatimes<2)
+                nums[i++]=nums[j];
+        }
+        return i;
+    }
+};
+
+void testSolutionremoveDuplicates(){
+    SolutionremoveDuplicates2 solution;
+    vector<int> nums;
+    int a[]={1,1,1,2,2,2,3,3};
+    nums.assign(a,a+8);
+    int length=solution.removeDuplicates(nums);
+    cout<<length<<endl;
+    for(int i=0;i<length;i++)
+        cout<<nums[i]<<endl;
+}
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -2544,6 +2848,11 @@ int main(int argc, const char * argv[]) {
     //testSolutionBalancedBinaryTree();
     //testSolutionPermutations();
     //testSolutionSpiralMatrix();
-    testremoveDuplicates();
+    //testremoveDuplicates();
+    //testSolutionRotatedSortedArray();
+    //testSolutionRotatedSortedArray2();
+    //testSolutionsetZeroes();
+    //testSolutionCombinations();
+    testSolutionremoveDuplicates();
     return 1;
 }

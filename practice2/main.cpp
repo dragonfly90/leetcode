@@ -2811,6 +2811,69 @@ void testSolutionremoveDuplicates(){
         cout<<nums[i]<<endl;
 }
 
+class SolutionRoottoLeafNumbers{
+public:
+    int sumNumbers(TreeNode* root) {
+        if(root==NULL) return 0;
+        queue<TreeNode*> myTree;
+        queue<int> myTreenumber;
+        vector<int> allNumbers;
+        int currentnumber;
+        TreeNode* currentTreeNode;
+        
+        myTree.push(root);
+        myTreenumber.push(root->val);
+        
+        while(!myTree.empty())
+        {
+            currentTreeNode=myTree.front();
+            currentnumber=myTreenumber.front();
+            myTree.pop();
+            myTreenumber.pop();
+            
+            if(currentTreeNode->left==NULL&&currentTreeNode->right==NULL)
+            {
+                allNumbers.push_back(currentnumber);
+                continue;
+            }
+            
+            if(currentTreeNode->left!=NULL)
+            {
+                myTree.push(currentTreeNode->left);
+                myTreenumber.push(currentnumber*10+currentTreeNode->left->val);
+            }
+            
+            
+            if(currentTreeNode->right!=NULL)
+            {
+                myTree.push(currentTreeNode->right);
+                myTreenumber.push(currentnumber*10+currentTreeNode->right->val);
+            }
+            
+
+        }
+        
+        int sum=0;
+        for(vector<int>::iterator temp=allNumbers.begin();temp!=allNumbers.end();temp++)
+            sum+=*temp;
+        
+        return sum;
+        
+    }
+};
+
+void testSolutionRoottoLeafNumbers()
+{
+    SolutionRoottoLeafNumbers solution;
+    TreeNode* head;
+    TreeNode a(1),b(2),c(3);
+    head=&a;
+    a.left=&b;
+    b.right=&c;
+    
+    int sum=solution.sumNumbers(head);
+    cout<<sum<<endl;
+}
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -2853,6 +2916,7 @@ int main(int argc, const char * argv[]) {
     //testSolutionRotatedSortedArray2();
     //testSolutionsetZeroes();
     //testSolutionCombinations();
-    testSolutionremoveDuplicates();
+    //testSolutionremoveDuplicates();
+    testSolutionRoottoLeafNumbers();
     return 1;
 }

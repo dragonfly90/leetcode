@@ -2874,6 +2874,200 @@ void testSolutionRoottoLeafNumbers()
     int sum=solution.sumNumbers(head);
     cout<<sum<<endl;
 }
+
+class SolutionInvertBinaryTree {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+        
+        if(root==NULL)return NULL;
+        TreeNode* left,* right;
+        
+        left=root->left;
+        right=root->right;
+        
+        if(left==NULL&&right==NULL)
+            return root;
+        invertTree(left);
+        invertTree(right);
+        root->right=left;
+        root->left=right;
+        
+        return root;
+    }
+};
+
+class SolutionPascal {
+public:
+    vector<vector<int>> generate(int numRows) {
+        vector<vector<int> > sumPascal;
+        vector<int> temp;
+        vector<int> previous;
+        
+        if(numRows==0)return sumPascal;
+        temp.push_back(1);
+        sumPascal.push_back(temp);
+        
+        if(numRows==1)return sumPascal;
+        
+        for(int i=2;i<=numRows;i++)
+        {
+            previous=temp;
+            temp.clear();
+            
+            temp.push_back(1);
+            for(int j=0;j<previous.size()-1;j++)
+                temp.push_back(previous[j]+previous[j+1]);
+            temp.push_back(1);
+            
+            sumPascal.push_back(temp);
+        }
+        return sumPascal;
+    }
+};
+
+void testSolutionPascal(){
+    SolutionPascal solution;
+    vector<vector<int> > sumPascal=solution.generate(5);
+    for(int i=0;i<sumPascal.size();i++)
+    {
+        for(int j=0;j<sumPascal[i].size();j++)
+        {
+            cout<<sumPascal[i][j]<<',';
+        }
+        cout<<endl;
+    }
+}
+
+class SolutionpathSum {
+public:
+    bool hasPathSum(TreeNode* root, int sum) {
+        if(root==NULL)return false;
+        
+        if(root->left==NULL&&root->right==NULL)
+            if(root->val==sum)return true;
+        
+        if(root->left!=NULL&&hasPathSum(root->left,sum-(root->val)))
+            return true;
+        
+        if(root->right!=NULL&&hasPathSum(root->right, sum-(root->val)))
+           return true;
+        
+        return false;
+    }
+};
+
+void testSolutionpathSum(){
+    SolutionpathSum solution;
+    TreeNode* root;
+    TreeNode a(5),b(4),c(8),d(11),e(13),f(4),g(7),h(2),i(1);
+    
+    root=&a;
+    a.left=&b;
+    a.right=&c;
+    
+    b.left=&d;
+    c.left=&e;
+    c.right=&f;
+    
+    d.left=&g;
+    d.right=&h;
+    
+    f.right=&i;
+    
+    bool findsum=solution.hasPathSum(root, 22);
+    
+    if(findsum)
+        cout<<"find sum=22"<<endl;
+}
+
+class Stack {
+public:
+    queue<int> queue1;
+    queue<int> queue2;
+    int current1=1;
+    bool emptystack;
+    int temp;
+    // Push element x onto stack.
+    void push(int x) {
+        if(current1==1)
+        {
+            queue1.push(x);
+            temp=x;
+        }
+        else
+        {
+            queue2.push(x);
+            temp=x;
+        }
+    }
+    
+    // Removes the element on top of the stack.
+    void pop() {
+        if(current1==1)
+        {
+            if(queue1.size()==1)
+            {
+
+                queue1.pop();
+                emptystack=true;
+                
+            }
+
+            while(queue1.size()>1)
+            {
+                if(queue1.size()==2)
+                    temp=queue1.front();
+                queue2.push(queue1.front());
+                queue1.pop();
+                
+            }
+
+            queue1.pop();
+            current1=2;
+        }
+       else
+        {
+            if(queue2.size()==1)
+            {
+                
+                queue2.pop();
+                emptystack=true;
+                
+            }
+
+            
+            while(queue2.size()>1)
+            {
+                
+                if(queue2.size()==2)
+                    temp=queue2.front();
+                queue1.push(queue2.front());
+                queue2.pop();
+            }
+            
+            queue2.pop();
+            current1=1;
+        }
+        
+    }
+    
+    // Get the top element.
+    int top() {
+        if(!emptystack)
+        return temp;
+    }
+    
+    // Return whether the stack is empty.
+    bool empty() {
+        return emptystack;
+    }
+};
+
+void testStack(){
+    
+};
+
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -2917,6 +3111,8 @@ int main(int argc, const char * argv[]) {
     //testSolutionsetZeroes();
     //testSolutionCombinations();
     //testSolutionremoveDuplicates();
-    testSolutionRoottoLeafNumbers();
+    //testSolutionRoottoLeafNumbers();
+    //testSolutionPascal();
+    testSolutionpathSum();
     return 1;
 }

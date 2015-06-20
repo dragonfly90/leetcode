@@ -12,6 +12,8 @@
 #include <cmath>
 #include<stack>
 #include<queue>
+#include<unordered_map>
+
 
 using namespace std;
 
@@ -1260,9 +1262,87 @@ public:
     }
 };
 
-void testSolution_binarytreenode()
+class Solution_binaryTreeOrderTraversal {
+public:
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        if(root==NULL) return vector<vector<int> >();
+        
+        queue<TreeNode*> myqueue;
+        TreeNode* temp;
+        int templevel;
+        int tempnumber;
+        
+        queue<int> levels;
+        
+        queue<int> recordlevels;
+        queue<int> numbers;
+        myqueue.push(root);
+        levels.push(0);
+        
+        recordlevels.push(0);
+        numbers.push(root->val);
+        
+        int maxlevel=0;
+        
+        while(!myqueue.empty())
+        {
+            temp=myqueue.front();
+            myqueue.pop();
+            
+            templevel=levels.front();
+            levels.pop();
+            
+            if(temp->left!=NULL)
+            {
+                myqueue.push(temp->left);
+                levels.push(templevel+1);
+                
+                recordlevels.push(templevel+1);
+                numbers.push(temp->left->val);
+                
+                if(templevel+1>maxlevel)
+                    maxlevel=templevel+1;
+            }
+            
+            if(temp->right!=NULL)
+            {
+                myqueue.push(temp->right);
+                levels.push(templevel+1);
+                
+                recordlevels.push(templevel+1);
+                numbers.push(temp->right->val);
+                if(templevel+1>maxlevel)
+                    maxlevel=templevel+1;
+            }
+            
+        }
+        
+        
+        
+        vector< vector<int> > myvector;
+        
+        myvector.resize(maxlevel+1);
+        
+        while(!recordlevels.empty())
+        {
+            templevel=recordlevels.front();
+            tempnumber=numbers.front();
+            
+            recordlevels.pop();
+            numbers.pop();
+            
+            myvector[templevel].push_back(tempnumber);
+        }
+        
+        return myvector;
+        
+        
+    }
+};
+
+void testSolution_binaryTreeOrderTraversal()
 {
-    Solution_binarytreenode solution;
+    Solution_binaryTreeOrderTraversal solution;
     TreeNode* root;
     TreeNode a(3);
     TreeNode b(9);
@@ -2989,6 +3069,7 @@ public:
     int temp;
     // Push element x onto stack.
     void push(int x) {
+        if(emptystack)emptystack=false;
         if(current1==1)
         {
             queue1.push(x);
@@ -3010,6 +3091,7 @@ public:
 
                 queue1.pop();
                 emptystack=true;
+                return;
                 
             }
 
@@ -3032,7 +3114,7 @@ public:
                 
                 queue2.pop();
                 emptystack=true;
-                
+                return;
             }
 
             
@@ -3055,6 +3137,8 @@ public:
     int top() {
         if(!emptystack)
         return temp;
+        else
+            return -1;
     }
     
     // Return whether the stack is empty.
@@ -3063,10 +3147,546 @@ public:
     }
 };
 
+class SolutionMultiplyStrings {
+public:
+    string multiply(string num1, string num2) {
+        int size1=(int)num1.size();
+        int size2=(int)num2.size();
+        //cout<<num1<<endl;
+        //cout<<num2<<endl;
+        string renum1=string(num1.rbegin(),num1.rend());
+        string renum2=string(num2.rbegin(),num2.rend());
+        string result;
+        int tempsum=0;
+        for(int i=0;i<size1+size2-1;i++)
+        {
+            
+            
+            for(int j=0;j<=i&&j<size1;j++)
+            {
+                if((i-j)>=size2)continue;
+                tempsum+=(int(renum1[j]-'0'))*(int(renum2[i-j]-'0'));
+                //cout<<renum1[j]<<','<<renum2[i-j]<<endl;
+            }
+            //cout<<char(tempsum%10+'0')<<endl;
+            //cout<<"-----"<<endl;
+            
+            result.push_back(char(tempsum%10+'0'));
+            tempsum/=10;
+        }
+        while(tempsum!=0)
+        {
+            result.push_back(char(tempsum%10+'0'));
+            tempsum/=10;
+        }
+        
+        
+        string resultr=string(result.rbegin(),result.rend());
+        //cout<<result<<endl;
+        int i=0;
+        for(i=0;i<((int)resultr.size()-1);i++)
+        {
+            if(resultr[i]=='0')continue;
+            else break;
+        }
+        return resultr.substr(i,(int)resultr.size()-i);
+    }
+};
+
+void testSolutionMultiplyStrings()
+{
+    SolutionMultiplyStrings solution;
+    string num1="9";
+    string num2="9";
+    string result=solution.multiply(num1, num2);
+    cout<<result<<endl;
+}
+
 void testStack(){
+    Stack mystack;
+    mystack.push(5);
+    mystack.push(6);
+    mystack.push(7);
+    mystack.push(8);
+    mystack.pop();
+    mystack.pop();
+    while(!mystack.empty())
+    {
+        cout<<mystack.top()<<endl;
+        mystack.pop();
+    }
+    
+    
+    mystack.push(5);
+    mystack.push(6);
+    mystack.push(7);
+    mystack.push(8);
+    mystack.push(10);
+    
+    
+    while(!mystack.empty())
+    {
+        cout<<mystack.top()<<endl;
+        mystack.pop();
+    }
+    
+
     
 };
 
+class SolutionminDepth {
+public:
+    int minDepth(TreeNode* root) {
+        if(root==NULL)return 0;
+        int left,right;
+        if(root->left==NULL&&root->right==NULL)
+            return 1;
+        else
+            if(root->left==NULL)
+                return 1+minDepth(root->right);
+        else
+            if(root->right==NULL)
+                return 1+minDepth(root->left);
+        else
+        {
+            left=minDepth(root->left);
+            right=minDepth(root->right);
+            if(left<right)
+                return left+1;
+            else
+                return right+1;
+        }
+            
+        
+    }
+};
+
+class SolutionTrappingRainWater  {
+public:
+    int trap(vector<int>& height) {
+      
+        vector<int> leftmostheight;
+        int leftmost;
+        int rightmost;
+        int nsize=(int)height.size();
+        
+        if(nsize<2)return 0;
+        
+        leftmostheight.push_back(height[0]);
+        leftmost=height[0];
+        
+        for(int i=1;i<nsize;i++)
+        {
+            
+            if(height[i]>leftmost)
+                leftmost=height[i];
+            leftmostheight.push_back(leftmost);
+            
+        }
+        
+        int sum=0;
+        rightmost=height[nsize-1];
+        
+        for(int i=nsize-2;i>=0;i--)
+        {
+            if(height[i]>rightmost)
+                rightmost=height[i];
+            if(min(leftmostheight[i],rightmost)>height[i])
+                sum+=min(leftmostheight[i],rightmost)-height[i];
+        }
+        
+        return sum;
+        
+    }
+};
+
+
+class SolutionlongestConsecutive {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_map<int,bool> mapnums;
+        for(int i=0;i<nums.size();i++){
+            mapnums[nums[i]]=true;
+        }
+        
+        int maxlength=0;
+        for(int i=0;i<nums.size();i++)
+        {
+            int current=nums[i];
+            int len=1;
+            mapnums.erase(nums[i]);
+            
+            while(mapnums.find(current+1)!=mapnums.end())
+            {
+                current++;
+                mapnums.erase(current);
+                len++;
+            }
+            
+            current=nums[i];
+            while(mapnums.find(current-1)!=mapnums.end())
+            {
+                current--;
+                mapnums.erase(current);
+                len++;
+            }
+            
+            if(len>maxlength)
+                maxlength=len;
+        }
+        
+        return maxlength;
+    }
+};
+
+void testSolutionTrappingRainWater()
+{
+    vector<int> height;
+    int a[]={0,1,0,2,1,0,1,3,2,1,2,1};
+    int b[]={5,5,1,7,1,1,5,2,7,6};
+    int c[]={0,2,0};
+    height.assign(b,b+10);
+    SolutionTrappingRainWater solution;
+    int sum=solution.trap(height);
+    cout<<sum<<endl;
+}
+
+/*
+     1
+   1  1
+ 1   2   1
+1  3   3    1
+ */
+
+class SolutionPASCAL {
+public:
+    vector<int> getRow(int rowIndex) {
+        vector<int> pasacalrow;
+        pasacalrow.resize(rowIndex+1);
+        if(rowIndex==0)
+        {
+            pasacalrow[0]=1;
+            
+            return pasacalrow;
+        }
+        if(rowIndex==1)
+        {
+            pasacalrow[0]=1;
+            pasacalrow[1]=1;
+            return pasacalrow;
+        }
+        
+        pasacalrow[0]=1;
+        pasacalrow[1]=1;
+        int tempp,templ;
+        for(int i=2;i<=rowIndex;i++)
+        {
+            pasacalrow[0]=1;
+            templ=1;
+            for(int j=1;j<=i-1;j++)
+            {
+                tempp=pasacalrow[j];
+                pasacalrow[j]=templ+pasacalrow[j];
+                templ=tempp;
+                
+            }
+            pasacalrow[i]=1;
+           
+        }
+        return pasacalrow;
+    }
+};
+
+void testSolutionPASCAL()
+{
+    SolutionPASCAL solution;
+    vector<int> tempint;
+    tempint=solution.getRow(2);
+   for(int i=0;i<tempint.size();i++)
+       cout<<tempint[i]<<endl;
+}
+
+class BSTIterator_On {
+private:
+    vector<int> m_values;
+    int m_idx;
+  
+public:
+
+    BSTIterator_On(TreeNode *root) {
+        inOrder(root);
+        m_idx=0;
+    }
+    
+    void inOrder(TreeNode* root)
+    {
+        if(root==NULL)
+            return;
+        inOrder(root->left);
+        m_values.push_back(root->val);
+        inOrder(root->right);
+    }
+    
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+       if(m_idx<m_values.size())
+           return true;
+        
+        return false;
+    }
+    
+    /** @return the next smallest number */
+    int next() {
+        return m_values[m_idx++];
+    }
+};
+
+/*
+public class BSTIterator{
+    ST
+    
+    public BSTIterator(TreeNode root){
+       
+        while(root!=NULL){
+            stack.push(root):
+            root=root.left;
+        }
+    }
+    
+    public bool hasNext(){
+        return STACK.
+    }
+};
+*/
+
+class BSTIterator {
+    stack<TreeNode*> mystack;
+public:
+    BSTIterator(TreeNode *root) {
+        while(root!=NULL)
+        {
+            mystack.push(root);
+            root=root->left;
+        }
+    }
+    
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+        return !mystack.empty();
+    }
+    
+    /** @return the next smallest number */
+    int next() {
+        TreeNode* node=mystack.top();
+        mystack.pop();
+        int ret=node->val;
+        if(node->right!=NULL){
+            node=node->right;
+            while(node!=NULL){
+                mystack.push(node);
+                node=node->left;
+            }
+        }
+        
+        return ret;
+    }
+};
+
+//f(n)=max{f(n-1),f(n-2)+nums[n-1]
+class SolutionRob {
+public:
+    int rob(vector<int>& nums) {
+        if(nums.size()<1)return 0;
+        int nsize=(int)nums.size();
+        vector<int> newnums;
+        newnums.resize(nsize+1);
+        newnums[0]=0;
+        newnums[1]=nums[0];
+        
+        for(int i=2;i<=nsize;i++)
+        {
+            newnums[i]=max(newnums[i-2]+nums[i],newnums[i-1]);
+        }
+        return newnums[nsize];
+    }
+};
+
+void testSolutionRob(){
+    SolutionRob solution;
+    vector<int> temp;
+    temp.push_back(0);
+    temp.push_back(0);
+    int robtemp=solution.rob(temp);
+    cout<<robtemp<<endl;
+}
+
+
+class SolutionTreetoLinked {
+public:
+    void flatten(TreeNode* root) {
+        if(root==NULL)return;
+        TreeNode* cright=root->right;
+        TreeNode* leftend;
+        if(root->left!=NULL)
+        {
+            root->right=root->left;
+            leftend=findTreeNode(root->left);
+            root->left=NULL;
+            if(cright!=NULL)
+            {
+                findTreeNode(cright);
+                leftend->left=NULL;
+                leftend->right=cright;
+            }
+        }
+        else
+        {
+            if(cright!=NULL)
+            {
+            findTreeNode(cright);
+            }
+        }
+    }
+    
+    TreeNode* findTreeNode(TreeNode* root)
+    {
+       
+        TreeNode* cright=root->right;
+        TreeNode* leftend;
+        TreeNode* rightend;
+        if(root->left!=NULL)
+        {
+            root->right=root->left;
+            
+            leftend=findTreeNode(root->left);
+            root->left=NULL;
+            rightend=leftend;
+            
+            if(cright!=NULL)
+            {
+                rightend=findTreeNode(cright);
+                leftend->left=NULL;
+                leftend->right=cright;
+                
+            }
+            return rightend;
+        }
+        else
+        {
+            if(cright!=NULL)
+            {
+              return findTreeNode(cright);
+            }
+            
+            return root;
+        }
+    }
+  
+};
+
+void testSolutionTreetoLinked()
+{
+    SolutionTreetoLinked solution;
+    TreeNode* head;
+    TreeNode a(1),b(2),c(3),d(4),e(5),f(6);
+    head=&a;
+    a.left=&b;
+    a.right=&e;
+    
+    b.left=&c;
+    b.right=&d;
+    
+    e.right=&f;
+    
+    solution.flatten(head);
+    
+    TreeNode* temp=head;
+    while(temp!=NULL)
+    {
+        if(temp->left!=NULL)cout<<"wrong"<<endl;
+        cout<<temp->val<<endl;
+        temp=temp->right;
+    }
+}
+
+
+class SolutiongetIntersectionNode {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        int alength,blength;
+        ListNode* temp,*temp2;
+        alength=0;
+        blength=0;
+        temp=headA;
+        while (temp!=NULL) {
+            alength++;
+            temp=temp->next;
+        }
+        temp2=headB;
+        while(temp2)
+        {
+            blength++;
+            temp2=temp2->next;
+        }
+        
+        int morele=alength-blength;
+        temp=headA;
+        temp2=headB;
+        if(morele>0)
+        {
+            for(int i=0;i<morele;i++)
+                temp=temp->next;
+            
+        }
+        else
+        {
+            if(morele<0)
+            for(int i=0;i<-morele;i++)
+                temp2=temp2->next;
+        }
+        
+        while(temp!=temp2)
+        {
+            temp=temp->next;
+            temp2=temp2->next;
+        }
+        
+        return temp;
+    }
+};
+
+
+class SolutionreverseBits {
+public:
+    uint32_t reverseBits(uint32_t n) {
+        bool bitb[32];
+        uint32_t sum=0;
+        for(int i=0;i<32;i++)
+        {
+            if(n&(1<<i))
+                bitb[i]=true;
+            else
+                bitb[i]=false;
+                
+        }
+        
+        for(int i=0;i<32;i++)
+        {
+            if(bitb[31-i])
+                sum|=(1<<i);
+        }
+        return sum;
+    }
+};
+
+void testSolutionreverseBits()
+{
+    SolutionreverseBits solution;
+    uint32_t a=2;
+    uint32_t b;
+    b=solution.reverseBits(a);
+    cout<<b<<endl;
+}
 
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
@@ -3082,7 +3702,7 @@ int main(int argc, const char * argv[]) {
     //testSolution_linklist2();
     //testreverse();
     //testSolutionTraversalInoder();
-    //testSolution_binarytreenode();
+    //testSolution_binaryTreeOrderTraversal();
     //testZigZag();
     //testRegularExpressionMatching();
     //testSolutionthreeSumClosest();
@@ -3113,6 +3733,14 @@ int main(int argc, const char * argv[]) {
     //testSolutionremoveDuplicates();
     //testSolutionRoottoLeafNumbers();
     //testSolutionPascal();
-    testSolutionpathSum();
+    //testSolutionpathSum();
+    //testStack();
+    //testSolutionMultiplyStrings();
+    
+    //testSolutionTrappingRainWater();
+    //testSolutionPASCAL();
+    //testSolutionRob();
+    //testSolutionTreetoLinked();
+    testSolutionreverseBits();
     return 1;
 }

@@ -3688,6 +3688,237 @@ void testSolutionreverseBits()
     cout<<b<<endl;
 }
 
+
+class SolutionTrailingZeroes {
+public:
+    int trailingZeroes(int n) {
+        int sum=0;
+        int x=5;
+        while(n>=x)
+        {
+            sum+=n/x;
+            x*=5;
+        }
+        return sum;
+    }
+};
+
+void testSolutionTrailingZeroes()
+{
+    SolutionTrailingZeroes solution;
+    int temp=solution.trailingZeroes(10);
+    cout<<temp<<endl;
+}
+
+class Solutionsubsets {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int> > allSubSets;
+        vector<int> currentSubset;
+        
+       // allSubSets.push_back(currentSubset);
+        sort(nums.begin(),nums.end());
+        if(nums.empty())return allSubSets;
+        
+        currentSubset.push_back(nums[0]);
+        allSubSets.push_back(currentSubset);
+        
+        for(int i=1;i<nums.size();i++)
+        {
+            int nsize=(int)allSubSets.size();
+            for(int j=0;j<nsize;j++)
+            {
+                currentSubset=allSubSets[j];
+                currentSubset.push_back(nums[i]);
+                allSubSets.push_back(currentSubset);
+            }
+            
+            currentSubset.clear();
+            currentSubset.push_back(nums[i]);
+            allSubSets.push_back(currentSubset);
+        }
+        
+        currentSubset.clear();
+        allSubSets.push_back(currentSubset);
+        return allSubSets;
+        
+    }
+    
+};
+
+void testSolutionsubsets()
+{
+    Solutionsubsets solution;
+    vector<int> numbers;
+    //numbers.push_back(1);
+    //numbers.push_back(2);
+    
+    vector<vector<int> > allSubSets=solution.subsets(numbers);
+    
+    for(int i=0;i<allSubSets.size();i++)
+    {
+        for(int j=0;j<allSubSets[i].size();j++)
+            cout<<allSubSets[i][j]<<',';
+        cout<<endl;
+    }
+
+    
+}
+
+
+class SolutionlengthOfLastWord {
+public:
+    int lengthOfLastWord(string s) {
+        int len=(int)s.size();
+        int current=len-1;
+        while(current>=0&&s[current]==' ')
+            current--;
+        
+        int i=0;
+        while(current>=0&&s[current]!=' ')
+        {
+            i++;
+            current--;
+        }
+        
+        return i;
+    }
+};
+
+class SolutionsortedListToBST {
+public:
+    TreeNode* sortedListToBST(ListNode* head) {
+        ListNode* temp;
+        temp=head;
+        vector<ListNode*> allNode;
+        
+        while(temp!=NULL)
+        {
+            allNode.push_back(temp);
+            temp=temp->next;
+        }
+        
+        vector<TreeNode*> allTreeNode;
+        int nsize=(int)allNode.size();
+        allTreeNode.resize(nsize);
+        
+        TreeNode* headTree=sortTree(allTreeNode,allNode,0,nsize-1);
+        return headTree;
+        
+    }
+    
+    TreeNode* sortTree(vector<TreeNode*>& allTreeNode,vector<ListNode*>& allNode,int begin,int end)
+    {
+        if(begin>end) return NULL;
+        int middle=(begin+end)/2;
+        allTreeNode[middle]=new TreeNode(allNode[middle]->val);
+        
+        
+        allTreeNode[middle]->left=sortTree(allTreeNode,allNode,begin,middle-1);
+        allTreeNode[middle]->right=sortTree(allTreeNode,allNode,middle+1,end);
+        return allTreeNode[middle];
+    }
+};
+
+void preorder(TreeNode* head)
+{
+    if(head==NULL)return;
+    if(head->left!=NULL)preorder(head->left);
+    cout<<head->val<<endl;
+    if(head->right!=NULL)preorder(head->right);
+}
+
+void testSolutionsortedListToBST(){
+    SolutionsortedListToBST solution;
+    ListNode* head;
+    ListNode a(5),b(6),c(7),d(8),e(9);
+    head=&a;
+    a.next=&b;
+    b.next=&c;
+    c.next=&d;
+    d.next=&e;
+    TreeNode* mytreeHead=solution.sortedListToBST(head);
+    preorder(mytreeHead);
+    
+}
+
+class SolutionuniquePathsWithObstacles {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        vector<vector<int> > pathSolution;
+        int rows=(int)obstacleGrid.size();
+        if(rows==0) return 0;
+        int cols=(int)obstacleGrid[0].size();
+        
+        pathSolution.resize(rows);
+        for(int i=0;i<rows;i++)
+            pathSolution[i].resize(cols);
+        
+        if(obstacleGrid[0][0]==1)
+            pathSolution[0][0]=0;
+        else
+            pathSolution[0][0]=1;
+            
+        
+        for(int i=1;i<rows;i++)
+        {
+            if(obstacleGrid[i][0]==1)
+                pathSolution[i][0]=0;
+            else
+                pathSolution[i][0]=pathSolution[i-1][0];
+            
+        }
+        
+        for(int i=1;i<cols;i++)
+        {
+            if(obstacleGrid[0][i]==1)
+                pathSolution[0][i]=0;
+            else
+                pathSolution[0][i]=pathSolution[0][i-1];
+        }
+        
+        for(int i=1;i<rows;i++)
+            for(int j=1;j<cols;j++)
+            {
+                if(obstacleGrid[i][j]==1)
+                    pathSolution[i][j]=0;
+                else
+                    pathSolution[i][j]=pathSolution[i-1][j]+pathSolution[i][j-1];
+               // cout<<pathSolution[i][j]<<endl;
+                
+            }
+        
+        return pathSolution[rows-1][cols-1];
+        
+    }
+};
+
+
+void testSolutionuniquePathsWithObstacles()
+{
+    vector<vector<int> > obstacleGrid;
+    SolutionuniquePathsWithObstacles solution;
+    obstacleGrid.resize(3);
+    obstacleGrid[0].push_back(0);
+    obstacleGrid[0].push_back(0);
+    obstacleGrid[0].push_back(0);
+    obstacleGrid[1].push_back(0);
+    obstacleGrid[1].push_back(1);
+    obstacleGrid[1].push_back(0);
+    obstacleGrid[2].push_back(0);
+    obstacleGrid[2].push_back(0);
+    obstacleGrid[2].push_back(0);
+    
+    vector<vector<int> > obstacleGrid2;
+    obstacleGrid.resize(2);
+    obstacleGrid[0].push_back(0);
+    obstacleGrid[1].push_back(0);
+    
+    int pathNumbers=solution.uniquePathsWithObstacles(obstacleGrid2);
+    cout<<pathNumbers<<endl;
+    
+}
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -3741,6 +3972,11 @@ int main(int argc, const char * argv[]) {
     //testSolutionPASCAL();
     //testSolutionRob();
     //testSolutionTreetoLinked();
-    testSolutionreverseBits();
+    //testSolutionreverseBits();
+    
+    //testSolutionTrailingZeroes();
+    //testSolutionsubsets();
+    //testSolutionsortedListToBST();
+    testSolutionuniquePathsWithObstacles();
     return 1;
 }

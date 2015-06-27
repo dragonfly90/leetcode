@@ -3919,6 +3919,430 @@ void testSolutionuniquePathsWithObstacles()
     
 }
 
+class SolutiongenerateTrees {
+public:
+    vector<TreeNode*> generateTrees(int n) {
+        if(n==0) return generateTrees(1,0);
+        return generateTrees(1,n);
+    }
+    
+    vector<TreeNode*> generateTrees(int start,int end)
+    {
+        vector<TreeNode*> allTrees;
+        if(start>end)
+        {
+            allTrees.push_back(NULL);
+            return allTrees;
+        }
+        
+        for(int i=start;i<=end;i++)
+        {
+            
+            vector<TreeNode*> leftTree;
+            vector<TreeNode*> rightTree;
+            
+            leftTree=generateTrees(start,i-1);
+        
+            rightTree=generateTrees(i+1, end);
+            
+            
+            for(int j=0;j<leftTree.size();j++)
+                for(int k=0;k<rightTree.size();k++)
+                {
+                    TreeNode* temp=new TreeNode(i);
+                    
+                    temp->left=leftTree[j];
+                    temp->right=rightTree[k];
+                    allTrees.push_back(temp);
+                    
+                    
+                }
+        }
+        
+        
+        return allTrees;
+    }
+    
+};
+
+
+
+void testSolutiongenerateTrees()
+{
+    SolutiongenerateTrees solution;
+    vector<TreeNode*> allTrees=solution.generateTrees(0);
+    for(int i=0;i<allTrees.size();i++)
+        preorder(allTrees[i]);
+}
+
+
+class SolutionCombinationSum {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        sort(candidates.begin(),candidates.end());
+        vector<vector<int> > allCombinationSum;
+        vector<int> current;
+        generateAllCombinations(candidates,0,(int)candidates.size()-1,target,current,allCombinationSum);
+        
+        return allCombinationSum;
+        
+    }
+    
+    void generateAllCombinations(vector<int>& candidates,int start,int end,int sum,vector<int>& current,vector<vector<int> >& allCombinations){
+        
+        if(sum==0)
+        {
+            allCombinations.push_back(current);
+            return;
+        }
+
+        
+        if(sum<0||start>end)return;
+        
+        int i=0;
+        
+        while(i<(sum/candidates[start]))
+        {
+            current.push_back(candidates[start]);
+            generateAllCombinations(candidates,start+1,end,sum-(i+1)*candidates[start],current,allCombinations);
+            i++;
+        }
+        
+        while(i>0)
+        {
+            current.pop_back();
+            i--;
+        }
+        
+        generateAllCombinations(candidates,start+1,end,sum,current,allCombinations);
+        
+    }
+};
+
+void testSolutionCombinationSum()
+{
+    SolutionCombinationSum solution;
+    vector<int> testvector;
+    testvector.push_back(1);
+    testvector.push_back(2);
+    vector<vector<int> > newvector=solution.combinationSum(testvector, 3);
+    
+    for(int i=0;i<newvector.size();i++)
+    {
+        for(int j=0;j<newvector[i].size();j++)
+            cout<<newvector[i][j]<<',';
+        cout<<endl;
+    }
+}
+
+
+class SolutioncombinationSum3 {
+public:
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<vector<int> > allCombinationSum;
+        int start=1;
+        vector<int> tempnumbers;
+        combinationSumNumbers(k,n,start,tempnumbers,allCombinationSum);
+        return allCombinationSum;
+    }
+    
+    void combinationSumNumbers(int k,int n, int temp, vector<int>& tempnumbers, vector<vector<int> >& allCombinationSum)
+    {
+        if(n==0&&k==0)
+        {
+            allCombinationSum.push_back(tempnumbers);
+        }
+        
+        if(k<0||n<0||temp>9)
+            return;
+        
+        for(int i=temp;i<=9;i++)
+        {
+            tempnumbers.push_back(i);
+            combinationSumNumbers(k-1,n-i,i+1,tempnumbers,allCombinationSum);
+            tempnumbers.pop_back();
+        }
+    }
+};
+
+
+void testSolutioncombinationSum3()
+{
+    SolutioncombinationSum3 solution;
+    vector<vector<int>> newvector=solution.combinationSum3(2,18);
+    for(int i=0;i<newvector.size();i++)
+    {
+        for(int j=0;j<newvector[i].size();j++)
+            cout<<newvector[i][j]<<',';
+        cout<<endl;
+    }
+
+}
+
+
+class SolutionsubsetsWithDup {
+public:
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int> > allSubsets;
+        vector<int> temp;
+        sort(nums.begin(),nums.end());
+        allSubsets.push_back(temp);
+        
+        int i=0;
+        if(nums.size()==0)
+            return allSubsets;
+        allSubsets.pop_back();
+        
+        int nsize=(int)nums.size()-1;
+        
+        generateAllSubSets(allSubsets,nums,temp,i,nsize);
+        return allSubsets;
+    }
+    
+    void generateAllSubSets(vector<vector<int> >& allSubsets, vector<int>& nums, vector<int>& temp, int i, int nsize)
+    {
+        if(i>nsize)
+        {
+            allSubsets.push_back(temp);
+            return;
+        }
+        int j=0;
+        int numscurrent;
+        
+        if(i+1<=nsize)
+        {
+        for(j=i+1;j<=nsize;j++)
+        {
+            if(nums[j]!=nums[j-1])
+                break;
+        }
+            numscurrent=j-i;
+        }
+        else
+            numscurrent=1;
+            
+        
+        
+        
+        generateAllSubSets(allSubsets, nums, temp, i+numscurrent,nsize);
+        
+        for(j=0;j<numscurrent;j++)
+        {
+            temp.push_back(nums[i]);
+            generateAllSubSets(allSubsets,nums,temp,i+numscurrent,nsize);
+        }
+        
+        for(j=0;j<numscurrent;j++)
+            temp.pop_back();
+    }
+};
+
+void testSolutionsubsetsWithDup()
+{
+    SolutionsubsetsWithDup solution;
+    vector<int> nums;
+    nums.push_back(1);
+    nums.push_back(2);
+    nums.push_back(2);
+    nums.push_back(2);
+       vector<vector<int> > newvector=solution.subsetsWithDup(nums);
+    for(int i=0;i<newvector.size();i++)
+    {
+        for(int j=0;j<newvector[i].size();j++)
+            cout<<newvector[i][j]<<',';
+        cout<<endl;
+    }
+}
+
+class SolutionPartition {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        ListNode* head2=new ListNode(x);
+        ListNode* head1=new ListNode(0);
+        ListNode* temp=head;
+        ListNode* head1tail=NULL;
+        ListNode* head2tail=NULL;
+        while(temp!=NULL)
+        {
+            ListNode* tempNext=temp->next;
+            
+            if(temp->val<x)
+            {
+                if(head1tail==NULL)
+                {
+                    head1->next=temp;
+                    
+                    head1tail=temp;
+                    head1tail->next=NULL;
+                    //cout<<temp->val<<endl;
+                }
+                else
+                {
+                    head1tail->next=temp;
+                    head1tail=temp;
+                    head1tail->next=NULL;
+                    //cout<<temp->val<<endl;
+                }
+            }
+            else
+            {
+                if(head2tail==NULL)
+                {
+                    head2->next=temp;
+                    head2tail=temp;
+                    head2tail->next=NULL;
+                    //cout<<temp->val<<endl;
+                }
+                else
+                {
+                    head2tail->next=temp;
+                    head2tail=temp;
+                    head2tail->next=NULL;
+                    //cout<<temp->val<<endl;
+                }
+            }
+            temp=tempNext;
+        }
+        
+        if(head1tail==NULL)
+        {
+            head2tail=head2->next;
+            delete head2;
+            
+            return head2tail;
+        }
+        else
+        {
+        
+            head1tail->next=head2->next;
+            head1tail=head1->next;
+            delete head1;
+            
+            return head1tail;
+        }
+        
+    }
+};
+
+void testSolutionPartition()
+{
+    SolutionPartition solution;
+    ListNode* head;
+    ListNode* headSort;
+    ListNode a(1),b(1);
+    head=&a;
+    a.next=&b;
+    
+    headSort=solution.partition(head, 2);
+    
+    ListNode* temp;
+    temp=headSort;
+    while(temp!=NULL)
+    {
+        cout<<temp->val<<endl;
+        temp=temp->next;
+    }
+    
+}
+
+class SolutionSearchRange {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        int left,right;
+        int current,currentl,currentr;
+        vector<int> myvector;
+        left=0;
+        right=(int)nums.size()-1;
+        current=searchInt(nums,left,right,target);
+        if(current==-1)
+        {
+            myvector.push_back(-1);
+            myvector.push_back(-1);
+        }
+        else
+        {
+            currentl=searchInt(nums,left,current-1,target);
+            currentr=searchInt(nums,current+1,right,target);
+            if(currentl==-1)
+            {
+                if(currentr==-1)
+                {
+                    myvector.push_back(current);
+                    myvector.push_back(current);
+                }
+                else
+                {
+                    myvector.push_back(current);
+                    myvector.push_back(currentr);
+                }
+            }
+            else
+            {
+                if(currentr==-1)
+                {
+                    myvector.push_back(currentl);
+                    myvector.push_back(current);
+                }
+                else
+                {
+                    myvector.push_back(currentl);
+                    myvector.push_back(currentr);
+                }
+            }
+        }
+        
+        return myvector;
+    }
+    
+    int searchInt(vector<int>& nums,int left,int right, int target)
+    {
+        if(left>right)
+            return -1;
+    
+        if(left==right)
+        {
+            if(nums[left]==nums[right])
+            {
+                if(nums[left]==target)
+                    return left;
+                else
+                    return -1;
+            }
+        
+        }
+        
+        int middle=(left+right)/2;
+        if(nums[middle]==target)return middle;
+        else
+        {
+            if(nums[middle]>target)
+            {
+                return searchInt(nums,left,middle-1,target);
+            }
+            else
+            {
+                return searchInt(nums,middle+1,right,target);
+            }
+        }
+    }
+                                       
+                                       
+};
+
+void testSolutionSearchRange()
+{
+    SolutionSearchRange solution;
+    vector<int> nums;
+    nums.push_back(2);
+    nums.push_back(2);
+    vector<int> myvector=solution.searchRange(nums, 1);
+    
+    for(int i=0;i<myvector.size();i++)
+    {
+        cout<<myvector[i]<<endl;
+    }
+}
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -3977,6 +4401,13 @@ int main(int argc, const char * argv[]) {
     //testSolutionTrailingZeroes();
     //testSolutionsubsets();
     //testSolutionsortedListToBST();
-    testSolutionuniquePathsWithObstacles();
+    //testSolutionuniquePathsWithObstacles();
+    //testSolutiongenerateTrees();
+    
+    //testSolutionCombinationSum();
+    //testSolutioncombinationSum3();
+    //testSolutionsubsetsWithDup();
+    //testSolutionPartition();
+    testSolutionSearchRange();
     return 1;
 }

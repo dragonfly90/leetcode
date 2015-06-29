@@ -4261,38 +4261,55 @@ public:
         }
         else
         {
-            currentl=searchInt(nums,left,current-1,target);
-            currentr=searchInt(nums,current+1,right,target);
-            if(currentl==-1)
-            {
-                if(currentr==-1)
-                {
-                    myvector.push_back(current);
-                    myvector.push_back(current);
-                }
-                else
-                {
-                    myvector.push_back(current);
-                    myvector.push_back(currentr);
-                }
-            }
-            else
-            {
-                if(currentr==-1)
-                {
-                    myvector.push_back(currentl);
-                    myvector.push_back(current);
-                }
-                else
-                {
-                    myvector.push_back(currentl);
-                    myvector.push_back(currentr);
-                }
-            }
+            currentl=searchLeftHand(nums,left,current,target);
+            
+            currentr=searchRightHand(nums,current,right,target);
+           
+            
+            myvector.push_back(currentl);
+            myvector.push_back(currentr);
+            
         }
         
         return myvector;
     }
+    
+    int searchLeftHand(vector<int> &nums,int left,int right,int target){
+        if(left==right)return left;
+     
+        int middle=(left+right)/2;
+        
+        if(nums[middle]==target)
+            return searchLeftHand(nums, left, middle, target);
+        else
+            return searchLeftHand(nums, middle+1, right, target);
+            
+    }
+    
+    int searchRightHand(vector<int> &nums,int left,int right,int target)
+    {
+      
+        if(left==right) return left;
+        int middle=(left+right)/2;
+        
+        if(nums[middle]==target)
+        {
+            if((right-middle)==1)
+            {
+                if(nums[right]==target)
+                    return right;
+                else
+                    return middle;
+            }
+            return searchRightHand(nums, middle,right, target);
+        }
+        else
+        {
+            
+            return searchRightHand(nums, left, middle-1, target);
+        }
+    }
+
     
     int searchInt(vector<int>& nums,int left,int right, int target)
     {
@@ -4333,8 +4350,12 @@ void testSolutionSearchRange()
 {
     SolutionSearchRange solution;
     vector<int> nums;
+    //nums.push_back(-2);
+    //nums.push_back(-1);
+    nums.push_back(1);
     nums.push_back(2);
-    nums.push_back(2);
+    nums.push_back(3);
+    //nums.push_back(2);
     vector<int> myvector=solution.searchRange(nums, 1);
     
     for(int i=0;i<myvector.size();i++)
@@ -4342,6 +4363,193 @@ void testSolutionSearchRange()
         cout<<myvector[i]<<endl;
     }
 }
+
+class SolutionfindKthLargest {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int Left=0;
+        int Right=(int)nums.size()-1;
+        
+        int lef,rig;
+        
+        while(Left<Right)
+        {
+            lef=Left;
+            rig=Right;
+            
+            int pivot=nums[lef];
+            
+            while(lef<rig)
+            {
+                while(lef<rig&&nums[rig]<pivot)
+                    rig--;
+                if(lef<rig)nums[lef]=nums[rig];
+                while(lef<rig&&nums[lef]>=pivot)
+                    lef++;
+                if(lef<rig)nums[rig]=nums[lef];
+            }
+            
+            nums[lef]=pivot;
+            if(lef==k-1)
+                return pivot;
+            else
+            {
+                if(lef>k-1)
+                    Right=lef;
+                else
+                    Left=lef;
+            }
+        }
+        
+        return nums[k-1];
+        
+    }
+    
+};
+
+class SolutionMinimumTotal {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int i,j;
+        int tempSize;
+        vector<vector<int> > pathSum;
+        int nsize=(int)triangle.size();
+        
+        if(nsize==0) return 0;
+        
+        vector<int> tempVector;
+        
+        tempVector.push_back(triangle[0][0]);
+        pathSum.push_back(tempVector);
+       
+        
+        for(i=1;i<nsize;i++)
+        {
+            
+            tempSize=(int)triangle[i].size();
+            
+            
+            tempVector.clear();
+            tempVector.resize(tempSize);
+            
+            if(tempSize>2)
+            {
+                for(j=1;j<tempSize-1;j++)
+                {
+                    if(pathSum[i-1][j-1]<pathSum[i-1][j])
+                        tempVector[j]=pathSum[i-1][j-1]+triangle[i][j];
+                    else
+                        tempVector[j]=pathSum[i-1][j]+triangle[i][j];
+                    
+                }
+            }
+            
+          
+           
+            
+            tempVector[0]=pathSum[i-1][0]+triangle[i][0];
+           
+            tempVector[tempSize-1]=pathSum[i-1][tempSize-2]+triangle[i][tempSize-1];
+            
+            
+            pathSum.push_back(tempVector);
+            
+        }
+        
+        int minValue=pathSum[nsize-1][0];
+        for(i=1;i<pathSum[nsize-1].size();i++)
+        {
+            if(minValue>pathSum[nsize-1][i])
+                minValue=pathSum[nsize-1][i];
+        }
+        
+        return minValue;
+    }
+};
+
+void testSolutionMinimumTotal()
+{
+    SolutionMinimumTotal solution;
+    vector<vector<int> > myvector;
+    myvector.resize(4);
+    myvector[0].push_back(2);
+    myvector[1].push_back(3);
+    myvector[1].push_back(4);
+    myvector[2].push_back(6);
+    myvector[2].push_back(5);
+    myvector[2].push_back(7);
+
+    myvector[3].push_back(4);
+    myvector[3].push_back(1);
+    myvector[3].push_back(8);
+    myvector[3].push_back(3);
+
+    int valuem=solution.minimumTotal(myvector);
+    cout<<valuem<<endl;
+}
+
+
+class SolutionIsValidSudoku {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        if(board.size()!=9||board[0].size()!=9)
+            return false;
+        return rowIsValid(board)&&colIsValid(board)&&gridIsValid(board);
+    }
+    
+    bool rowIsValid(vector<vector<char>>& board){
+        for(int i=0;i<9;i++)
+        {
+            vector<bool> used;
+            used.assign(9,false);
+            for(int j=0;j<9;j++){
+                if(!isdigit(board[i][j]))continue;
+                int k=board[i][j]-'0';
+                if(k==0||used[k-1])return false;
+                used[k-1]=true;
+            }
+        }
+        return true;
+
+    }
+    
+    bool colIsValid(vector<vector<char>>& board){
+        for(int i=0;i<9;i++)
+        {
+            vector<bool> used;
+            used.assign(9,false);
+            for(int j=0;j<9;j++){
+                if(!isdigit(board[j][i]))continue;
+                int k=board[i][j]-'0';
+                if(k==0||used[k-1])return false;
+                used[k-1]=true;
+            }
+        }
+            return true;
+        
+    }
+    
+    bool gridIsValid(vector<vector<char>>& board){
+            
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                int row = 3*i;
+                int col = 3*j;
+                vector<bool> used(9,false);
+                for(int m=row; m<row+3; m++) {
+                    for(int n=col; n<col+3; n++) {
+                        if(!isdigit(board[m][n])) continue;
+                        int k = board[m][n]-'0';
+                        if(k==0 || used[k-1]) return false;
+                        used[k-1]=true;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+};
+
 
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
@@ -4408,6 +4616,8 @@ int main(int argc, const char * argv[]) {
     //testSolutioncombinationSum3();
     //testSolutionsubsetsWithDup();
     //testSolutionPartition();
-    testSolutionSearchRange();
+    //testSolutionSearchRange();
+    
+    testSolutionMinimumTotal();
     return 1;
 }

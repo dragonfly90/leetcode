@@ -4551,6 +4551,402 @@ public:
 };
 
 
+class Queue {
+public:
+    stack<int> InputStack;
+    stack<int> OutputStack;
+    // Push element x to the back of queue.
+    void push(int x) {
+        InputStack.push(x);
+    }
+    
+    // Removes the element from in front of queue.
+    void pop(void) {
+        if(OutputStack.empty())
+        {
+            while (!InputStack.empty()) {
+                OutputStack.push(InputStack.top());
+                InputStack.pop();
+            }
+        }
+        if(!OutputStack.empty())
+            OutputStack.pop();
+    }
+    
+    // Get the front element.
+    int peek(void) {
+        if(OutputStack.empty())
+        {
+            while (!InputStack.empty()) {
+                OutputStack.push(InputStack.top());
+                InputStack.pop();
+            }
+        }
+        if(!OutputStack.empty())
+            return OutputStack.top();
+        return -1;
+    }
+    
+    // Return whether the queue is empty.
+    bool empty(void) {
+        if(InputStack.empty()&&OutputStack.empty())
+            return true;
+        else
+            return false;
+    }
+};
+
+class SolutionisPowerOfTwo {
+public:
+    bool isPowerOfTwo(int n) {
+        int bitn=1;
+        while(n>bitn)
+        {
+            bitn=bitn<<1;
+            cout<<bitn<<endl;
+        }
+        
+        if(n==bitn)
+            return true;
+        
+        return false;
+    }
+};
+
+void testSolutionisPowerOfTwo(){
+    SolutionisPowerOfTwo solution;
+    int num=16;
+    bool isPowerofTwo=solution.isPowerOfTwo(num);
+    if(isPowerofTwo)
+        cout<<"is Power of Two"<<endl;
+    else
+        cout<<"not Power of Two"<<endl;
+        
+}
+
+
+class SolutionkthSmallest {
+public:
+    bool find;
+    int result;
+    SolutionkthSmallest(){
+        result=-1;
+        find=true;
+    }
+    int kthSmallest(TreeNode* root, int k)
+    {
+        int numk=k;
+        return kthSmallests(root,numk);
+        
+    }
+                    
+    int kthSmallests(TreeNode* root, int& k) {
+       
+        
+        if(!root||k<=0)
+            return -1;
+       
+        if(root)
+        {
+          
+            kthSmallests(root->left, k);
+            
+            k--;
+           
+            if(k==0&&find)
+            {
+                result=root->val;
+                find=false;
+            }
+            if(k>0)
+            {
+                return kthSmallests(root->right, k);
+            }
+            
+        }
+        else
+            if(k>0)
+                result=-1;
+        
+        return result;
+    }
+};
+
+
+void SolutionkthSmallesttest(){
+    SolutionkthSmallest solution;
+    TreeNode a(3);
+    TreeNode b(1);
+    TreeNode c(4);
+    TreeNode d(2);
+    TreeNode* root=&a;
+    a.left=&b;
+    b.right=&d;
+    a.right=&c;
+    
+    int kthSmallest=solution.kthSmallest(root, 3);
+    cout<<kthSmallest<<endl;
+}
+
+class SolutionrightSideView {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> rightVector;
+        queue<TreeNode*> allNodes;
+        queue<int> allLevels;
+        
+        TreeNode* currentNode;
+        int currentLevel;
+        
+        rightVector.clear();
+        TreeNode* temp=root;
+        if(temp==NULL)
+            return rightVector;
+        allNodes.push(root);
+        allLevels.push(1);
+        
+        while(!allNodes.empty())
+        {
+            currentNode=allNodes.front();
+            currentLevel=allLevels.front();
+            if(currentLevel>rightVector.size())
+                rightVector.push_back(currentNode->val);
+            else
+                if(currentLevel==((int)rightVector.size()))
+                    rightVector[currentLevel-1]=currentNode->val;
+            
+            if(currentNode->left!=NULL)
+            {
+                allNodes.push(currentNode->left);
+                allLevels.push(currentLevel+1);
+            }
+            
+            if(currentNode->right!=NULL)
+            {
+                allNodes.push(currentNode->right);
+                allLevels.push(currentLevel+1);
+            }
+            
+            allNodes.pop();
+            allLevels.pop();
+        }
+        
+        return rightVector;
+    }
+};
+
+
+
+
+void testSolutionrightSideView(){
+    SolutionrightSideView solution;
+    TreeNode* head;
+    TreeNode a(1),b(2);
+    head=&a;
+    a.left=&b;
+    
+    vector<int> solutionVector=solution.rightSideView(head);
+    for(int i=0;i<solutionVector.size();i++)
+        cout<<solutionVector[i]<<endl;
+}
+
+
+class SolutionRemoveNthFromEnd {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* tempHead,* tempEnd;
+        int currentIteration=0;
+        tempHead=head;
+        tempEnd=head;
+        while(currentIteration<n)
+        {
+            tempEnd=tempEnd->next;
+            currentIteration++;
+        }
+        
+        ListNode* tempPrevious=NULL;
+        
+        while(tempEnd!=NULL)
+        {
+            tempPrevious=tempHead;
+            tempHead=tempHead->next;
+            tempEnd=tempEnd->next;
+            
+        }
+        
+        if(tempPrevious==NULL)
+            return head->next;
+        else
+        {
+            if(tempHead==NULL)
+                tempPrevious->next=NULL;
+            else
+                tempPrevious->next=tempHead->next;
+        }
+        
+        return head;
+    }
+};
+
+
+class SolutioncanJumpOrigin {
+public:
+    bool canJump(vector<int>& nums) {
+        int nsize=(int)nums.size()-1;
+        
+        return canJumpPosition(nums, 0, nsize);
+    }
+    
+    bool canJumpPosition(vector<int>& nums, int startPosition,int nsize)
+    {
+        if(startPosition>=nsize)
+            return true;
+        
+        if(nums[startPosition]>0)
+        {
+            for(int i=1;i<=nums[startPosition];i++)
+            {
+                if(canJumpPosition(nums, startPosition+i, nsize))
+                    return true;
+            }
+        }
+        
+        return false;
+        
+    }
+};
+
+
+class SolutioncanJump {
+public:
+    bool canJump(vector<int>& nums) {
+    
+        int nsize=(int)nums.size();
+        if(nsize<=1)return true;
+        
+        vector<bool> boolnums;
+        boolnums.resize(nsize);
+        
+        for(int i=1;i<nsize;i++)
+        {
+            boolnums[i]=false;
+            for(int j=0;j<i;j++)
+            {
+                if(nums[i]>=(i-j)&&boolnums[j])
+                {
+                    boolnums[i]=true;
+                    break;
+                }
+            }
+        }
+        
+        return boolnums[nsize-1];
+    }
+    
+};
+
+/*
+ :  bool canJump(int A[], int n) {
+ 2:      // Start typing your C/C++ solution below
+ 3:      // DO NOT write int main() function
+ 4:      int* jump = new int[n];
+ 5:      jump[0] = 0;
+ 6:      for(int i=1; i < n; i++)
+ 7:      {
+ 8:        jump[i] = max(jump[i-1], A[i-1]) -1;
+ 9:        if(jump[i] <0)
+ 10:          return false;;
+ 11:      }
+ 12:      return jump[n-1] >=0;
+ 13:    }
+ */
+
+class SolutioncanJumpNP{
+public:
+    bool canJump(vector<int>& nums)
+    {
+        int nsize=(int)nums.size();
+        if(nsize<=1)return true;
+        vector<int> jumpNums;
+        jumpNums.resize(nsize);
+        
+        for(int i=1;i<nsize;i++)
+        {
+            jumpNums[i]=max(jumpNums[i-1],nums[i-1])-1;
+            if(jumpNums[i]<0)
+                return false;
+        }
+        
+        return jumpNums[nsize-1]>=0;
+    }
+};
+
+class SolutionlowestCommonAncestor {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        TreeNode* findTree;
+        bool find=false;
+        search(root,p,q,find,findTree);
+        return findTree;
+    }
+    
+    int search(TreeNode* root,TreeNode* p,TreeNode* q,bool& find,TreeNode*& findTree)
+    {
+        if(find==true)return 3;
+        int current0=0;
+        int current1=0;
+        int current2=0;
+        if(root==p)
+            current0=1;
+        if(root==q)
+            current0=2;
+        if(root==NULL)
+            return 0;
+        if(root->left!=NULL)
+            current1=search(root->left,p,q,find,findTree);
+        if(root->right!=NULL)
+            current2=search(root->right,p,q,find,findTree);
+        
+        if(current0!=0)
+        {
+            if(current1==0)
+                current1=current0;
+            else
+                if(current2==0)
+                    current2=current0;
+                else
+                    return 3;
+        }
+        
+        if((current1==1&&current2==2)||(current1==2&&current2==1))
+        {
+            find=true;
+            findTree=root;
+            return 3;
+        }
+        else
+        {
+            if(current1==1||current2==1)
+                return 1;
+            else
+            {
+                if(current1==2||current2==2)
+                    return 2;
+                else
+                    return 0;
+            }
+        }
+        
+    }
+};
+
+class SolutioninsertionSortList {
+public:
+    ListNode* insertionSortList(ListNode* head) {
+        return head;
+    }
+};
+
 int main(int argc, const char * argv[]) {
     //testtitletoNumber();
     // insert code here...
@@ -4618,6 +5014,9 @@ int main(int argc, const char * argv[]) {
     //testSolutionPartition();
     //testSolutionSearchRange();
     
-    testSolutionMinimumTotal();
+    //testSolutionMinimumTotal();
+    //testSolutionisPowerOfTwo();
+    //SolutionkthSmallesttest();
+    testSolutionrightSideView();
     return 1;
 }

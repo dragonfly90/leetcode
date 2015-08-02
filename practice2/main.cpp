@@ -4940,11 +4940,558 @@ public:
     }
 };
 
-class SolutioninsertionSortList {
+
+
+class SolutionDeleteNode {
+public:
+    void deleteNode(ListNode* node) {
+        ListNode* temp=node->next;
+        *node=*temp;
+        delete temp;
+    }
+};
+
+class SolutionproductExceptSelf{
+public:
+vector<int> productExceptSelf(vector<int>& nums) {
+    vector<int> allProducts;
+    int nsize=(int)nums.size();
+    
+    allProducts.assign(nsize,1);
+    
+    int temp=1;
+    
+    for(int i=0;i<nsize;i++)
+    {
+        if(i>0)
+            allProducts[i]*=temp;
+        
+        temp*=nums[i];
+    }
+    
+    temp=1;
+    for(int i=nsize-1;i>=0;i--)
+    {
+        if(i<nsize-1)
+            allProducts[i]*=temp;
+        temp*=nums[i];
+    }
+    
+    return allProducts;
+    
+}
+};
+
+
+class SolutionsearchMatrix2{
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m=(int)matrix.size();
+        if(m<1) return false;
+        int n=(int)matrix[0].size();
+        if(n<1) return false;
+        return searchMatrix(matrix,target,0,0,m-1,n-1);
+    }
+    
+    bool searchMatrix(vector<vector<int> >& matrix, int target, int startr,int startc, int endr, int endc)
+    {
+        
+        if(startr>endr||startc>endc)
+        return false;
+        if(startr==endr&&startc==endc&&matrix[startr][startc]!=target)
+        return false;
+        int middler=(startr+endr)/2;
+        int middlec=(startc+endc)/2;
+        if(matrix[middler][middlec]==target)
+        return true;
+        else
+        {
+            if(matrix[middler][middlec]>target)
+            {
+                if(searchMatrix(matrix,target,startr,startc,middler,middlec))
+                return true;
+                
+                if(searchMatrix(matrix,target,middler+1,startc,endr,middlec-1))
+                return true;
+                
+                if(searchMatrix(matrix,target,startr,middlec,middler-1,endc))
+                return true;
+                
+                return false;
+            }
+            else
+            {
+                if(searchMatrix(matrix,target,middler+1,middlec+1,endr,endc))
+                return true;
+                
+                if(searchMatrix(matrix,target,middler+1,startc,endr,middlec))
+                return true;
+                
+                if(searchMatrix(matrix,target,startr,middlec+1,middler,endc))
+                return true;
+                
+                return false;
+                
+            }
+        }
+        
+    }
+
+};
+
+void testSolutionsearchMatrix2()
+{
+    vector<vector<int> > matrixs;
+    vector<int> matrixAll;
+    
+    matrixAll.push_back(-5);
+    matrixs.push_back(matrixAll);
+    
+    SolutionsearchMatrix2 solution;
+    bool findInt=solution.searchMatrix(matrixs,-10);
+    
+    if(findInt)
+    cout<<"find matrix"<<endl;
+    else
+    cout<<"don't find matrix"<<endl;
+    
+    
+}
+
+
+class Solutionpartition {
+public:
+    
+    std::vector<std::vector<std::string> > partition(std::string s) {
+        len = int(s.size());
+        std::vector<std::vector<std::string> > res;
+        std::vector<std::string> pars;
+        partitionHelper(s, res, pars, 0);
+        return res;
+    }
+    
+private:
+    
+    int len;
+    void partitionHelper(std::string &s, std::vector<std::vector<std::string> > &res, std::vector<std::string> &pars, int begin) {
+        if (begin == len)
+            res.push_back(pars);
+        for (int end = begin; end != len; ++end)
+            if (isPalindrome(s, begin, end)) {
+                pars.push_back(s.substr(begin, end - begin + 1));
+                partitionHelper(s, res, pars, end + 1);
+                pars.pop_back();
+            }
+    }
+    
+    bool isPalindrome(std::string &s, int begin, int end) {
+        while (begin <= end)
+            if (s[begin++] != s[end--])
+                return false;
+        return true;
+    }
+};
+
+class Solutionpartition2{
+public:
+    vector<vector<string> > partition(string s){
+        vector<vector<string> > allPalindromes;
+        vector<string> onePalindrome;
+        
+        searchAllPartitions(allPalindromes,onePalindrome,s.begin(),s.end());
+        return allPalindromes;
+    }
+    
+    void searchAllPartitions(vector<vector<string> >& allPalindromes,vector<string>& onePalindrome,string::iterator currentIter,string::iterator endIter)
+    {
+        if(currentIter==endIter)
+        {
+            allPalindromes.push_back(onePalindrome);
+            return;
+        }
+        
+        else
+        {
+            for(string::iterator currents=currentIter;currents!=endIter;currents++)
+            {
+                string temp=string(currentIter,currents+1);
+               
+                if(isPalindrome(temp))
+                {
+                    onePalindrome.push_back(temp);
+                    searchAllPartitions(allPalindromes,onePalindrome,currents+1,endIter);
+                    onePalindrome.pop_back();
+                }
+                
+                   
+            }
+        }
+    }
+                   
+    bool isPalindrome(std::string &s) {
+        int begin=0;
+        int end=(int)s.length()-1;
+        while (begin <= end)
+            if (s[begin++] != s[end--])
+                    return false;
+        return true;
+    }
+};
+
+void testSolutionpartition2(){
+    Solutionpartition2 solution1;
+    string s="aab";
+    vector<vector<string> > alls=solution1.partition(s);
+    
+    for(int i=0;i<alls.size();i++)
+    {
+        for(int j=0;j<alls[i].size();j++)
+        {
+            cout<<alls[i][j]<<endl;
+        }
+        cout<<"---------------------------"<<endl;
+    }
+}
+class SolutionmyPow {
+public:
+    double myPow(double x, int n) {
+        if(x==0||x==1||n==1)
+            return x;
+        else
+            if(n==0)
+                return 1;
+        if(x<0&&n%2!=0)
+            return -myPow(-x,n);
+        else
+            if(x<0&&n%2==0)
+                return myPow(-x,n);
+        
+        if(n<0)
+            return 1/myPow(x,-n);
+        
+        return powerP(x,n);
+    }
+    
+    double powerP(double x, int n)
+    {
+        if(n==1)
+            return x;
+        return ((n%2)==0)?powerP(x*x,n/2):(powerP(x*x,n/2)*x);
+    }
+    
+};
+/*
+
+ 2
+1 3
+ 
+inorder:   1 2 3
+postorder: 1 3 2
+ 
+*/
+
+class SolutionbuildTree {
+public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int m=(int)inorder.size();
+        int n=(int)postorder.size();
+        int itemp;
+        
+        if(m==0||m!=n)return NULL;
+        TreeNode* temp=new TreeNode(postorder[n-1]);
+        
+        for(itemp=0;itemp<m;itemp++)
+        {
+            if(inorder[itemp]==temp->val)
+                break;
+        }
+        
+        
+        temp->right=findRoot(inorder,itemp+1,m-1,postorder,n-(m-itemp),n-2);
+        temp->left=findRoot(inorder,0,itemp-1,postorder,0,n-(m-itemp)-1);
+        return temp;
+    }
+    
+    TreeNode* findRoot(vector<int>& inorder, int inleft, int inright, vector<int>& postorder, int outleft,int outright)
+    {
+        
+        TreeNode* temps;
+        int itemp;
+        if(inleft>inright||outleft>outright)
+            return NULL;
+        
+        if(inleft==inright||outleft==outright)
+        {
+            temps=new TreeNode(inorder[inleft]);
+            return temps;
+        }
+        else
+        {
+            temps=new TreeNode(postorder[outright]);
+            for(itemp=inleft;itemp<=inright;itemp++)
+            {
+                
+                if(inorder[itemp]==temps->val)
+                    break;
+            }
+            
+         
+            
+            temps->right=findRoot(inorder,itemp+1,inright,postorder,outright-(inright-itemp),outright-1);
+            
+            temps->left=findRoot(inorder,inleft,itemp-1,postorder,outleft,outright-(inright-itemp)-1);
+            return temps;
+        }
+            
+    }
+   
+};
+
+void testSolutionbuildTree()
+{
+    SolutionbuildTree solution;
+    int a[]={1,2,3,4,5};
+    int b[]={4,3,5,2,1};
+    vector<int> middle;
+    vector<int> post;
+    middle.assign(a,a+5);
+    post.assign(b,b+5);
+    
+    TreeNode* root=solution.buildTree(middle, post);
+    preorder(root);
+}
+
+
+class SolutionlowestCommonAncestor2 {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root==p||root==q||root==NULL)
+            return root;
+        TreeNode* left=lowestCommonAncestor(root->left,p,q);
+        TreeNode* right=lowestCommonAncestor(root->right,p,q);
+        if(left&&right)
+            return root;
+        if(left)
+            return left;
+        else
+            return right;
+        
+    }
+};
+
+class SolutionRobcircle {
+public:
+    int rob(vector<int>& nums) {
+        int length=(int)nums.size();
+        
+        if(length==0)
+            return 0;
+        if(length==1)
+            return nums[0];
+        if(length==2)
+            return max(nums[0],nums[1]);
+        
+        vector<int> numsall1;
+        numsall1.resize(length);
+        numsall1[0]=nums[0];
+        
+        for(int i=1;i<length;i++)
+        {
+            if(i==1)
+                numsall1[i]=max(numsall1[i-1],nums[1]);
+            else
+                if(i==length-1)
+                    numsall1[i]=numsall1[i-1];
+                else
+                    numsall1[i]=max(numsall1[i-1],numsall1[i-2]+nums[i]);
+        }
+        
+        vector<int> numsall2;
+        numsall2.resize(length);
+        numsall2[0]=nums[length-1];
+        numsall2[1]=numsall2[0]+nums[1];
+        
+        
+        for(int i=2;i<length-2;i++)
+        {
+            numsall2[i]=max(numsall2[i-1],numsall2[i-2]+nums[i]);
+        }
+        
+        
+        return max(numsall1[length-1],numsall2[length-3]);
+    }
+};
+
+void testSolutionRobcircle()
+{
+    SolutionRobcircle solution;
+    int a[]={1,2,1,1};
+    vector<int> nums;
+    nums.assign(a,a+4);
+    
+    int maxnum=solution.rob(nums);
+    
+    cout<<maxnum<<endl;
+}
+
+class SolutiondiffWaysToCompute {
+public:
+    vector<int> diffWaysToCompute(string input) {
+        vector<int> allResults;
+        int size=(int)input.size();
+        
+        for(int i=0;i<size;i++){
+            char cur=input[i];
+            if(cur=='+'||cur=='-'||cur=='*'){
+                vector<int> result1=diffWaysToCompute(input.substr(0,i));
+                vector<int> result2=diffWaysToCompute(input.substr(i+1));
+                
+                for(vector<int>::iterator temp1=result1.begin();temp1!=result1.end();temp1++)
+                    for(vector<int>::iterator temp2=result2.begin();temp2!=result2.end();temp2++)
+                    {
+                        if(cur=='+')
+                            allResults.push_back((*temp1)+(*temp2));
+                        else
+                            if(cur=='-')
+                                allResults.push_back((*temp1)-(*temp2));
+                            else
+                                allResults.push_back((*temp1)*(*temp2));
+                        
+                    }
+            }
+        }
+        
+        if(allResults.empty())
+            allResults.push_back(atoi(input.c_str()));
+        
+        return allResults;
+    
+    }
+};
+
+class SolutioninsertionSortList2 {
 public:
     ListNode* insertionSortList(ListNode* head) {
-        return head;
+        ListNode* tempHead=new ListNode(0);
+        
+        ListNode* temp,* tempNext, * searchList, * currentList;
+        temp=head;
+        
+        while(temp!=NULL)
+        {
+            tempNext=temp->next;
+            
+            currentList=tempHead;
+            searchList=tempHead->next;
+            while(searchList!=NULL)
+            {
+                if(searchList->val<=temp->val)
+                {
+                    currentList=searchList;
+                    searchList=searchList->next;
+                }
+                else
+                {
+                    currentList->next=temp;
+                    temp->next=searchList;
+                    break;
+                }
+            }
+            
+            if(searchList==NULL)
+            {
+                currentList->next=temp;
+                temp->next=NULL;
+            }
+            
+            temp=tempNext;
+        }
+        
+        return tempHead->next;
+        
     }
+};
+
+class SolutionisAnagram {
+public:
+    bool isAnagram(string s, string t) {
+        vector<int> snums;
+        vector<int> tnums;
+        
+        snums.assign(26,0);
+        tnums.assign(26,0);
+        
+        for(string::iterator temp=s.begin();temp!=s.end();temp++)
+        {
+            snums[int(*temp-'a')]++;
+            
+        }
+        
+        for(string::iterator temp=t.begin();temp!=t.end();temp++)
+        {
+            tnums[int(*temp-'a')]++;
+        }
+        
+        for(int i=0;i<26;i++)
+        {
+            if(snums[i]!=tnums[i])
+                return false;
+        }
+        
+        return true;
+    }
+};
+
+void testSolutionisAnagram()
+{
+    SolutionisAnagram solution;
+    string s("rat");
+    string t("car");
+    
+    bool findanagram=solution.isAnagram(s, t);
+    if(findanagram)
+        cout<<"true"<<endl;
+}
+
+
+class SolutionpathSum2 {
+public:
+    vector<vector<int>> pathSum(TreeNode* root, int sum) {
+        vector<vector<int> > allPathSum;
+        vector<int> current;
+        findPaths(allPathSum,current,root,sum);
+        return allPathSum;
+    }
+    
+    void findPaths(vector<vector<int> >& allPathSum, vector<int>& current,TreeNode* root, int sum)
+    {
+        
+        if(root==NULL)
+            return;
+        if(root->left==NULL&&root->right==NULL)
+        {
+            if(sum==root->val)
+            {
+                current.push_back(root->val);
+                allPathSum.push_back(current);
+                current.pop_back();
+                return;
+            }
+            else
+                return;
+        }
+    
+        
+        current.push_back(root->val);
+        if(root->left!=NULL)
+            findPaths(allPathSum,current,root->left,sum-root->val);
+        if(root->right!=NULL)
+            findPaths(allPathSum,current,root->right,sum-root->val);
+        
+        current.pop_back();
+    }
+    
+    
 };
 
 int main(int argc, const char * argv[]) {
@@ -5017,6 +5564,13 @@ int main(int argc, const char * argv[]) {
     //testSolutionMinimumTotal();
     //testSolutionisPowerOfTwo();
     //SolutionkthSmallesttest();
-    testSolutionrightSideView();
+    //testSolutionrightSideView();
+    //testSolutionsearchMatrix2();
+    
+    //testSolutionpartition2();
+    
+    //testSolutionbuildTree();
+    //testSolutionRobcircle();
+    testSolutionisAnagram();
     return 1;
 }

@@ -14,7 +14,8 @@
 #include<queue>
 #include<unordered_map>
 
-
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch.hpp"
 using namespace std;
 
  // Definition for a binary tree node.
@@ -5494,83 +5495,55 @@ public:
     
 };
 
+
+class SolutionnumDistinct {
+public:
+    int numDistinct(string s, string t) {
+        int sumDistinct=0;
+        int i;
+        
+        for(i=0;i<s.size();i++)
+        {
+            
+            if(s[i]==t[0])
+            {
+                if(t.size()==1)
+                    sumDistinct+=1;
+                else
+                    sumDistinct+=numDistinct(s.substr(i+1), t.substr(1));
+            }
+            
+        }
+        
+        return sumDistinct;
+    }
+};
+
+void testSolutionnumDistinct()
+{
+    SolutionnumDistinct solution;
+    string s("rabbbit");
+    string t("rabbit");
+    
+    int numOfDistinct=solution.numDistinct(s, t);
+    
+    cout<<numOfDistinct<<endl;
+}
+
+/*
 int main(int argc, const char * argv[]) {
-    //testtitletoNumber();
-    // insert code here...
-    //test3Sum();
-    //testBuyandSell();
-    //testSolutionsingle();
-    //teststr();
-    //testGenerate();
-    //testIsPalindrome();
-    //testFindMin();
-    //testPeakNumber();
-    //testSolution_linklist2();
-    //testreverse();
-    //testSolutionTraversalInoder();
-    //testSolution_binaryTreeOrderTraversal();
-    //testZigZag();
-    //testRegularExpressionMatching();
-    //testSolutionthreeSumClosest();
-    //testSolution_mergeSortedArray();
-    //testSolutionsearchMatrix();
-    //testSolutionTreeLinkNode();
-    //testSolution_uniquebinary();
-    //testSolutiontotalNQueens();
-    //testSolutionSearchInsert();
-    //testSolutionmaxSubArray();
-    //testString2int();
-    //testSolutionmyAtoi();
-    //testSolutionheightbalancedBST();
-    //testSolutionUniquePath();
-    //testSolutionSortedList();
-    //testSolutiongrayCode();
-    //testSolutionremoveElement();
-    //testSolutioncomputeArea();
-    //testSolutionminPathSum();
-    //testSolutionBalancedBinaryTree();
-    //testSolutionPermutations();
-    //testSolutionSpiralMatrix();
-    //testremoveDuplicates();
-    //testSolutionRotatedSortedArray();
-    //testSolutionRotatedSortedArray2();
-    //testSolutionsetZeroes();
-    //testSolutionCombinations();
-    //testSolutionremoveDuplicates();
-    //testSolutionRoottoLeafNumbers();
-    //testSolutionPascal();
-    //testSolutionpathSum();
-    //testStack();
-    //testSolutionMultiplyStrings();
-    
-    //testSolutionTrappingRainWater();
-    //testSolutionPASCAL();
-    //testSolutionRob();
-    //testSolutionTreetoLinked();
-    //testSolutionreverseBits();
-    
-    //testSolutionTrailingZeroes();
-    //testSolutionsubsets();
-    //testSolutionsortedListToBST();
-    //testSolutionuniquePathsWithObstacles();
-    //testSolutiongenerateTrees();
-    
-    //testSolutionCombinationSum();
-    //testSolutioncombinationSum3();
-    //testSolutionsubsetsWithDup();
-    //testSolutionPartition();
-    //testSolutionSearchRange();
-    
-    //testSolutionMinimumTotal();
-    //testSolutionisPowerOfTwo();
-    //SolutionkthSmallesttest();
-    //testSolutionrightSideView();
-    //testSolutionsearchMatrix2();
-    
-    //testSolutionpartition2();
-    
-    //testSolutionbuildTree();
-    //testSolutionRobcircle();
-    testSolutionisAnagram();
+    testSolutionnumDistinct();
     return 1;
+}
+*/
+
+unsigned int Factorial( unsigned int number ) {
+    return number <= 1 ? number : Factorial(number-1)*number;
+}
+
+TEST_CASE( "Factorials are computed", "[factorial]" ) {
+    REQUIRE( Factorial(1) == 1 );
+    REQUIRE( Factorial(2) == 2 );
+    REQUIRE( Factorial(3) == 6 );
+    REQUIRE( Factorial(10) == 3628800 );
 }

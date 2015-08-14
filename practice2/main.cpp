@@ -13,6 +13,7 @@
 #include<stack>
 #include<queue>
 #include<unordered_map>
+#include<unordered_set>
 
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
@@ -5499,23 +5500,25 @@ public:
 class SolutionnumDistinct {
 public:
     int numDistinct(string s, string t) {
-        int sumDistinct=0;
-        int i;
+        int m=(int)t.length();
+        int n=(int)s.length();
+        int previous;
         
-        for(i=0;i<s.size();i++)
+        vector<int>  allnums(m+1,0);
+        allnums[0]=1;
+     
+        
+        for(int j=1;j<=n;j++)
         {
-            
-            if(s[i]==t[0])
+            previous=1;
+            for(int i=1;i<=m;i++)
             {
-                if(t.size()==1)
-                    sumDistinct+=1;
-                else
-                    sumDistinct+=numDistinct(s.substr(i+1), t.substr(1));
+                int temp=allnums[i];
+                allnums[i]=allnums[i]+(t[i-1]==s[j-1]?previous:0);
+                previous=temp;
             }
-            
         }
-        
-        return sumDistinct;
+        return allnums[m];
     }
 };
 
@@ -5530,6 +5533,205 @@ void testSolutionnumDistinct()
     cout<<numOfDistinct<<endl;
 }
 
+class SolutionwordBreak {
+public:
+    bool wordBreak(string s, unordered_set<string>& wordDict) {
+        int nsize=(int)s.size();
+        vector<bool> findWordBreak;
+        findWordBreak.assign(nsize+1,false);
+        
+        findWordBreak[0]=true;
+        
+        for(int i=1;i<=nsize;i++)
+        {
+            
+            for(int j=0;j<i;j++)
+            {
+                if(wordDict.find(s.substr(j,i-j))!=wordDict.end()&&findWordBreak[j]==true)
+                {
+                    findWordBreak[i]=true;
+                    break;
+                }
+                
+            }
+        }
+        
+        
+        return findWordBreak[nsize];
+        
+        
+    }
+};
+
+
+class SolutionwordBreak2 {
+public:
+    bool wordBreak(string s, unordered_set<string>& wordDict) {
+        int nsize=(int)s.size();
+        vector<bool> findWordBreak;
+        findWordBreak.assign(nsize+1,false);
+        
+        findWordBreak[0]=true;
+        
+        for(int i=1;i<=nsize;i++)
+        {
+            
+            for(int j=0;j<i;j++)
+            {
+                if(wordDict.find(s.substr(j,i-j))!=wordDict.end()&&findWordBreak[j]==true)
+                {
+                    findWordBreak[i]=true;
+                    break;
+                }
+                
+            }
+        }
+        
+        
+        return findWordBreak[nsize];
+        
+        
+    }
+};
+
+/*
+ minDistance(i,j)
+ =(minDistance(i-1,j)+1,
+ minDistance(i,j-1)+1,
+ minDistance(i-1,j-1)+1,if word[i]!=word[j]
+ )
+ 
+ minDistance(0,0)=0,
+ minDistance(0,1)=minDistance(1,0)=1
+ 
+ 
+ abc
+ defg
+ */
+ 
+class SolutionminDistance {
+public:
+    int minDistance(string word1, string word2) {
+        int size1=(int)word1.size();
+        int size2=(int)word2.size();
+        
+        vector< vector<int> > allMin(size1+1, vector<int>(size2+1,0));
+        allMin[0][0]=0;
+        for(int i=1;i<=size1;i++)
+        {
+            allMin[i][0]=i;
+        }
+        for(int i=1;i<=size2;i++)
+        {
+            allMin[0][i]=i;
+        }
+        
+        for(int i=1;i<=size1;i++)
+            for(int j=1;j<=size2;j++)
+            {
+                vector<int> alls(3,0);
+                if(word1[i-1]==word2[j-1])
+                    alls[0]=allMin[i-1][j-1];
+                else
+                    alls[0]=allMin[i-1][j-1]+1;
+                
+                alls[1]=allMin[i][j-1]+1;
+                
+                alls[2]=allMin[i-1][j]+1;
+                
+                allMin[i][j]=min(alls[0],alls[1]);
+                allMin[i][j]=min(alls[2],allMin[i][j]);
+            }
+        
+        return allMin[size1][size2];
+    }
+};
+
+class SolutionisScramble {
+public:
+    bool isScramble(string s1, string s2) {
+       
+        
+        if(s1==s2)return true;
+        
+        vector<int> allNumbers;
+        allNumbers.assign(26,0);
+        
+        for(int i=0;i<s1.size();i++)
+        {
+            allNumbers[s1[i]-'a']++;
+            allNumbers[s2[i]-'a']--;
+        }
+        
+        for(int i=0;i<26;i++)
+        {
+            if(allNumbers[i]!=0)
+                return false;
+        }
+        
+        for(int i=1;i<s1.size();i++)
+        {
+            if(isScramble(s1.substr(0,i),s2.substr(0,i))&&isScramble(s1.substr(i), s2.substr(i)))
+                return true;
+            if(isScramble(s1.substr(0,i),s2.substr(s2.size()-i))&&isScramble(s1.substr(i), s2.substr(0,s2.size()-i)))
+                return true;
+        }
+        
+        return false;
+        
+    }
+};
+
+class SolutionlargestRectangleArea {
+public:
+    int largestRectangleArea(vector<int>& height) {
+        vector<int> s;
+        height.push_back(0);
+        
+        int sum=0;
+        int i=0;
+        
+        while(i<(int)height.size()){
+            if(s.empty()||height[i]>height[s.back()]){
+                s.push_back(i);
+                i++;
+            }
+            else
+            {
+                int t=s.back();
+                s.pop_back();
+                sum=max(sum,height[t]*(s.empty()?i:i-s.back()-1));
+            }
+        }
+        
+        return sum;
+            
+        
+        
+    }
+};
+
+class SolutionmaximalRectangle {
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        
+        int m=(int)matrix.size();
+        if(m==0)return 0;
+        int n=(int)matrix[0].size();
+        if(n==0)return 0;
+        
+        
+        
+        //a[m,n]=
+        for(int i=0;i<m;i++)
+            for(int i=0;i<n;i++)
+            {
+                
+            }
+        return 0;
+    }
+};
+
 /*
 int main(int argc, const char * argv[]) {
     testSolutionnumDistinct();
@@ -5538,7 +5740,7 @@ int main(int argc, const char * argv[]) {
 */
 
 unsigned int Factorial( unsigned int number ) {
-    return number <= 1 ? number : Factorial(number-1)*number;
+    return number > 1 ? Factorial(number-1)*number:1;
 }
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
@@ -5546,4 +5748,7 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     REQUIRE( Factorial(2) == 2 );
     REQUIRE( Factorial(3) == 6 );
     REQUIRE( Factorial(10) == 3628800 );
+    SolutionminDistance solution;
+
+    REQUIRE(solution.minDistance("abc","abd")==1);
 }

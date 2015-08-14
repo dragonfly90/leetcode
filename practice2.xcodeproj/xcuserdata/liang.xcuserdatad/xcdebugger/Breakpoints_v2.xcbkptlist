@@ -47,8 +47,24 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "5073"
             endingLineNumber = "5073"
-            landmarkName = "class Solutionpartition"
-            landmarkType = "3">
+            landmarkName = "partition(std::string s)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "practice2/main.cpp"
+            timestampString = "461056255.387968"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5695"
+            endingLineNumber = "5695"
+            landmarkName = "maximalRectangle(vector&lt;vector&lt;char&gt;&gt;&amp; matrix)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

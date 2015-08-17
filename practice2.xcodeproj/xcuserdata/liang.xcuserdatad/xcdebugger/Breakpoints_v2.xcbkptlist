@@ -63,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "5695"
             endingLineNumber = "5695"
-            landmarkName = "maximalRectangle(vector&lt;vector&lt;char&gt;&gt;&amp; matrix)"
+            landmarkName = "largestRectangleArea(vector&lt;int&gt;&amp; height)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

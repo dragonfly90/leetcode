@@ -5739,6 +5739,12 @@ int main(int argc, const char * argv[]) {
 }
 */
 
+class SolutionaddDigits {
+public:
+    int addDigits(int num) {
+        return 1+(num-1)%9;
+    }
+};
 unsigned int Factorial( unsigned int number ) {
     return number > 1 ? Factorial(number-1)*number:1;
 }

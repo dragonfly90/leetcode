@@ -5745,16 +5745,189 @@ public:
         return 1+(num-1)%9;
     }
 };
+
+class SolutionremoveElements {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode* temp=head;
+        if(temp==NULL)return NULL;
+        if(temp->val==val)
+            return removeElements(temp->next,val);
+        
+        ListNode* tempHead=temp;
+        temp=temp->next;
+        
+        while(temp!=NULL)
+        {
+            if(temp->val==val)
+            {
+                temp=temp->next;
+                tempHead->next=temp;
+            }
+            else
+            {
+                tempHead=temp;
+                temp=temp->next;
+            }
+            
+        }
+        
+        return head;
+            
+    }
+};
+
 unsigned int Factorial( unsigned int number ) {
     return number > 1 ? Factorial(number-1)*number:1;
 }
 
+class SolutionsolveNQueens {
+public:
+    vector<vector<string> > solveNQueens(int n) {
+        vector<vector<string> > allQueens;
+        vector<int>  allNums;
+        searchAll(allQueens,allNums,0,n);
+        
+        return allQueens;
+    }
+    
+    void searchAll(vector<vector<string> >& allQueens,vector<int>& myNums, int current,int& n)
+    {
+       
+        int currentPosition,currentSize;
+        int i,j;
+        if(current==n)
+        {
+            vector<string> currentVectorString;
+            string currentString;
+            
+            for(i=0;i<n;i++)
+            {
+                currentString.clear();
+                currentPosition=myNums[i];
+                
+                for(j=0;j<currentPosition;j++)
+                    currentString.push_back('.');
+                
+                currentString.push_back('Q');
+                
+                for(j=currentPosition+1;j<n;j++)
+                    currentString.push_back('.');
+                
+                currentVectorString.push_back(currentString);
+            }
+            
+            allQueens.push_back(currentVectorString);
+            
+            return;
+            
+        }
+        
+        currentSize=(int)myNums.size();
+        
+        for(i=0;i<n;i++)
+        {
+            if(!isConflict(myNums,currentSize,i))
+            {
+                myNums.push_back(i);
+                searchAll(allQueens,myNums,currentSize+1,n);
+                myNums.pop_back();
+            }
+        }
+        
+        
+    }
+    
+    bool isConflict(vector<int>& myNums,int currentSize,int num)
+    {
+        for(int i=0;i<myNums.size();i++)
+        {
+            if(myNums[i]==num)
+                return true;
+            
+            if(abs(currentSize-i)==abs(num-myNums[i]))
+                return true;
+        }
+        
+        return false;
+    }
+};
+
+
+class SolutionisUgly {
+public:
+    bool isUgly(int num) {
+        int current=num;
+        if(current<=0) return false;
+        while(current!=1)
+        {
+            if(current%2==0)
+            {
+                current/=2;
+                continue;
+            }
+            else
+                if(current%3==0)
+                {
+                    current/=3;
+                    continue;
+                }
+                else
+                    if(current%5==0)
+                    {
+                        current/=5;
+                        continue;
+                    }
+            
+            return false;
+            
+        }
+        
+        return true;
+    }
+};
+
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
+    /*
     REQUIRE( Factorial(1) == 1 );
     REQUIRE( Factorial(2) == 2 );
     REQUIRE( Factorial(3) == 6 );
     REQUIRE( Factorial(10) == 3628800 );
+     */
     SolutionminDistance solution;
 
     REQUIRE(solution.minDistance("abc","abd")==1);
+    
+    SolutionsolveNQueens solutionQueens;
+    
+    vector<vector<string> > c;
+    vector<vector<string> > solutionString;
+    vector<string> currentString;
+    
+    string firstSolution[]={".Q..", "...Q","Q...","..Q."};
+    string secondSolution[]={"..Q.", "Q...","...Q",".Q.."};
+    
+  
+    currentString.assign(firstSolution,firstSolution+4);
+    solutionString.push_back(currentString);
+
+    
+    currentString.assign(secondSolution,secondSolution+4);
+    solutionString.push_back(currentString);
+    
+    
+    
+    c=solutionQueens.solveNQueens(4);
+    
+    for(int i=0;i<c.size();i++)
+    {
+        for(int j=0;j<c[i].size();j++)
+            std::cout<<c[i][j]<<endl;
+        cout<<"-------"<<endl;
+    }
+    
+    
+    REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
+    
 }

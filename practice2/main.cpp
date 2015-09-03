@@ -1,3 +1,4 @@
+
 //
 //  main.cpp
 //  practice2
@@ -12,6 +13,7 @@
 #include <cmath>
 #include<stack>
 #include<queue>
+#include<deque>
 #include<unordered_map>
 #include<unordered_set>
 
@@ -5888,6 +5890,413 @@ public:
 };
 
 
+class SolutionisValid {
+public:
+    bool isValid(string s) {
+        string temp;
+        char tempChar;
+        char searChar;
+        
+        for(int i=0;i<s.size();i++)
+        {
+            searChar=s[i];
+            if(searChar=='('||searChar=='{'||searChar=='[')
+            {
+                temp.push_back(s[i]);
+            }
+            else
+            {
+                if(temp.empty())
+                    return false;
+                tempChar=temp.back();
+                if(validate(tempChar,searChar))
+                {
+                    temp.pop_back();
+                    continue;
+                }
+                else
+                    return false;
+                
+            }
+            
+            
+            
+        }
+        
+        if(temp.empty())
+            return true;
+        else
+            return false;
+        
+        
+    }
+    
+    bool validate(char tempChar,char endChar)
+    {
+        if(tempChar=='('&&endChar==')')
+            return true;
+        
+        if(tempChar=='['&&endChar==']')
+            return true;
+        
+        if(tempChar=='{'&&endChar=='}')
+            return true;
+        
+        return false;
+    }
+};
+
+
+class SolutionbuildTree2 {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int m=(int)preorder.size();
+        int n=(int)inorder.size();
+        int middle;
+        
+        if(m==0||m!=n)
+            return NULL;
+        
+        return findNode(preorder,inorder,0,m-1,0,n-1);
+        
+        
+    }
+    
+    TreeNode* findNode(vector<int>& preorder,vector<int>& inorder, int pres,int pree, int inos,int inoe)
+    {
+        if(pres>pree)
+            return NULL;
+        
+        TreeNode* root=new TreeNode(preorder[pres]);
+        int middle;
+        
+        for(int i=inos;i<=inoe;i++)
+        {
+            if(inorder[i]==preorder[pres])
+            {
+                middle=i;
+                break;
+            }
+        }
+        
+        root->left=findNode(preorder,inorder,pres+1,pres+middle-inos,inos,middle-1);
+        root->right=findNode(preorder,inorder,pres+1+middle-inos,pree,middle+1,inoe);
+        
+        return root;
+        
+        
+    }
+};
+
+class SolutionsingleNumber2 {
+public:
+    vector<int> singleNumber(vector<int>& nums) {
+        int temp,a,b;
+        temp=0;
+        a=0;
+        b=0;
+        
+        for(int i=0;i<nums.size();i++)
+        {
+            temp^=nums[i];
+        }
+        
+        int highbit=(temp&(temp-1))^temp;
+        
+        for(int i=0;i<nums.size();i++)
+        {
+            if(nums[i]&highbit)a^=nums[i];
+            else
+                b^=nums[i];
+        }
+        
+        return vector<int>{a,b};
+    }
+};
+
+class SolutionzigzagLevelOrder {
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+        queue<TreeNode*> myTreeNode;
+        queue<int> myLevel;
+        TreeNode* currentNode;
+        int currentLevel;
+        int currentLevelInQueue=0;
+        vector<vector<int> > allLevels;
+        vector<int> tempVector;
+        deque<int> tempQueue;
+        
+        if(root==NULL)return allLevels;
+        myTreeNode.push(root);
+        myLevel.push(0);
+        
+        while(!myTreeNode.empty())
+        {
+            
+            currentNode=myTreeNode.front();
+            myTreeNode.pop();
+            currentLevel=myLevel.front();
+            myLevel.pop();
+            
+            if(currentLevelInQueue==currentLevel)
+            {
+                if(currentLevel%2==0)
+                    tempQueue.push_back(currentNode->val);
+                else
+                    tempQueue.push_front(currentNode->val);
+            }
+            else
+            {
+                currentLevelInQueue=currentLevel;
+                tempVector.assign(tempQueue.begin(),tempQueue.end());
+                allLevels.push_back(tempVector);
+                tempQueue.clear();
+                
+                if(currentLevel%2==0)
+                    tempQueue.push_back(currentNode->val);
+                else
+                    tempQueue.push_front(currentNode->val);
+            }
+            
+            if(currentNode->left!=NULL)
+            {
+                myTreeNode.push(currentNode->left);
+                myLevel.push(currentLevel+1);
+            }
+            
+            if(currentNode->right!=NULL)
+            {
+                myTreeNode.push(currentNode->right);
+                myLevel.push(currentLevel+1);
+            }
+            
+        }
+        
+        tempVector.assign(tempQueue.begin(),tempQueue.end());
+        allLevels.push_back(tempVector);
+        
+        return allLevels;
+    }
+};
+
+
+class SolutionmissingNumber {
+public:
+    int missingNumber(vector<int>& nums) {
+        int missing =0;
+        for(int i=0; i<nums.size();++i)
+            missing ^= ((i+1)^nums[i]);
+        return missing;
+    }
+};
+
+class SolutionreverseBetween {
+public:
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode *temp;
+        ListNode *tempNext,*previous,*previousNode,*previousHead;
+        int step=1;
+        temp=head;
+        previous=NULL;
+        previousNode=NULL;
+        tempNext=NULL;
+        
+        if(step<m)
+            previousNode=temp;
+        
+        while(step<m)
+        {
+            previous=temp;
+            temp=temp->next;
+            step++;
+        }
+        
+        previousHead=temp;
+        tempNext=temp->next;
+        
+        if(tempNext==NULL)
+        {
+            if(previousNode!=NULL)
+                return previousNode;
+            else
+                return temp;
+        }
+        
+        
+        while(step<n)
+        {
+            temp->next=tempNext->next;
+            if(previous!=NULL)
+                previous->next=tempNext;
+            tempNext->next=previousHead;
+            
+            previousHead=tempNext;
+            
+            if(temp->next!=NULL)
+                tempNext=temp->next;
+            else
+                if(previousNode!=NULL)
+                    return previousNode;
+                else
+                    return previousHead;
+            
+            
+            step++;
+            
+        }
+        
+        
+        if(previousNode!=NULL)
+            return previousNode;
+        else
+            return previousHead;
+    }
+};
+
+void testSolutionreverseBetween(){
+    SolutionreverseBetween solution;
+    ListNode* head;
+    head=new ListNode(3);
+    ListNode b(5);
+    ListNode c(6),d(7);
+    head->next=&b;
+    b.next=&c;
+    c.next=&d;
+    
+    ListNode* current=solution.reverseBetween(head,2,4);
+    while(current!=NULL)
+    {
+        cout<<current->val<<endl;
+        current=current->next;
+        
+    }
+}
+
+class SolutionpermuteUnique {
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> allVectors;
+        vector<int> currentVector;
+        permuateUniqueCurrent(nums, currentVector, allVectors);
+        
+        return allVectors;
+    }
+    
+   void permuateUniqueCurrent(vector<int>& nums, vector<int>& current,vector<vector<int> >& allVectors)
+    {
+        unordered_map<int,int> mp;
+        if(nums.empty())
+        {
+            allVectors.push_back(current);
+            return;
+        }
+        for(int i=0;i<nums.size();i++)
+        {
+            if(!mp[nums[i]])
+            {
+                vector<int> left;
+                
+                current.push_back(nums[i]);
+                
+                left.assign(nums.begin(),nums.end());
+                left.erase(nums.begin()+i);
+                permuateUniqueCurrent(left, current, allVectors);
+                
+                current.pop_back();
+                mp[nums[i]]=1;
+            }
+        }
+       
+        
+    }
+};
+
+
+class SolutioncontainsNearbyDuplicate {
+public:
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        set<int> mysets;
+        for(int i=0;i<nums.size();i++)
+        {
+            if(i<k)
+            {
+                if(mysets.find(nums[i])!=mysets.end())
+                    return true;
+                else
+                    mysets.insert(nums[i]);
+            }
+            
+            else
+            {
+                mysets.erase(nums[i-k-1]);
+                if(mysets.find(nums[i])!=mysets.end())
+                    return true;
+                else
+                    mysets.insert(nums[i]);
+
+            }
+        }
+        
+        return false;
+        
+        
+    }
+};
+
+
+class SolutioncanCompleteCircuit {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int sumGas=0;
+        int tempGas=-1;
+        int temp=-1;
+        
+        for(int i=0;i<gas.size();i++)
+        {
+            sumGas+=gas[i]-cost[i];
+            
+            if(tempGas<0)
+            {
+                temp=i;
+                tempGas=gas[i]-cost[i];
+            }
+            else
+                tempGas+=gas[i]-cost[i];
+            
+        }
+        
+        if(sumGas>=0)
+            return temp;
+        else
+            return -1;
+    
+    }
+};
+
+class SimulationAssignment{
+    int mc;     //master clock
+    int cl1;    //clock for machine 1
+    int cl2;    //clock for machine 2
+    int cl3;    //clock for machine 3
+    int cl4;    //clock for departure
+    int n;      //number of broken machines
+    int r;      //state of repairman
+public:
+    SimulationAssignment(int mcp=0,int cl1p=1,int cl2p=4,int cl3p=9,int cl4p=0,int np=0,int rp=0
+    {
+        mc=mcp;
+        cl1=cl1p;
+        cl2=cl2p;
+        cl3=cl3p;
+        cl4=cl4p;
+        n=np;
+        r=rp;
+        
+                             
+    }
+    
+};
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
     /*
     REQUIRE( Factorial(1) == 1 );
@@ -5895,6 +6304,7 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     REQUIRE( Factorial(3) == 6 );
     REQUIRE( Factorial(10) == 3628800 );
      */
+    testSolutionreverseBetween();
     SolutionminDistance solution;
 
     REQUIRE(solution.minDistance("abc","abd")==1);
@@ -5919,7 +6329,7 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     
     
     c=solutionQueens.solveNQueens(4);
-    
+    cout<<"---------------"<<endl;
     for(int i=0;i<c.size();i++)
     {
         for(int j=0;j<c[i].size();j++)
@@ -5931,3 +6341,14 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
     
 }
+
+
+
+
+
+
+
+//delete the first line
+//use the keyboard and mouse to delete the first line
+
+

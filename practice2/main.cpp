@@ -6273,7 +6273,11 @@ public:
     }
 };
 
+/*
+ Write a computer program to simulate the machine interference problem as described in section 1.3.1. Each time an event occurs, print out a line of output to show the current values of the clocks and of the other status parameters (as in the hand simulation). Run your simulation until the master clock is equal to 20. Check by hand whether the simulation advances from event to event properly, and whether it updates the clocks and the other status parameters correctly.
+*/
 class SimulationAssignment{
+public:
     int mc;     //master clock
     int cl1;    //clock for machine 1
     int cl2;    //clock for machine 2
@@ -6281,8 +6285,13 @@ class SimulationAssignment{
     int cl4;    //clock for departure
     int n;      //number of broken machines
     int r;      //state of repairman
+    queue<int> allNumbers;
+    int currentStep;
+    int nextStep;
+    int nextState;//next state broken or recovered;
+    
 public:
-    SimulationAssignment(int mcp=0,int cl1p=1,int cl2p=4,int cl3p=9,int cl4p=0,int np=0,int rp=0
+    SimulationAssignment(int mcp=0,int cl1p=1,int cl2p=4,int cl3p=9,int cl4p=0,int np=0,int rp=0)
     {
         mc=mcp;
         cl1=cl1p;
@@ -6291,11 +6300,210 @@ public:
         cl4=cl4p;
         n=np;
         r=rp;
+        currentStep=0;
         
-                             
+        if(cl1>0)
+        {
+            nextStep=cl1;
+            nextState=0;
+        }
+        if(cl2>0&&cl2<nextStep)
+        {
+            nextStep=cl2;
+            nextState=0;
+            
+        }
+        if(cl3>0&&cl3<nextStep)
+        {
+            nextStep=cl3;
+            nextState=0;
+        }
+        
+       
+        
     }
     
+    void generateStep()
+    {
+        currentStep=nextStep;
+        mc=currentStep;
+        
+    
+            
+        if(cl1==mc)
+        {
+            cl1=-1;
+            if(allNumbers.empty())
+                cl4=mc+5;
+            allNumbers.push(1);
+            
+            
+        }
+        
+        if(cl2==mc)
+        {
+            cl2=-1;
+            if(allNumbers.empty())
+                cl4=mc+5;
+            allNumbers.push(2);
+            
+        }
+        
+        if(cl3==mc)
+        {
+            cl3=-1;
+            if(allNumbers.empty())
+                cl4=mc+5;
+            allNumbers.push(3);
+            
+        }
+        
+        
+        if(nextState==1)
+        {
+            int serial=allNumbers.front();
+            if(serial==1)
+            {
+                cl1=mc+10;
+            }
+            else
+                if(serial==2)
+                {
+                    cl2=mc+10;
+                }
+                else
+                    cl3=mc+10;
+            allNumbers.pop();
+            n=(int)allNumbers.size();
+            if(n>0)
+                cl4=mc+5;
+
+           
+        }
+        
+        
+        nextStep=cl4;
+        
+        if(cl1>0&&cl1<cl4)
+        {
+            nextStep=cl1;
+            nextState=0;
+        }
+        if(cl2>0&&cl2<cl4)
+        {
+            nextStep=cl2;
+            nextState=0;
+            
+        }
+        if(cl3>0&&cl3<cl4)
+        {
+            nextStep=cl3;
+            nextState=0;
+        }
+        
+        if(nextStep==cl4)
+        {
+            nextState=1;
+        }
+        
+        
+        n=(int)allNumbers.size();
+       
+        
+        if(n>0)
+            r=0;
+        else
+            r=1;
+        
+        
+        
+        
+       
+        
+    }
+    
+    
+    
 };
+
+void testSimulationAssignment(){
+    SimulationAssignment solution;
+    while(solution.mc<=30)
+    {
+        cout<<"mc: "<<solution.mc<<" ("<<solution.cl1<<','<<solution.cl2<<','<<solution.cl3<<','<<solution.cl4<<") "<<solution.n<<"  "<<solution.r<<endl;
+        solution.generateStep();
+    }
+}
+
+
+class SolutionrangeBitwiseAnd {
+public:
+    int rangeBitwiseAnd(int m, int n) {
+        int diffBit=0;
+        while(m!=n)
+        {
+            m>>=1;
+            n>>=1;
+            diffBit++;
+        }
+        
+        return n<<diffBit;
+    }
+};
+
+
+class SolutionletterCombinations {
+public:
+    vector<string> letterCombinations(string digits) {
+        string mystr[10];
+        mystr[0]="";
+        mystr[1]="";
+        mystr[2]="abc";
+        mystr[3]="def";
+        mystr[4]="ghi";
+        mystr[5]="jkl";
+        mystr[6]="mno";
+        mystr[7]="pqrs";
+        mystr[8]="tuv";
+        mystr[9]="wxyz";
+        
+        string temp;
+        vector<string> all;
+        int n=(int)digits.size()-1;
+        
+        search(digits,all,temp,mystr,0,n);
+        
+        return all;
+        
+    }
+    
+    void search(string& digits,vector<string>& allstrs,string& temp, string* mystr,int i,int n)
+    {
+        
+        if(i>n&&!temp.empty())
+        {
+            allstrs.push_back(temp);
+            return;
+        }
+        if(i>n)
+            return;
+        int current=digits[i]-'0';
+        if(mystr[current].empty())
+            search(digits,allstrs,temp,mystr,i+1,n);
+        else
+            
+            for(int j=0;j<mystr[current].size();j++)
+            {
+                temp.push_back(mystr[current][j]);
+                search(digits,allstrs,temp,mystr,i+1,n);
+                temp.pop_back();
+            }
+    }
+
+    
+    
+};
+
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
     /*
@@ -6337,9 +6545,14 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
         cout<<"-------"<<endl;
     }
     
+    testSimulationAssignment();
     
     REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
     
+    SolutionletterCombinations solutionComb;
+    vector<string> allstrs=solutionComb.letterCombinations("2");
+    for(auto i:allstrs)
+        cout<<i<<endl;
 }
 
 

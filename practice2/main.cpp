@@ -6505,6 +6505,165 @@ public:
 };
 
 
+class SolutionhIndex {
+public:
+    int hIndex(vector<int>& citations) {
+        sort(citations.begin(),citations.end());
+        int nsize=(int)citations.size();
+        for(int i=0;i<citations.size();i++)
+        {
+            if(citations[i]>=nsize-i)
+                return nsize-i;
+        }
+        
+        return 0;
+    }
+};
+
+
+struct RandomListNode {
+       int label;
+        RandomListNode *next, *random;
+         RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+};
+
+class SolutionRandomListNode {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        RandomListNode* node=head,* nextNode;
+        while(node){
+            nextNode=node->next;
+            node->next=new RandomListNode(node->label);
+            node->next->next=nextNode;
+            node=nextNode;
+        }
+        
+        node=head;
+        
+        while(node){
+            node->next->random=node->random?node->random->next:nullptr;
+            node=node->next->next;
+        }
+        
+        RandomListNode* fakehead=new RandomListNode(0),* copyNode=fakehead;
+        
+        node=head;
+        while (node) {
+            copyNode->next=node->next;
+            copyNode=node->next;
+            node->next=node->next->next;
+            node=node->next;
+        }
+        
+        return fakehead->next;
+        
+    }
+};
+
+
+class SolutionRandomListNodeHashMap {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        unordered_map<RandomListNode*,RandomListNode*> tempList;
+        RandomListNode* copy;
+        RandomListNode* tempcopy,*tempcopyPrevious;
+        RandomListNode* tempRandom;
+        
+        tempcopyPrevious=NULL;
+        copy=NULL;
+        tempRandom=head;
+        
+        while(tempRandom!=NULL)
+        {
+            if(copy==NULL)
+            {
+                tempcopy=new RandomListNode(tempRandom->label);
+                tempList[tempRandom]=tempcopy;
+                tempcopyPrevious=tempcopy;
+                copy=tempcopy;
+                tempcopy=NULL;
+            }
+            else
+            {
+                tempcopy=new RandomListNode(tempRandom->label);
+                tempList[tempRandom]=tempcopy;
+                
+                if(tempcopyPrevious!=NULL)
+                {
+                    tempcopyPrevious->next=tempcopy;
+                    tempcopyPrevious=tempcopy;
+                }
+                tempcopy=NULL;
+            }
+            
+            tempRandom=tempRandom->next;
+            
+        }
+        
+        tempRandom=head;
+        
+        while(tempRandom!=NULL)
+        {
+            if(tempRandom->random==NULL)
+                tempList[tempRandom]->random=NULL;
+            else
+                tempList[tempRandom]->random=tempList[tempRandom->random];
+            tempRandom=tempRandom->next;
+        }
+        
+        return copy;
+        
+    }
+};
+
+class SolutioncountAndSay {
+public:
+    string countAndSay(int n) {
+        string temp;
+        string next;
+        int currentdigit=0;
+        int numberofdigit=0;
+        
+        temp="1";
+        if(n==1)
+            return temp;
+        
+        for(int i=2;i<=n;i++)
+        {
+            for(int j=0;j<temp.size();j++)
+            {
+                if(j==0)
+                {
+                    currentdigit=temp[j];
+                    numberofdigit=1;
+                }
+                else
+                {
+                    if(temp[j]==currentdigit)
+                        numberofdigit++;
+                    else
+                    {
+                        next.push_back(char('0'+numberofdigit));
+                        next.push_back(currentdigit);
+                        
+                        currentdigit=temp[j];
+                        numberofdigit=1;
+                    }
+                }
+            }
+            
+            next.push_back(char('0'+numberofdigit));
+            next.push_back(currentdigit);
+            
+            temp=next;
+            next.clear();
+        }
+        
+        return temp;
+    }
+};
+
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
     /*
     REQUIRE( Factorial(1) == 1 );
@@ -6549,10 +6708,10 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     
     REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
     
-    SolutionletterCombinations solutionComb;
-    vector<string> allstrs=solutionComb.letterCombinations("2");
-    for(auto i:allstrs)
-        cout<<i<<endl;
+    SolutioncountAndSay solutioncountAndSay;
+    string tempstring=solutioncountAndSay.countAndSay(30);
+    cout<<tempstring<<endl;
+    
 }
 
 

@@ -6663,6 +6663,181 @@ public:
     }
 };
 
+class SolutioncombinationSum2 {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int> > allCombinations;
+        
+        sort(candidates.begin(),candidates.end());
+        vector<int> digits;
+        vector<int> numbers;
+        vector<int> tempVector;
+        int temp=0;
+        int tempnumber=0;
+        for(int i=0;i<candidates.size();i++)
+        {
+            if(i==0)
+            {
+                temp=candidates[i];
+                tempnumber=1;
+            }
+            else
+            {
+                if(candidates[i]==temp)
+                {
+                    tempnumber++;
+                }
+                else
+                {
+                    digits.push_back(temp);
+                    numbers.push_back(tempnumber);
+                    temp=candidates[i];
+                    tempnumber=1;
+                }
+            }
+        }
+        
+        if(tempnumber!=0)
+        {
+            digits.push_back(temp);
+            numbers.push_back(tempnumber);
+        }
+        searchCombinations(allCombinations,tempVector,digits,numbers,target,0);
+        return allCombinations;
+        
+    }
+    
+    void searchCombinations(vector<vector<int> >& combinations, vector<int>& temp,vector<int>& digits,vector<int>& numbers,int target,int currentposition)
+    {
+        if(target<0)
+            return;
+        if(target==0)
+        {
+            if(!temp.empty())
+                combinations.push_back(temp);
+            return;
+            
+        }
+        
+        if(currentposition>=digits.size())
+        {
+            return;
+        }
+        
+        for(int i=1;i<=numbers[currentposition];i++)
+        {
+            temp.push_back(digits[currentposition]);
+            searchCombinations(combinations, temp, digits, numbers, target-i*digits[currentposition], currentposition+1);
+        }
+        
+        for(int i=1;i<=numbers[currentposition];i++)
+        {
+            temp.pop_back();
+        }
+        
+        searchCombinations(combinations, temp, digits, numbers, target, currentposition+1);
+        
+    }
+};
+
+
+class SolutionreverseKGroup {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        vector<ListNode*> tempVector;
+        tempVector.assign(k,NULL);
+        int tempsize;
+        int i=0;
+        ListNode* temp=head;
+        ListNode* tempNext=NULL;
+        if(k<2) return temp;
+        
+        while(temp!=NULL)
+        {
+            tempVector[i%k]=temp;
+            temp=temp->next;
+            i++;
+            
+            if(i==k)
+            {
+                tempVector[0]->next=tempVector[k-1]->next;
+                head=tempVector[k-1];
+                
+                for(int j=k-1;j>=1;j--)
+                {
+                    tempVector[j]->next=tempVector[j-1];
+                }
+                
+                tempNext=tempVector[0];
+                
+            }
+            else
+                if(i%k==0)
+                {
+                    tempNext->next=tempVector[k-1];
+                    tempVector[0]->next=tempVector[k-1]->next;
+                    
+                    for(int j=k-1;j>=1;j--)
+                    {
+                        tempVector[j]->next=tempVector[j-1];
+                    }
+                    
+                    tempNext=tempVector[0];
+                }
+        }
+        
+        
+        return head;
+    }
+};
+
+
+class SolutiondeleteDuplicates {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        ListNode* temp;
+        ListNode* currentHead=NULL;
+        ListNode* previousEnd=NULL;
+        
+        ListNode* newHead=new ListNode(0);
+        newHead->next=head;
+        temp=head;
+        previousEnd=newHead;
+        
+        while(temp!=NULL)
+        {
+            currentHead=temp;
+           
+            temp=temp->next;
+            
+            
+            if(temp==NULL)
+                break;
+            else
+            {
+                if(currentHead->val==temp->val)
+                {
+                    while(temp!=NULL&&currentHead->val==temp->val)
+                        temp=temp->next;
+                    previousEnd->next=temp;
+                }
+                else
+                {
+                    previousEnd=currentHead;
+                   // cout<<"currentHead "<<currentHead->val<<endl;
+                }
+            }
+            
+            
+            
+        }
+        
+        head=newHead->next;
+        
+        return head;
+        
+    }
+};
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
     /*
@@ -6708,9 +6883,28 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     
     REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
     
-    SolutioncountAndSay solutioncountAndSay;
-    string tempstring=solutioncountAndSay.countAndSay(30);
-    cout<<tempstring<<endl;
+    SolutiondeleteDuplicates solutionDeleteDuplicates;
+    ListNode* myhead;
+    myhead=new ListNode(1);
+    ListNode a1(2),b1(3),c1(3),d1(4),e1(4),f1(5);
+    myhead->next=&a1;
+    a1.next=&b1;
+    b1.next=&c1;
+    c1.next=&d1;
+    d1.next=&e1;
+    e1.next=&f1;
+    ListNode* tempHead=solutionDeleteDuplicates.deleteDuplicates(myhead);
+    
+    ListNode* temp;
+    temp=tempHead;
+    while(temp!=NULL)
+    {
+        cout<<temp->val<<endl;
+        temp=temp->next;
+    }
+    
+    
+    
     
 }
 

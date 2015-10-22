@@ -6839,72 +6839,425 @@ public:
     }
 };
 
-TEST_CASE( "Factorials are computed", "[factorial]" ) {
+
+class SolutionisIsomorphic {
+public:
+    bool isIsomorphic(string s, string t) {
+        char sm[128];
+        char tm[128];
+        
+        unordered_map<char,char>::iterator got;
+        int m=(int)s.size();
+        int n=(int)t.size();
+        if(m!=n)
+            return false;
+        
+        for(int i=0;i<128;i++)
+        {
+            sm[i]=-1;
+            tm[i]=-1;
+        }
+        
+        for(int i=0;i<m;i++)
+        {
+            if(sm[s[i]]==t[i]&&tm[t[i]]==s[i])
+                continue;
+            if(sm[s[i]]==-1&&tm[t[i]]==-1)
+            {
+                sm[s[i]]=t[i];
+                tm[t[i]]=s[i];
+                continue;
+            }
+            return false;
+            
+        }
+        return true;
+    }
+};
+
+class SolutionnumSquares {
+public:
+    int numSquares(int n) {
+        int* dp=new int[n+1];
+        dp[0]=0;
+        for(int i=1;i<=n;i++)
+            dp[i]=100000;
+        for(int i=0;i<=n;i++)
+            for(int j=1;i+j*j<=n;j++)
+                dp[i+j*j]=min(dp[i+j*j],dp[i]+1);
+        
+        return dp[n];
+    }
+};
+
+
+class SolutionmoveZeroes {
+public:
+    void moveZeroes(vector<int>& nums) {
+        int i=0;
+        int j=0;
+        while(i<nums.size())
+        {
+            if(nums[i]!=0)
+                nums[j++]=nums[i];
+            i++;
+        }
+        while(j<nums.size())
+            nums[j++]=0;
+    }
+};
+
+class TrieNode{
+public:
+    TrieNode():isWord(false){
+        memset(Next,0,sizeof(TreeNode*)*26);
+    }
+    
+    TrieNode(char _c):c(_c),isWord(false){
+        memset(Next,0,sizeof(TreeNode*)*26);
+    }
+    
+    TrieNode* Next[26];
+    char c;
+    bool isWord;
+};
+
+class Trie{
+public:
+    Trie(){
+        root=new TrieNode();
+    }
+    
+    void insert(string word){
+        TrieNode* p=root;
+        int index;
+        for(char c:word)
+        {
+            index=c-'a';
+            if(p->Next[index]==NULL)
+                p->Next[index]=new TrieNode(c);
+            p->isWord=true;
+        }
+    }
     /*
-    REQUIRE( Factorial(1) == 1 );
-    REQUIRE( Factorial(2) == 2 );
-    REQUIRE( Factorial(3) == 6 );
-    REQUIRE( Factorial(10) == 3628800 );
-     */
-    testSolutionreverseBetween();
-    SolutionminDistance solution;
-
-    REQUIRE(solution.minDistance("abc","abd")==1);
-    
-    SolutionsolveNQueens solutionQueens;
-    
-    vector<vector<string> > c;
-    vector<vector<string> > solutionString;
-    vector<string> currentString;
-    
-    string firstSolution[]={".Q..", "...Q","Q...","..Q."};
-    string secondSolution[]={"..Q.", "Q...","...Q",".Q.."};
-    
-  
-    currentString.assign(firstSolution,firstSolution+4);
-    solutionString.push_back(currentString);
-
-    
-    currentString.assign(secondSolution,secondSolution+4);
-    solutionString.push_back(currentString);
-    
-    
-    
-    c=solutionQueens.solveNQueens(4);
-    cout<<"---------------"<<endl;
-    for(int i=0;i<c.size();i++)
-    {
-        for(int j=0;j<c[i].size();j++)
-            std::cout<<c[i][j]<<endl;
-        cout<<"-------"<<endl;
+    void insert(string word){
+        TrieNode* p=root;
+        int index;
+        for(char c:word)
+        {
+            index=c-'a';
+            if(p->Next[index]==NULL)
+                p->Next[index]=new TrieNode(c);
+            p->isWord=true;
+        }
+     }
+    */
+    bool search(string word){
+        TrieNode *p=root;
+        int index;
+        for(char c:word)
+        {
+            index=c-'a';
+            if(p->Next[index]==NULL)
+                return false;
+            p=p->Next[index];
+        }
+        return p->isWord;
     }
     
-    testSimulationAssignment();
-    
-    REQUIRE(solutionQueens.solveNQueens(4)==solutionString);
-    
-    SolutiondeleteDuplicates solutionDeleteDuplicates;
-    ListNode* myhead;
-    myhead=new ListNode(1);
-    ListNode a1(2),b1(3),c1(3),d1(4),e1(4),f1(5);
-    myhead->next=&a1;
-    a1.next=&b1;
-    b1.next=&c1;
-    c1.next=&d1;
-    d1.next=&e1;
-    e1.next=&f1;
-    ListNode* tempHead=solutionDeleteDuplicates.deleteDuplicates(myhead);
-    
-    ListNode* temp;
-    temp=tempHead;
-    while(temp!=NULL)
-    {
-        cout<<temp->val<<endl;
-        temp=temp->next;
+    bool startsWith(string prefix) {
+        TrieNode*p = root;
+        int index;
+        
+        for(char c:prefix)
+        {
+            index = c - 'a';
+            if(p->Next[index] == NULL)
+                return false;
+            p = p->Next[index];
+        }
+        return true;
     }
+
     
+private:
+    TrieNode* root;
+};
+
+//input:  integer array A = [-1, 3, -2, 4, 5, -7, 2]
+//output: [-7, -2, -1, 2, 3, 4, 5]
+//#include<iostream>
+//using namespace std;
+class MyQuickSort
+{
+public:
     
+    void quickSort(int* A, int l, int r)
+    {
+        int p;
+        if(l<r)
+            p=partition(A,l,r);
+        else
+            return;
+        quickSort(A,l,p-1);
+        quickSort(A,p+1,r);
+    }
+
+    int partition(int* A, int l, int r)
+    {
+        int pivotindex=l;
+        int pivot=A[l];
+        int curl=l;
+        int curr=r;
     
+        while(curl<curr)
+        {
+            while(A[curr]>=pivot&&curl<curr)curr--;
+            if(curl<curr)
+            {
+                A[curl]=A[curr];
+                curl++;
+            }
+            while(A[curl]<pivot&&curl<curr)curl++;
+            if(curl<curr)
+            {
+                A[curr]=A[curl];
+                curr--;
+            }
+        }
+        
+        A[curl]=pivot;
+        return curl;
+    }
+};
+
+void testMyQuickSort()
+{
+    int A[7]={-1, 3, -2, 4, 5, -7, 2};
+    MyQuickSort myquickSort;
+    myquickSort.quickSort(A,0,6);
+    cout<<'[';
+    for(int i=0;i<6;i++)
+        cout<<A[i]<<',';
+    cout<<A[6]<<']'<<endl;
+}
+/*
+ 
+ +4
+ votes
+ 364 views
+ class TrieNode {
+ public:
+ // Initialize your data structure here.
+ TrieNode():isWord(false){
+ memset(Next,0,sizeof(TrieNode*)*26);
+ 
+ }
+ TrieNode(char _c):c(_c),isWord(false) {
+ memset(Next,0,sizeof(TrieNode*)*26);
+ }
+ TrieNode* Next[26];
+ char c;
+ bool isWord;
+ };
+ 
+ 
+ class Trie {
+ public:
+ Trie() {
+ root = new TrieNode();
+ }
+ 
+ // Inserts a word into the trie.
+ void insert(string word) {
+ TrieNode*p = root;
+ int index;
+ 
+ for(char c:word)
+ {
+ index = c - 'a';
+ if(p->Next[index] == NULL)
+ p->Next[index] = new TrieNode(c);
+ p = p->Next[index];
+ }
+ p->isWord = true;
+ }
+ 
+ // Returns if the word is in the trie.
+ bool search(string word) {
+ TrieNode*p = root;
+ int index;
+ 
+ for(char c:word)
+ {
+ index = c - 'a';
+ if(p->Next[index] == NULL)
+ return false;
+ p = p->Next[index];
+ }
+ return p-->isWord;
+ }
+ 
+ // Returns if there is any word in the trie
+ // that starts with the given prefix.
+ bool startsWith(string prefix) {
+ TrieNode*p = root;
+ int index;
+ 
+ for(char c:prefix)
+ {
+ index = c - 'a';
+ if(p->Next[index] == NULL)
+ return false;
+ p = p->Next[index];
+ }
+ return true;
+ }
+ 
+ private:
+ TrieNode* root;
+ };
+ 
+ // Your Trie object will be instantiated and called as such:
+ // Trie trie;
+ // trie.insert("somestring");
+ // trie.search("key");
+ 
+ */
+
+class SolutioncanWinNim {
+public:
+    bool canWinNim(int n) {
+        if(n%4==0)
+            return false;
+        else
+            return true;
+    }
+};
+
+class SolutiongameOfLife {
+public:
+    void gameOfLife(vector<vector<int>>& board) {
+        
+        if(board.size()==0)
+            return;
+        
+        for(int i=0;i<board.size();i++)
+            for(int j=0;j<board[i].size();j++)
+            {
+                int alive=0;
+                for(int x=-1;x<=1;x++)
+                    for(int y=-1;y<=1;y++)
+                        if(!(x==0&&y==0)&&(i+x)>=0&&(i+x)<board.size()&&(j+y)>=0&&(j+y)<board[i].size()&&(board[i+x][j+y]&1)==1)
+                            alive++;
+                if((board[i][j]&1)==1&&alive>=2&&alive<=3)
+                    board[i][j]|=1<<1;
+                if((board[i][j]&1)==0&&alive==3)
+                    board[i][j]|=1<<1;
+            }
+        for(int i=0;i<board.size();i++)
+            for(int j=0;j<board[0].size();j++)
+                board[i][j]>>=1;
+        
+    }
+};
+
+class SolutionaddBinary {
+public:
+    string addBinary(string a, string b) {
+        reverse(a.begin(),a.end());
+        reverse(b.begin(),b.end());
+    
+        
+        string sum;
+        
+        string::iterator tempa,tempb;
+        tempa=a.begin();
+        tempb=b.begin();
+        int current=0;
+        while(tempa!=a.end()||tempb!=b.end())
+        {
+            if(tempa==a.end())
+            {
+                current+=int(*tempb-'0');
+                if(current==0)
+                    sum.push_back('0');
+                else
+                    if(current==1)
+                    {
+                        sum.push_back('1');
+                        current=0;
+                    }
+                    else
+                    {
+                        sum.push_back('0');
+                        current=1;
+                    }
+                tempb+=1;
+            }
+            else
+            {
+                if(tempb==b.end())
+                {
+                    current+=int(*tempa-'0');
+                    if(current==0)
+                    sum.push_back('0');
+                    else
+                    if(current==1)
+                    {
+                        sum.push_back('1');
+                        current=0;
+                    }
+                    else
+                    {
+                        sum.push_back('0');
+                        current=1;
+                    }
+                    tempa+=1;
+                }
+                else
+                {
+                    
+                    current+=int(*tempa-'0')+int(*tempb-'0');
+                    if(current==0)
+                        sum.push_back('0');
+                    else
+                    if(current==1)
+                    {
+                        sum.push_back('1');
+                        current=0;
+                    }
+                    else
+                    {
+                        if(current==2)
+                        {
+                            sum.push_back('0');
+                            current=1;
+                        }
+                        else
+                        {
+                            sum.push_back('1');
+                            current=1;
+                        }
+                    }
+                    tempa+=1;
+                    tempb+=1;
+                }
+            }
+        }
+        if(current==1)
+        sum.push_back('1');
+        reverse(sum.begin(),sum.end());
+        cout<<sum<<endl;
+        return sum;
+    }
+};
+
+TEST_CASE( "Factorials are computed", "[factorial]" ) {
+    SolutionaddBinary mybinary;
+    string endstring=(mybinary.addBinary("1", "11"));
+    REQUIRE(endstring.compare("100")==0);
+
     
 }
 
@@ -6917,4 +7270,52 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
 //delete the first line
 //use the keyboard and mouse to delete the first line
 
-
+/*
+ 
+ (p justify-xaxis1
+ =goal>
+ isa best-point
+ state read-xaxis
+ timestamp =currenttime
+ =imaginal>
+ timestamp =currenttime
+ ==>
+ =goal>
+ state read-line
+ !output!(=currenttime)
+ -visual-location>
+ -visual>
+ )
+ 
+ (p justify-xaxis2
+ =goal>
+ isa best-point
+ state read-xaxis
+ timestamp =currenttime
+ =imaginal>
+ < timestamp =currenttime
+ ==>
+ =goal>
+ state search-down-xaxis
+ !output!(=currenttime)
+ -visual-location>
+ -visual>
+ )
+ 
+ (p justify-xaxis3
+ =goal>
+ isa best-point
+ state read-xaxis
+ timestamp =currenttime
+ =imaginal>
+ > timestamp =currenttime
+ ==>
+ =goal>
+ state search-up-xaxis
+ !output!(=currenttime)
+ -visual-location>
+ -visual>
+ )
+ 
+ */
+ 

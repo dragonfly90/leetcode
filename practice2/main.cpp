@@ -7253,10 +7253,335 @@ public:
     }
 };
 
+
+class SolutionmaximumGap {
+public:
+    int maximumGap(vector<int>& nums) {
+        int n = (int)nums.size();
+        if (n < 2) return 0;
+        auto lu = minmax_element(nums.begin(), nums.end());
+        int l = *lu.first, u = *lu.second;
+        int gap = max((u - l) / (n - 1), 1);
+        int m = (u - l) / gap + 1;
+        vector<int> bucketsMin(m, INT_MAX);
+        vector<int> bucketsMax(m, INT_MIN);
+        for (int num : nums) {
+            int k = (num - l) / gap;
+            if (num < bucketsMin[k]) bucketsMin[k] = num;
+            if (num > bucketsMax[k]) bucketsMax[k] = num;
+        }
+        int i = 0, j;
+        gap = bucketsMax[0] - bucketsMin[0];
+        while (i < m) {
+            j = i + 1;
+            while (j < m && bucketsMin[j] == INT_MAX && bucketsMax[j] == INT_MIN)
+                j++;
+            if (j == m) break;
+            gap = max(gap, bucketsMin[j] - bucketsMax[i]);
+            i = j;
+        }
+        return gap;
+    }
+};
+
+
+class SolutionmaximumGap2 {
+    int maximumGap(vector<int>&  nums) {
+        int nsize=(int)nums.size();
+        if (nsize < 2) {
+            return 0;
+        }
+        
+        // m is the maximal number in nums
+        int m = nums[0];
+        for (int i = 1; i < nsize; i++) {
+            m = max(m, nums[i]);
+        }
+        
+        int exp = 1; // 1, 10, 100, 1000 ...
+        int R = 10; // 10 digits
+        
+        int* aux = new int[nsize];
+        
+        while (m / exp > 0) { // Go through all digits from LSB to MSB
+            int* count = new int[R];
+            
+            for (int i = 0; i < nsize; i++) {
+                count[(nums[i] / exp) % 10]++;
+            }
+            
+            for (int i = 1; i < R; i++) {
+                count[i] += count[i - 1];
+            }
+            
+            for (int i = nsize - 1; i >= 0; i--) {
+                aux[--count[(nums[i] / exp) % 10]] = nums[i];
+            }
+            
+            for (int i = 0; i < nsize; i++) {
+                nums[i] = aux[i];
+            }
+            exp *= 10;
+        }
+        
+        int cmax = 0;
+        for (int i = 1; i < nsize; i++) {
+            cmax = max(cmax, aux[i] - aux[i - 1]);
+        }
+        
+        return cmax;
+    }
+};
+
+class SolutionbinaryTreePaths {
+public:
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<vector<int> > allstrs;
+        vector<int> temp;
+        string tempstr;
+        
+        citerate(allstrs,root,temp);
+        
+        vector<string> allstr;
+        for(int i=0;i<allstrs.size();i++)
+        {
+            tempstr.clear();
+            int j=0;
+            for(j=0;j<allstrs[i].size()-1;j++)
+            {
+                tempstr=tempstr+to_string(allstrs[i][j]);
+                tempstr=tempstr+"->";
+            }
+            tempstr+=to_string(allstrs[i][j]);
+            allstr.push_back(tempstr);
+        }
+        
+        return allstr;
+        
+    }
+    
+    void citerate(vector<vector<int> >& allstrs, TreeNode* root,vector<int> temp)
+    {
+        if(root==NULL)
+        {
+            if(!temp.empty())
+                allstrs.push_back(temp);
+        }
+        else
+        {
+            temp.push_back(root->val);
+            if(root->left!=NULL)
+            {
+                citerate(allstrs, root->left, temp);
+            }
+            if(root->right!=NULL)
+            {
+                citerate(allstrs, root->right, temp);
+            }
+            if((root->left==NULL)&&(root->right==NULL))
+                citerate(allstrs, NULL, temp);
+        }
+    }
+};
+
+void testSolutionbinaryTreePaths(){
+    SolutionbinaryTreePaths solution;
+    TreeNode root(1);
+    TreeNode a(3);
+    TreeNode* myroot;
+    myroot=&root;
+    myroot->right=&a;
+    vector<string> allstrs=solution.binaryTreePaths(myroot);
+    for(int i=0;i<allstrs.size();i++)
+        cout<<allstrs[i]<<endl;
+    
+}
+
+
+
+
+#define HASHSIZE 50
+struct Lockhash
+{
+    int lockid;
+    int id;
+} ;
+void initHash();
+int hashfuction(int key);
+int hashInsert(int key);
+int deletekey(int key);
+Lockhash hashtable[HASHSIZE];
+
+void initHash()
+{
+    int i=0;
+    for(i=0;i<HASHSIZE;i++)
+    {
+        hashtable[i].lockid=-1;
+        hashtable[i].id=i;
+        
+    }
+}
+
+int hashfuction(int key)
+{
+    return key%HASHSIZE;
+};
+
+int hashInsert(int key)
+{
+    int position=hashfuction(key);
+    if(hashtable[position].lockid==-1)
+    {
+        hashtable[position].lockid=key;
+        return position;
+    }
+    else
+    {
+        int j;
+        int k;
+        for(j=position+1;j<position+HASHSIZE;j++)
+        {
+            k=j%HASHSIZE;
+            if(hashtable[k].lockid==-1)
+            {
+                hashtable[k].lockid=key;
+                return k;
+            }
+        }
+    }
+    return -1;
+}
+
+int deletekey(int key)
+{
+    int position=hashfuction(key);
+    if(hashtable[position].lockid==key)
+    {
+        hashtable[position].lockid=-1;
+        return position;
+    }
+    else
+    {
+        int j;
+        int k;
+
+        for(j=position+1;j<position+HASHSIZE;j++)
+        {
+            k=j%HASHSIZE;
+            if(hashtable[k].lockid==key)
+            {
+                hashtable[k].lockid=-1;
+                return k;
+            }
+        }
+    }
+    return -1;
+
+}
+
+
+class SolutiongetHint {
+public:
+    string getHint(string secret, string guess) {
+        int psec_start=0;
+        int pgue_start=0;
+        
+        return secret;
+    }
+};
+
+class solutionanagrams{
+public:
+    vector<string> anagrams(vector<string>& strs)
+    {
+        vector<string> vec, anavec;
+        unordered_map<string, vector<string> > mp;
+        for(string s: strs)
+        {
+            string tmp=s;
+            sort(tmp.begin(),tmp.end());
+            mp[tmp].push_back(s);
+            
+        }
+        
+        for(auto map:mp)
+        {
+            if(map.second.size()>1)
+                vec.insert(vec.end(), map.second.begin(),map.second.end());
+                
+        }
+        return vec;
+        
+    }
+};
+
+class SolutionTwoSum{
+public:
+    vector<int> twoSum(vector<int>& numbers, int target){
+        vector<int> result;
+        unordered_map<int, int> mymap;
+        int index1,index2;
+        
+        index1=0;
+        index2=0;
+        
+        for(int i=0;i<numbers.size();i++)
+        {
+            if(mymap.find(numbers[i])==mymap.end())
+            {
+                mymap[target-numbers[i]] = i;
+            }
+            else
+            {
+                index1=((mymap[numbers[i]]<i)?mymap[numbers[i]]:i)+1;
+                index2=((mymap[numbers[i]]>i)?mymap[numbers[i]]:i)+1;
+                result.push_back(index1);
+                result.push_back(index2);
+                break;
+            }
+        }
+        
+        return result;
+    }
+};
+
+
+class SolutionFindMedian{
+public:
+    double findMedianSortedArrays(int A[],int m, int B[],int n)
+    {
+        int total=m+n;
+        if(total & 0x1)
+            return findKth(A,m,B,n, total/2+1);
+        else
+            return findKth(A,m,B,n,total/2)+findKth(A,m,B,n,total/2+1)/2;
+    }
+    
+    double findKth(int a[],int m, int b[], int n,int k)
+    {
+        if(m>n)
+            return findKth(b,n,a,m,k);
+        if(m==0)
+            return b[k-1];
+        if(k==1)
+            return min(a[0],b[0]);
+        int pa=min(k/2,m), pb=k-pa;
+        
+        if(a[pa-1]<b[pb-1])
+            return findKth(a+pa,m-pa,b,n,k-pa);
+        else
+            if(a[pa-1]>b[pb-1])
+                return findKth(a,m,b+pb,n-pb,k-pb);
+            else
+                return a[pa-1];
+    }
+    
+};
+
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    SolutionaddBinary mybinary;
-    string endstring=(mybinary.addBinary("1", "11"));
-    REQUIRE(endstring.compare("100")==0);
+   
 
     
 }

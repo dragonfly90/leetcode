@@ -7481,15 +7481,6 @@ int deletekey(int key)
 }
 
 
-class SolutiongetHint {
-public:
-    string getHint(string secret, string guess) {
-        int psec_start=0;
-        int pgue_start=0;
-        
-        return secret;
-    }
-};
 
 class solutionanagrams{
 public:
@@ -7579,11 +7570,227 @@ public:
     
 };
 
+class SolutiongetHint {
+public:
+    string getHint(string secret, string guess) {
+        string resultStr;
+        
+        int m=(int)secret.size();
+        int n=(int)guess.size();
+        
+        int anum=0;
+        int bnum=0;
+        
+        int digitsecret[10];
+        int digitguess[10];
+        
+        for(int i=0;i<10;i++)
+        {
+            digitsecret[i]=0;
+            digitguess[i]=0;
+        }
+        
+        for(int i=0;(i<m)&&(i<n);i++)
+        {
+            if(secret[i]==guess[i])
+                anum++;
+            else
+            {
+                digitsecret[int(secret[i]-'0')]++;
+                digitguess[int(guess[i]-'0')]++;
+            }
+            
+        }
+        
+        for(int i=0;i<10;i++)
+        {
+            bnum+=min(digitsecret[i],digitguess[i]);
+        }
+        
+        
+        
+        char temp1[64];
+        sprintf(temp1, "%d", anum);
+        string s1(temp1);
+        
+    
+        char temp2[64];
+        sprintf(temp2, "%d", bnum);
+        string s2(temp2);
+        
+        resultStr=s1+'A'+s2+'B';
+        
+        return resultStr;
+    }
+};
+
+void testSolutiongetHint()
+{
+    SolutiongetHint mysolution;
+    string secretmy="1807";
+    string guessmy="7810";
+    string result=mysolution.getHint(secretmy, guessmy);
+    cout<<result<<endl;
+}
+
+
+class SolutionbulbSwitch {
+public:
+    int bulbSwitch(int n) {
+        int i,j,k;
+        bool* state;
+        int onnumber;
+        
+        onnumber=0;
+        state=new bool[n];
+        
+        for(i=0;i<n;i++)
+        {
+            state[i]=false;
+        }
+        
+        for(j=1;j<=n;j++)
+        {
+            for(k=-1+j;k<n;k+=j)
+            {
+                state[k]=!state[k];
+            }
+            
+            /*
+            for(i=0;i<n;i++)
+                cout<<state[i]<<',';
+            cout<<endl;
+             */
+        }
+        
+        for(i=0;i<n;i++)
+        {
+            if(state[i])onnumber++;
+        }
+        
+        return onnumber;
+    }
+};
+
+class SolutionbulbSwitch2 {
+public:
+    int bulbSwitch(int n) {
+        int i;
+        for(i=1;i*i<=n;i++);
+        return i-1;
+    }
+};
+
+
+void testSolutionbulbSwitch()
+{
+    SolutionbulbSwitch solution;
+    cout<<solution.bulbSwitch(3)<<endl;
+}
+
+class SolutionnthUglyNumber {
+public:
+    int nthUglyNumber(int n) {
+        
+        vector<int> results(1,1);
+        
+        int i=0,j=0,k=0;
+        
+        while(results.size()<n)
+        {
+            int currentnum=min(results[i]*2,min(results[j]*3,results[k]*5));
+           
+            if(currentnum==results[i]*2)++i;
+            
+            if(currentnum==results[j]*3)++j;
+            
+            if(currentnum==results[k]*5)++k;
+            
+            results.push_back(currentnum);
+            
+        }
+        
+        return results.back();
+        
+    }
+};
+
+void testSolutionnthUglyNumber()
+{
+    SolutionnthUglyNumber solution;
+    cout<<solution.nthUglyNumber(5)<<endl;
+}
+
+class SolutionnthSuperUglyNumber {
+public:
+    int nthSuperUglyNumber(int n, vector<int>& primes) {
+        vector<int> superUglyNumbers;
+        superUglyNumbers.push_back(1);
+        
+        int numPrimes=(int)primes.size();
+        
+        vector<int> idxs(numPrimes,0);
+        
+        while(superUglyNumbers.size()<n)
+        {
+            int currentnum= superUglyNumbers[idxs[0]]*primes[0]; //next super ugly number
+            
+            for(int i=0;i<numPrimes;i++)
+            {
+                currentnum = min(currentnum, superUglyNumbers[idxs[i]]*primes[i]);
+            }
+            
+            for(int i=0;i<numPrimes;i++)
+            {
+                if(currentnum == superUglyNumbers[idxs[i]]*primes[i])
+                {
+                    idxs[i]++;
+                }
+            }
+            
+             superUglyNumbers.push_back(currentnum);
+            
+        }
+        
+        
+        return superUglyNumbers[n-1];
+    }
+};
+
+
+int SolutionmaxCoins(vector<int>& nums) {
+    int N = (int)nums.size();
+    nums.insert(nums.begin(), 1);
+    nums.insert(nums.end(), 1);
+    
+    // rangeValues[i][j] is the maximum # of coins that can be obtained
+    // by popping balloons only in the range [i,j]
+    vector<vector<int>> rangeValues(nums.size(), vector<int>(nums.size(), 0));
+    
+    // build up from shorter ranges to longer ranges
+    for (int len = 1; len <= N; ++len) {
+        for (int start = 1; start <= N - len + 1; ++start) {
+            int end = start + len - 1;
+            // calculate the max # of coins that can be obtained by
+            // popping balloons only in the range [start,end].
+            // consider all possible choices of final balloon to pop
+            int bestCoins = 0;
+            for (int final = start; final <= end; ++final) {
+                int coins = rangeValues[start][final-1] + rangeValues[final+1][end]; // coins from popping subranges
+                coins += nums[start-1] * nums[final] * nums[end+1]; // coins from final pop
+                if (coins > bestCoins) bestCoins = coins;
+            }
+            rangeValues[start][end] = bestCoins;
+        }
+    }
+    return rangeValues[1][N];
+}
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
    
-
-    
+    //testSolutiongetHint();
+    //testSolutionbulbSwitch();
+    testSolutionnthUglyNumber();
 }
 
 

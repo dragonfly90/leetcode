@@ -7786,11 +7786,78 @@ int SolutionmaxCoins(vector<int>& nums) {
     return rangeValues[1][N];
 }
 
+
+class SolutionmaxProduct {
+public:
+    int maxProduct(vector<string>& words) {
+        int nsize=(int)words.size();
+        
+        vector<int> keys(nsize,0);
+        
+        for(int i=0;i<nsize;i++)
+        {
+            for(auto c:words[i])
+            {
+                keys[i]|=1<<(c-'a');
+            }
+        }
+        
+        int res=0;
+        int m,n;
+        
+        for(int i=0;i<nsize;i++)
+            for(int j=i+1;j<nsize;j++)
+            {
+                
+                
+                if((keys[i]&keys[j])==0)
+                {
+                    m=(int)words[i].size();
+                    n=(int)words[j].size();
+                    if(m*n>res)
+                        res=m*n;
+                }
+            }
+        
+        return res;
+    }
+};
+
+
+void testmaxProduct(){
+    vector<string> words;
+    SolutionmaxProduct myproduct;
+    string mystr[]={"abcw","baz","foo","bar","xtfn","abcdef"};
+    words.assign(mystr,mystr+6);
+    cout<<myproduct.maxProduct(words)<<endl;
+    
+}
+
+class SolutionlengthOfLIS {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int i=0;
+        while(i<nums.size())
+        {
+            break
+        }
+    }
+};
+
+class SolutionisPowerOfThree {
+public:
+    bool isPowerOfThree(int n) {
+         return n > 0 && 3486784401 % n == 0;
+    }
+};
+
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
    
     //testSolutiongetHint();
     //testSolutionbulbSwitch();
-    testSolutionnthUglyNumber();
+    //testSolutionnthUglyNumber();
+    testmaxProduct();
 }
 
 

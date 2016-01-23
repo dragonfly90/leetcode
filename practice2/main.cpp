@@ -7836,11 +7836,21 @@ void testmaxProduct(){
 class SolutionlengthOfLIS {
 public:
     int lengthOfLIS(vector<int>& nums) {
-        int i=0;
-        while(i<nums.size())
-        {
-            break
+        if (nums.empty())
+            return 0;
+        vector<int> tails;
+        tails.reserve(nums.size());
+        tails.push_back(nums.front());
+        
+        for (size_t i = 1; i < nums.size(); ++i) {
+            const int& n = nums[i];
+            auto iter = lower_bound(tails.begin(), tails.end(), n);
+            if (iter == tails.end())
+                tails.push_back(n);
+            else if (n < *iter)
+                *iter = n;
         }
+        return (int)tails.size();
     }
 };
 
@@ -7851,6 +7861,297 @@ public:
     }
 };
 
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class SolutionisPalindrome {//O(n) time and O(1) space solution
+public:
+    bool isPalindrome(ListNode* head) {
+        if(!head || !head -> next) return true;
+        ListNode* pointer_slow = head,*pointer_fast = head;
+        while(pointer_fast && pointer_fast -> next) {
+            pointer_slow = pointer_slow -> next;
+            pointer_fast = pointer_fast -> next -> next;
+        }
+        if(pointer_fast) pointer_slow = reverseList(pointer_slow -> next);//reverse the last half of the list
+        else pointer_slow = reverseList(pointer_slow);
+        while(pointer_slow) {
+            if(head -> val != pointer_slow -> val) return false;
+            head = head -> next;
+            pointer_slow = pointer_slow -> next;
+        }
+        return true;
+    }
+    ListNode* reverseList(ListNode* head) {
+        if(!head) return NULL;
+        if(!head -> next) return head;
+        ListNode* pre = head -> next;
+        head -> next = NULL;
+        ListNode* temp;
+        while(pre) {
+            temp = pre -> next;
+            pre -> next = head;
+            head = pre;
+            pre = temp;
+        }
+        return head;
+    }
+};
+
+class solution_wordPattern{
+    bool wordPattern(string pattern, string str) {
+        unordered_map<char, string> c_to_str;
+        unordered_set<string> used_strs;
+        stringstream ss(str);
+        string s;
+    
+        for(auto c : pattern)
+        {
+        // if test string used up, return false
+            if(!(ss >> s))
+                return false;
+        // if we meet a new char in pattern, record the char-word pair
+            if (c_to_str.count(c) == 0)
+            {
+            // if the word is used for other char before, return false
+                if (!used_strs.insert(s).second)
+                    return false;
+                c_to_str.emplace(c, s);
+            }
+            // otherwise, we check if the char matches to the same word as before
+            else if (c_to_str[c] != s)
+                return false;
+        }
+        // if the test string is not used up, the match fails
+        return !(ss >> s);
+    }
+};
+
+class SolutionfindSubstring {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        unordered_map<string, int> map;
+        int i, wSize = (int)words.size(), wL=(int)words[0].size(), start, cur, sL=(int)s.size(), wCnt;
+        vector<int> res;
+        if(sL<wL*wSize) return res;
+        
+        //build the map
+        for(i=0; i<wSize; ++i)
+            map[words[i]] = map.count(words[i])>0? ++map[words[i]]:1;
+        
+        for(i=0; i<wL; ++i)
+        {// go through each possible starting point sequences
+            start = cur = i; // start is the starting point of the current search window, cur is the end of the current search window
+            wCnt = wSize; // reset the words to be searched
+            while(start<=sL-wL*wSize)
+            { // if it is a valid start
+                if(map.count(s.substr(cur,wL))==0){// if the current word is not one in the map, then move the starting window to the next word positon, reset wCnt and recover map counts.
+                    for(wCnt = wSize; start!=cur; start+=wL) ++map[s.substr(start,wL)];
+                    start +=wL; //skip the current invalid word;
+                }
+                else if(map[s.substr(cur,wL)]==0){
+                    // if the current word is a valid word in the map, but it is already found in the current search window, then we have to move start to skip the previously found one, and update wCnt and map counts accordingly.
+                    for(;s.substr(cur,wL)!=s.substr(start,wL); start+=wL)
+                    {
+                        ++map[s.substr(start,wL)];
+                        ++wCnt;
+                    }
+                    start += wL;//skip the previously found one
+                }
+                else{
+                    // if the current word is a valid one and it is not found before in the current search window
+                    --map[s.substr(cur,wL)]; // then reduce its counter
+                    if(--wCnt == 0) { // update wCnt, if we find all the words
+                        res.push_back(start); // save start
+                        ++map[s.substr(start,wL)]; //moving start to skip the first word in the current search window
+                        start +=wL;
+                        ++wCnt;
+                    }
+                }
+                cur+=wL; // update cur
+            }
+            for(;start<cur;start+=wL)  ++map[s.substr(start,wL)];//reset the map count
+        }
+        return res;
+    }
+};
+
+class SolutionfindSubstring2 {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        unordered_map<string, int> counts;
+        for (string word : words)
+            counts[word]++;
+        int n = (int)s.length(), num = (int)words.size(), len = (int)words[0].length();
+        vector<int> indexes;
+        for (int i = 0; i < n - num * len + 1; i++) {
+            unordered_map<string, int> seen;
+            int j = 0;
+            for (; j < num; j++) {
+                string word = s.substr(i + j * len, len);
+                if (counts.find(word) != counts.end()) {
+                    seen[word]++;
+                    if (seen[word] > counts[word])
+                        break;
+                }
+                else break;
+            }
+            if (j == num) indexes.push_back(i);
+        }
+        return indexes;
+    }
+};
+
+class SolutionfindSubstring3{
+public:
+    vector<int> findSubstring(string s, vector<string>& words){
+        unordered_map<string,int> counts;
+        vector<int> indexes;
+        unordered_map<string, int> seen;
+        
+        int len=(int)words[0].length();
+        for(string word: words)
+        {
+            if(len!=word.size())
+                return indexes;
+            counts[word]++;
+        }
+        
+        int n=(int)s.length();
+        int num=(int)words.size();
+        
+        for(int i=0;i<n-num*len+1;i++){
+            seen.clear();
+            int j=0;
+            for(;j<num;j++){
+                string word=s.substr(i+j*len,len);
+                if(counts.find(word)!=counts.end()){
+                    seen[word]++;
+                    if(seen[word] > counts[word])
+                        break;
+                }
+                else
+                    break;
+            }
+            if(j == num) indexes.push_back(i);
+        }
+        
+        return indexes;
+    }
+    
+};
+
+class SolutiongroupAnagrams {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string,vector<string> > allstrs;
+        vector<vector<string> > result;
+        int i=0;
+        for(string s: strs)
+        {
+            sort(s.begin(),s.end());
+            allstrs[s].push_back(strs[i++]);
+        }
+        
+        
+        for(auto n: allstrs){
+            sort(n.second.begin(),n.second.end());
+            result.push_back(n.second);
+        }
+        
+        return result;
+    }
+};
+
+class SolutioncountPrimes1 {
+public:
+    int countPrimes(int n) {
+        int count=0;
+        for(int i=0;i<n;i++)
+        {
+            double sqrtn=sqrt(n*1.0);
+            for(int j=2;j<=sqrtn;j++)
+            {
+                if(i%j==0)
+                {
+                    count++;
+                    break;
+                }
+            }
+        }
+        
+        return count;
+    }
+};
+
+class SolutioncountPrimes2 {
+public:
+    int countPrimes(int n){
+        int max=n;
+        vector<bool> flags;
+        flags.assign(max+1,true);
+        
+        int count=0;
+        int prime=2;
+        while(prime<=sqrt(max))
+        {
+            crossOff(flags,prime);
+            prime=getNextPrime(flags,prime);
+            if(prime>=flags.size()){
+                break;
+            }
+        }
+        
+        int countNum=0;
+        for(int i=1;i<max;i++)
+            if(flags[i])
+                countNum++;
+        
+        return countNum;
+    }
+    
+    void crossOff(vector<bool> flags, int prime)
+    {
+        for(int i=prime*prime;i<flags.size();i+=prime){
+            flags[i]=false;
+        }
+    }
+    
+    int getNextPrime(vector<bool> flags,int prime){
+        int next=prime+1;
+        while(next<flags.size()&&!flags[next]){
+            next++;
+        }
+        return next;
+    }
+    
+   
+};
+
+class SolutioncountPrimes3 {
+public:
+    int countPrimes(int n) {
+        if(--n < 2) return 0;
+        int m = (n + 1)/2, count = m, k, u = (sqrt(n) - 1)/2;
+        vector<bool> notPrime;
+        notPrime.assign(m,0);
+        
+        for(int i = 1; i <= u;i++)
+            if(!notPrime[i])
+                for(k = (i+ 1)*2*i; k < m;k += i*2 + 1)
+                    if (!notPrime[k])
+                    {
+                        notPrime[k] = true;
+                        count--;
+                    }
+        return count;
+    }
+};
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
    

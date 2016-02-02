@@ -5946,6 +5946,50 @@ public:
     }
 };
 
+class SolutionrotateRight {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(head==NULL)
+            return  head;
+        ListNode* copy=head;
+        int len=1;
+        while(copy->next!=NULL){
+            copy=copy->next;
+            len++;
+        }
+        copy->next=head;
+        for(int i=len-k%len;i>1;i--)
+        {
+            head=head->next;
+        }
+        copy=copy->next;
+        head->next=NULL;
+        return copy;
+    }
+    /*
+     if (head == null)
+     return head;
+     
+     ListNode copyHead = head;
+     
+     int len = 1;
+     while (copyHead.next != null) {
+     copyHead = copyHead.next;
+     len++;
+     }
+     
+     copyHead.next = head;
+     
+     for (int i = len - k % len; i > 1; i--)
+     head = head.next;
+     
+     copyHead = head.next;
+     head.next = null;
+     
+     return copyHead;
+     }
+     */
+};
 
 class SolutionbuildTree2 {
 public:
@@ -7929,6 +7973,40 @@ class solution_wordPattern{
         }
         // if the test string is not used up, the match fails
         return !(ss >> s);
+        
+        
+        /*
+         
+         map<char, int> p2i;
+         map<string, int> w2i;
+         istringstream in(str);
+         int i = 0, n = pattern.size();
+         for (string word; in >> word; ++i) {
+         if (i == n || p2i[pattern[i]] != w2i[word])
+         return false;
+         p2i[pattern[i]] = w2i[word] = i + 1;
+         }
+         return i == n;
+         
+         */
+    }
+};
+
+
+class SolutionwordPattern2 {
+public:
+    bool wordPattern(string pattern, string str) {
+        unordered_map<char, int> p2i;
+        unordered_map<string, int> w2i;
+        istringstream in(str);
+        int i = 0;
+        int n = (int)pattern.size();
+        for (string word; in >> word; ++i) {
+            if (i == n || p2i[pattern[i]] != w2i[word])
+                return false;
+            p2i[pattern[i]] = w2i[word] = i;
+        }
+        return i == n;
     }
 };
 
@@ -8153,12 +8231,638 @@ public:
     }
 };
 
+class SolutioncountPrimes4{
+public:
+    int countPrimes(int n){
+        if(--n < 2)return 0;
+        int m = (n+1)/2;
+        int count = m;
+        int k;
+        int u=(sqrt(n)-1)/2;
+        vector<bool> notPrime;
+        notPrime.assign(m,0);
+        
+        for(int i=1;i<=u;i++)
+        {
+            if(!notPrime[i])
+                for(k=(i+1)*2*i;k<m;k+=i*2+1)
+                {
+                    if(!notPrime[k])
+                    {
+                        notPrime[k]=true;
+                        count--;
+                    }
+                }
+        }
+        
+        return count;
+    }
+};
+
+
+class SolutioncountPrimes5{
+public:
+    int countPrimes(int n) {
+        if (n <= 2) return 0;
+        int res=n>>1, m=sqrt(n-1); // intilize res to n/2, removes all even number(not 2) and 1
+        bool *table=new bool[n];
+        for(int i=3,j,step;i<=m;i+=2)
+            if(!table[i]) { // i is an odd prime
+                for(step=i<<1, j=i*i;j<n;j+=step) // step=i*2, ignore even numbers
+                    if(!table[j]) { table[j]=1; --res; }
+            }
+        delete []table;
+        return res;
+    }
+
+};
+
+class SolutioncountPrimes6{
+    
+    /*
+     1. trick1 is to use square root of n.
+     2. trick2 is not to use non-prime numbers as the step
+     3. trick3 is to use i*i as the start.
+     4. trick4 is to use count-- in every loop, avoiding another traversal.
+    */
+    
+    int countPrimes(int n) {
+        if(n <= 2) return 0;
+        if(n == 3) return 1;
+        vector<bool> prime;
+        prime.assign(n,false);
+       
+        int i=0,j=0;
+        int count = n-2;
+        int rt = sqrt(n);
+        for(j = 0; j < n; j++)
+        {
+            prime[j] = true;
+        }
+        for(i = 2; i <= rt; i++)
+        {
+            if (prime[i])
+            {
+                for(j=i*i; j<n; j+=i)
+                {
+                    if (prime[j])
+                    {
+                        prime[j]=false;
+                        count--;
+                    }
+                }
+            }
+        }
+        
+        return count;
+    }
+};
+
+
+/*
+ 
+ class Solution:
+ # @param {integer} n
+ # @return {integer}
+ def countPrimes(self, n):
+ if n < 3:
+ return 0
+ primes = [True] * n
+ primes[0] = primes[1] = False
+ for i in range(2, int(n ** 0.5) + 1):
+ if primes[i]:
+ primes[i * i: n: i] = [False] * len(primes[i * i: n: i])
+ return sum(primes)
+ 
+*/
+
+class SolutionfindRepeatedDnaSequences {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        vector<bool> allstr;
+        vector<bool> currentstr;
+        int maxsize=1<<20;
+        
+        allstr.assign(maxsize,false);
+        currentstr.assign(maxsize,false);
+        
+        vector<string> returnVector;
+        for(int i=0;i+9<s.length();i++)
+        {
+            string temp=s.substr(i,10);
+            int currentint=hashnumber(temp);
+            if(allstr[currentint]==true)
+            {
+                if(currentstr[currentint]==false)
+                {
+                    returnVector.push_back(temp);
+                    currentstr[currentint]=true;
+                }
+            }
+            else
+            {
+                allstr[currentint]=true;
+            }
+        }
+        
+        //copy(returnStr.begin(),returnStr.end(),returnVector.begin());
+       
+        return returnVector;
+    }
+    
+    string backtemp(int nums)
+    {
+        string tempstr;
+        int step=0;
+        while(step<10)
+        {
+            int temp=nums&3;
+            switch(temp)
+            {
+                case 0:
+                    tempstr='A'+tempstr;
+                    break;
+                case 1:
+                    tempstr='C'+tempstr;
+                    break;
+                case 2:
+                    tempstr='G'+tempstr;
+                    break;
+                case 3:
+                    tempstr='T'+tempstr;
+                    break;
+            }
+            nums>>=2;
+            step++;
+        }
+        
+        return tempstr;
+        
+    }
+    
+    int hashnumber(string temp)
+    {
+        int nums=0;
+        int current=0;
+        for(auto k:temp)
+        {
+            switch(k){
+                case 'A':
+                    current=0;
+                    break;
+                case 'C':
+                    current=1;
+                    break;
+                case 'G':
+                    current=2;
+                    break;
+                case 'T':
+                    current=3;
+                    break;
+            }
+            nums<<=2;
+            nums+=current;
+           
+        }
+        return nums;
+    }
+};
+
+
+class SolutionfindRepeatedDnaSequences2 {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        if (s.size() <= 10)
+            return vector<string>();
+        
+        vector<string> R;;
+        bitset<(1<<20)-1> S1;
+        bitset<(1<<20)-1> S2;
+        
+        int val = 0;
+        for (int i=0; i < 10; i++)   // Calc. the has value for the first string.
+            val = (val << 2) | char2val(s[i]);
+        S1.set(val);
+        
+        cout << val << " | ";
+        
+        int mask = (1 << 20) - 1;
+        for (int i=10; i < s.size(); i++)
+        {
+            // Calc the hash value for the string ending at position i.
+            val = ((val << 2) & mask) | char2val(s[i]);
+            if (S2[val])
+                continue;
+            if (S1[val])
+            {
+                R.push_back(s.substr(i-10+1, 10));
+                S2.set(val);
+            }
+            else
+                S1.set(val);
+        }
+        return R;
+    }
+    
+    int char2val(char c) {
+        switch (c) {
+            case 'A': return 0;
+            case 'C': return 1;
+            case 'G': return 2;
+            case 'T': return 3;
+        }
+        return 0;
+    }
+};
+
+
+/*
+ vector<string> findRepeatedDnaSequences(string s) {
+ char flag[262144] ={0};
+ vector<string> result;
+ int len,DNA=0,i;
+ if((len=s.length())< 11) return result;
+ for(i = 0 ; i < 9; i++)
+ DNA = DNA << 2| (s[i] - 'A' + 1) % 5;
+ for(i = 9;i<len;i++)
+ {
+ DNA = (DNA<<2 & 0xFFFFF)|(s[i] - 'A' + 1)%5;
+ if(!(flag[DNA>>2]&(1<<((DNA&3) << 1))))
+ flag[DNA>>2] |= (1<<((DNA&3) << 1));
+ else if(!(flag[DNA>>2]&(2<<((DNA&3) << 1))))
+ {
+ result.push_back(s.substr(i-9,10));
+ flag[DNA>>2] |= (2<<((DNA&3) << 1));
+ }
+ }
+ return result;
+ }
+ */
+
+/*
+ int maximalRectangle(vector<vector<char>>& matrix) {
+ if(matrix.size()==0) return 0;
+ 
+ int ans = 0, m = matrix.size(), n = matrix[0].size();
+ vector<int> height(n,0); // height
+ 
+ for(int i=0;i<m;i++){
+ for(int j=0;j<n;j++){
+ if(matrix[i][j]=='0') {
+ height[j] = 0;
+ continue;
+ }
+ height[j]++;
+ for(int cur = j-1, pre = height[j]; cur>=0; cur--){
+ if ( height[cur] == 0 ) break;
+ pre = min(pre,height[cur]);
+ ans = max(ans, (j-cur+1)*pre);
+ }
+ ans = max(ans, height[j]);
+ }
+ }
+ return ans;
+ }
+ */
+
+class SolutionmaximalRectangle2 {
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        
+        if(matrix.size()==0) return 0;
+        
+        int ans = 0;
+        int m = (int)matrix.size();
+        int n = (int)matrix[0].size();
+        vector<int> height(n,0); // height
+        
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]=='0') {
+                    height[j] = 0;
+                    continue;
+                }
+                height[j]++;
+                for(int cur = j-1, pre = height[j]; cur>=0; cur--){
+                    if ( height[cur] == 0 ) break;
+                    pre = min(pre,height[cur]);
+                    ans = max(ans, (j-cur+1)*pre);
+                }
+                ans = max(ans, height[j]);
+            }
+        }
+        return ans;
+        
+    }
+    
+};
+
+struct Point{
+    int x;
+    int y;
+    Point():x(0),y(0){}
+    Point(int a,int b):x(a),y(b){}
+};
+
+class SolutionmaxPoints{
+public:
+    int maxPoints(vector<Point>& points)
+    {
+        if(points.size()<=0)
+            return 0;
+        if(points.size()<=2)
+            return (int)points.size();
+        
+        int result=0;
+        for(int i=0;i<points.size();i++)
+        {
+            unordered_map<double,int> hm;
+            int samex=1;
+            int samep=0;
+            for(int j=0;j<points.size();j++)
+            {
+                if(j!=i){
+                    if((points[j].x==points[i].x)&&(points[j].y==points[i].y))
+                    {
+                        samep++;
+                    }
+                    if(points[j].x==points[i].x)
+                    {
+                        samex++;
+                        continue;
+                    }
+                    
+                    double k = (double)(points[j].y - points[i].y) / (double)(points[j].x - points[i].x);
+                    if(hm.find(k)!=hm.end()){
+                        hm[k]=hm[k] + 1;
+                    }else{
+                        hm[k]=2;
+                    }
+                    result = max(result, hm[k] + samep);
+                }
+            }
+            
+            result=max(result,samex);
+        }
+        
+        return result;
+    }
+};
+
+class SolutioncountDigitOne {
+public:
+    int countDigitOne(int n) {
+        
+         if (n <= 0) return 0;
+         int q = n, x = 1, ans = 0;
+         do {
+         int digit = q % 10;
+         q /= 10;
+         ans += q * x;
+         if (digit == 1) ans += n % x + 1;
+         if (digit >  1) ans += x;
+         x *= 10;
+         } while (q > 0);
+         return ans;
+        
+    }
+};
+
+class SolutioncountDigitOne2 {
+public:
+    int countDigitOne(int n) {
+        
+        if(n<1)
+            return 0;
+        
+        if(n>=1&&n<10)
+            return 1;
+        
+        int y=1,x=n;
+        while(!(x<10))
+        {
+            x/=10;
+            y*=10;
+        }
+        
+        if(x==1)
+            return n-y+1+countDigitOne(y-1)+countDigitOne(n%y);
+        else
+            return y+x*countDigitOne(y-1)+countDigitOne(n%y);
+    }
+};
+
+class SolutioncountDigitOne3{
+    int countDigitOne(int n, int x){
+        if(n == 0) return 0;
+        if(n<10 || x==1) return 1;
+        if(n/x == 1) return n-n/x*x+1+countDigitOne(n-n/x*x)+countDigitOne(x-1);
+        return x+n/x*countDigitOne(x-1)+countDigitOne(n-n/x*x);
+    }
+    
+    int countDigitOne(int n) {
+        if(n <= 0) return 0;
+        int x = 1, y=n;
+        for(;y>=10;x*=10,y/=10);
+        return countDigitOne(n, x);
+    }
+};
+
+void findAllKs(){
+    SolutionmaxPoints solution;
+    vector<Point> allPoints;
+    allPoints.push_back(Point(4,0));
+    allPoints.push_back(Point(4,-1));
+    allPoints.push_back(Point(4,5));
+    int numofPoints=solution.maxPoints(allPoints);
+    cout<<numofPoints<<endl;
+}
+/*
+public class Solution {
+    public int maxPoints(Point[] points) {
+        if(points.length <= 0) return 0;
+        if(points.length <= 2) return points.length;
+        int result = 0;
+        for(int i = 0; i < points.length; i++){
+            HashMap<Double, Integer> hm = new HashMap<Double, Integer>();
+            int samex = 1;
+            int samep = 0;
+            for(int j = 0; j < points.length; j++){
+                if(j != i){
+                    if((points[j].x == points[i].x) && (points[j].y == points[i].y)){
+                        samep++;
+                    }
+                    if(points[j].x == points[i].x){
+                        samex++;
+                        continue;
+                    }
+                    double k = (double)(points[j].y - points[i].y) / (double)(points[j].x - points[i].x);
+                    if(hm.containsKey(k)){
+                        hm.put(k,hm.get(k) + 1);
+                    }else{
+                        hm.put(k, 2);
+                    }
+                    result = Math.max(result, hm.get(k) + samep);
+                }
+            }
+            result = Math.max(result, samex);
+        }
+        return result;
+    }
+}
+*/
+
+class SolutionoddEvenList {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        ListNode* head_odd,* head_even;
+        ListNode* head_odd_first,* head_even_first;
+        ListNode* head_odd_end,* head_even_end;
+        ListNode* temp_head_odd,* temp_head_even;
+        
+        head_odd=head;
+        if(head_odd==NULL)
+            return NULL;
+        
+        head_even=head->next;
+        if(head_even==NULL)
+            return head_odd;
+        
+        head_odd_first=head_odd_end=head_odd;
+        head_odd_end->next=NULL;
+        
+        head_even_first=head_even_end=head_even;
+        
+        while(1)
+        {
+            temp_head_odd=head_even_end->next;
+            if(temp_head_odd==NULL)
+            {
+                head_odd_end->next=head_even_first;
+                return head_odd_first;
+            }
+            
+            temp_head_even=temp_head_odd->next;
+            if(temp_head_even==NULL)
+            {
+                head_odd_end->next=temp_head_odd;
+                head_odd_end=temp_head_odd;
+                
+                head_odd_end->next=head_even_first;
+                head_even_end->next=NULL;
+                return head_odd_first;
+            }
+            
+            
+            head_even_end->next=temp_head_even;
+            head_even_end=head_even_end->next;
+            head_even_end->next=temp_head_even->next;
+            
+            
+            head_odd_end->next=temp_head_odd;
+            head_odd_end=head_odd_end->next;
+            head_odd_end->next=NULL;
+            
+        }
+        
+        return NULL;
+    }
+};
+
+void testSolutionoddEvenList(){
+    SolutionoddEvenList solution;
+    ListNode a(1),b(2),c(3),d(4),e(5);
+    ListNode* head=&a;
+    a.next=&b;
+    b.next=&c;
+    c.next=&d;
+    d.next=&e;
+    
+    ListNode* temp=solution.oddEvenList(head);
+    while(temp!=NULL)
+    {
+        cout<<temp->val<<endl;
+        temp=temp->next;
+    }
+    
+    
+}
+void testSolutionfindRepeatedDnaSequences()
+{
+    SolutionfindRepeatedDnaSequences mySolution;
+    string s="GAGAGAGAGAGAG";
+    vector<string> mystr=mySolution.findRepeatedDnaSequences(s);
+    for(auto currentstr:mystr)
+    {
+        cout<<currentstr<<endl;
+    }
+}
+
+class SolutionfourSum {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int> > total;
+        int n=(int)nums.size();
+        if(n<4) return total;
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<n-3;i++)
+        {
+            if(i>0&&nums[i]==nums[i-1])
+                continue;
+            
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3]>target)
+                break;
+            
+            if(nums[i]+nums[n-3]+nums[n-2]+nums[n-1]<target)
+                continue;
+            
+            for(int j=i+1;j<n-2;j++)
+            {
+                if(j>i+1&&nums[j]==nums[j-1]) continue;
+                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target) break;
+                if(nums[i]+nums[j]+nums[n-2]+nums[n-1]<target) continue;
+                
+                int left=j+1, right=n-1;
+                while(left<right)
+                {
+                    int sum=nums[left]+nums[right]+nums[i]+nums[j];
+                    if(sum<target)
+                        left++;
+                    else
+                        if(sum>target)
+                            right--;
+                        else
+                        {
+                            total.push_back(vector<int>{nums[i],nums[j],nums[left],nums[right]});
+                            do
+                            {
+                            left++;
+                            }
+                            while(nums[left]==nums[left-1]&&left<right);
+                        
+                            do
+                            {
+                                right--;
+                            }
+                            while(nums[right]==nums[right+1]&&left<right);
+                        
+                    }
+                }
+            }
+        }
+        
+        return total;
+    }
+};
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-   
+    testSolutionoddEvenList();
+    //testSolutionfindRepeatedDnaSequences();
+    //findAllKs();
     //testSolutiongetHint();
     //testSolutionbulbSwitch();
     //testSolutionnthUglyNumber();
-    testmaxProduct();
+    //testmaxProduct();
 }
 
 

@@ -88,12 +88,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "practice2/main.cpp"
-            timestampString = "475000768.133161"
+            timestampString = "475731651.033641"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8109"
-            endingLineNumber = "8109"
-            landmarkName = "sieveOfEratosthenes(int max)"
+            startingLineNumber = "8144"
+            endingLineNumber = "8144"
+            landmarkName = "countPrimes(int n)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

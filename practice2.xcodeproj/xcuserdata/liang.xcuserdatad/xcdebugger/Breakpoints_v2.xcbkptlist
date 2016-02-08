@@ -78,7 +78,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "5948"
-            endingLineNumber = "5948">
+            endingLineNumber = "5948"
+            landmarkName = "class SolutionrotateRight"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -88,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "practice2/main.cpp"
-            timestampString = "475731651.033641"
+            timestampString = "476236571.129169"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8144"
-            endingLineNumber = "8144"
+            startingLineNumber = "8391"
+            endingLineNumber = "8391"
             landmarkName = "countPrimes(int n)"
             landmarkType = "5">
          </BreakpointContent>

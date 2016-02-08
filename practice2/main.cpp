@@ -7678,6 +7678,209 @@ void testSolutiongetHint()
 }
 
 
+class SolutionreorderList {
+public:
+    /*
+     if (head == null || head.next == null)
+     return;
+     
+     // step 1. cut the list to two halves
+     // prev will be the tail of 1st half
+     // slow will be the head of 2nd half
+     ListNode prev = null, slow = head, fast = head, l1 = head;
+     
+     while (fast != null && fast.next != null) {
+     prev = slow;
+     slow = slow.next;
+     fast = fast.next.next;
+     }
+     
+     prev.next = null;
+     
+     // step 2. reverse the 2nd half
+     ListNode l2 = reverse(slow);
+     
+     // step 3. merge the two halves
+     merge(l1, l2);
+     }
+     
+     ListNode reverse(ListNode head) {
+     ListNode prev = null, curr = head, next = null;
+     
+     while (curr != null) {
+     next = curr.next;
+     curr.next = prev;
+     prev = curr;
+     curr = next;
+     }
+     
+     return prev;
+     }
+     
+     void merge(ListNode l1, ListNode l2) {
+     while (l1 != null) {
+     ListNode n1 = l1.next, n2 = l2.next;
+     l1.next = l2;
+     
+     if (n1 == null)
+     break;
+     
+     l2.next = n1;
+     l1 = n1;
+     l2 = n2;
+     }
+     }
+     */
+    void reorderList(ListNode* head) {
+        if(head==NULL||head->next==NULL)
+            return;
+        
+        ListNode* prev=NULL;
+        ListNode *head1,* head2;
+        head1=head;
+        ListNode* slow=head,*fast=head;
+        while(fast!=NULL&&fast->next!=NULL){
+            prev=slow;
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        
+        prev->next=NULL;
+        
+        head2=reverselist(slow);
+        merge(head1,head2);
+    }
+    
+    ListNode* reverselist(ListNode* lhead)
+    {
+        if(lhead==NULL||lhead->next==NULL)
+            return lhead;
+        
+        ListNode* nhead;
+        ListNode* templ,* tempe;
+        templ=lhead;
+        nhead=lhead;
+        tempe=lhead->next;
+        
+        while(tempe!=NULL)
+        {
+            templ->next=tempe->next;
+            tempe->next=nhead;
+            nhead=tempe;
+            tempe=templ->next;
+        }
+        return nhead;
+    }
+    
+    ListNode* merge(ListNode* list1,ListNode* list2)
+    {
+        
+        ListNode* temp1, *temp2, *temp1Next,*temp2Next;
+        ListNode* currentHead, *currentEnd;
+        
+        
+        if(list1==NULL||list2==NULL)
+            return list1;
+        
+        currentHead=list1;
+        currentEnd=list2;
+        temp1=list1->next;
+        temp2=list2->next;
+        currentHead->next=currentEnd;
+        currentEnd->next=NULL;
+        
+        while(temp1!=NULL)
+        {
+            if(temp2!=NULL)
+            {
+                temp1Next=temp1->next;
+                temp2Next=temp2->next;
+            
+                currentEnd->next=temp1;
+                temp1->next=temp2;
+                temp2->next=NULL;
+                currentEnd=temp2;
+                
+                temp1=temp1Next;
+                temp2=temp2Next;
+            }
+            else
+            {
+                
+                currentEnd->next=temp1;
+                temp1->next=NULL;
+                break;
+
+            }
+            
+            
+        }
+        
+        if(temp2!=NULL)
+        {
+            currentEnd->next=temp2;
+        }
+        
+        return currentHead;
+    }
+    
+    
+};
+
+/*
+ class Solution {
+ public:
+ ListNode* mergeKLists(vector<ListNode*>& lists) {
+ return partition(lists, 0, lists.size()-1);
+ }
+ 
+ ListNode* partition(vector<ListNode*>& lists, int start, int end){
+ if(start == end){
+ return lists[start];
+ }
+ 
+ if(start < end){
+ int mid = (end+start)/2;
+ 
+ ListNode* l1 = partition(lists, start, mid);
+ ListNode* l2 = partition(lists, mid+1, end);
+ return merge(l1, l2);
+ }
+ 
+ return NULL;
+ }
+ 
+ ListNode* merge(ListNode* l1, ListNode* l2){
+ if(!l1) return l2;
+ if(!l2) return l1;
+ 
+ if(l1->val < l2->val){
+ l1->next = merge(l1->next, l2);
+ return l1;
+ }else{
+ l2->next = merge(l1, l2->next);
+ return l2;
+ }
+ }
+ };
+ */
+
+
+void testSolutionreorderList(){
+    SolutionreorderList solution;
+    ListNode a(1),b(2),c(3);
+    ListNode* head;
+    head=&a;
+    a.next=&b;
+    b.next=&c;
+    solution.reorderList(head);
+    while(head!=NULL)
+    {
+        cout<<head->val<<endl;
+        head=head->next;
+    }
+}
+
 class SolutionbulbSwitch {
 public:
     int bulbSwitch(int n) {
@@ -8855,18 +9058,57 @@ public:
     }
 };
 
-TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSolutionoddEvenList();
-    //testSolutionfindRepeatedDnaSequences();
-    //findAllKs();
-    //testSolutiongetHint();
-    //testSolutionbulbSwitch();
-    //testSolutionnthUglyNumber();
-    //testmaxProduct();
+
+
+/*
+ public class Solution {
+ public ListNode mergeKLists(ListNode[] lists) {
+ 
+ Queue<ListNode> q = new PriorityQueue<ListNode>(new ListComparator());
+ for(ListNode n: lists){
+ if( n!= null) {
+ q.add(n);
+ }
+ }
+ ListNode head = new ListNode(0), p = head, cur = null;
+ while( !q.isEmpty()) {
+ cur = q.poll();
+ if(cur.next!=null)
+ q.offer(cur.next);
+ p.next = cur;
+ p = p.next;
+ }
+ return head.next;
+ }
+ }
+ 
+ class ListComparator implements Comparator<ListNode>{
+ 
+ @Override
+ public int compare(ListNode n1, ListNode n2) {
+ return n1.val - n2.val;
+ }
+ */
+class SolutionPlusOne{
+vector<int> plusOne(vector<int>& digits) {
+    
+    int n = (int)digits.size();
+    for(int i=n-1; i>=0; i--) {
+        if(digits[i] < 9) {
+            digits[i]++;
+            return digits;
+        }
+        
+        digits[i] = 0;
+    }
+    
+    vector<int> newNumber;
+    newNumber.assign(n+1,0);
+    newNumber[0] = 1;
+    
+    return newNumber;
 }
-
-
-
+};
 
 
 
@@ -8922,4 +9164,616 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
  )
  
  */
+
+/*
+ public static ListNode mergeKLists(ListNode[] lists){
+ return partion(lists,0,lists.length-1);
+ }
  
+ public static ListNode partion(ListNode[] lists,int s,int e){
+ if(s==e)  return lists[s];
+ if(s<e){
+ int q=(s+e)/2;
+ ListNode l1=partion(lists,s,q);
+ ListNode l2=partion(lists,q+1,e);
+ return merge(l1,l2);
+ }else
+ return null;
+ }
+ 
+ //This function is from Merge Two Sorted Lists.
+ public static ListNode merge(ListNode l1,ListNode l2){
+ if(l1==null) return l2;
+ if(l2==null) return l1;
+ if(l1.val<l2.val){
+ l1.next=merge(l1.next,l2);
+ return l1;
+ }else{
+ l2.next=merge(l1,l2.next);
+ return l2;
+ }
+ }
+ */
+class SolutionmergeKLists {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        
+        return partion(lists,0,(int)lists.size()-1);
+    }
+    ListNode* partion(vector<ListNode*>& lists, int s,int e)
+    {
+        if(s==e) return lists[s];
+        if(s<e)
+        {
+            int middle=(s+e)/2;
+            ListNode* l1=partion(lists,s,middle);
+            ListNode* l2=partion(lists,middle+1,e);
+            return mergeLists(l1,l2);
+            
+        }
+        else
+            return NULL;
+    }
+    ListNode* mergeLists(ListNode* l1,ListNode* l2)
+    {
+        if(l1==NULL)
+            return l2;
+        if(l2==NULL)
+            return l1;
+        if(l1->val<l2->val)
+        {
+            l1->next=mergeLists(l1->next, l2);
+            return l1;
+        }
+        else
+        {
+            l2->next=mergeLists(l1, l2->next);
+            return l2;
+        }
+        
+    }
+    
+};
+
+class SolutionCalculate{
+    int calculate(string s)
+    {
+    stack<int> myStack;
+    char sign = '+';
+    int res = 0, tmp = 0;
+    for (unsigned int i = 0; i < s.size(); i++) {
+        if (isdigit(s[i]))
+            tmp = 10*tmp + s[i]-'0';
+        if ((!isdigit(s[i]) && !isspace(s[i]) )|| i == (int)s.size()-1) {
+            if (sign == '-')
+                myStack.push(-tmp);
+                else if (sign == '+')
+                    myStack.push(tmp);
+                    else {
+                        int num;
+                        if (sign == '*' )
+                            num = myStack.top()*tmp;
+                        else
+                            num = myStack.top()/tmp;
+                        myStack.pop();
+                        myStack.push(num);
+                    }
+            sign = s[i];
+            tmp = 0;
+        }
+    }
+    while (!myStack.empty()) {
+        res += myStack.top();
+        myStack.pop();
+    }
+    return res;
+    }
+};
+
+class SolutionCalculate2 {
+public:
+    int calculate(string s) {
+        if(s.empty())
+            return 0;
+        int length=(int)s.size();
+        int res=0;
+        long preVal=0;
+        char sign='+';
+        
+        int i=0;
+        while(i<length)
+        {
+            long curVal=0;
+           
+            while(i<length&&isspace(s[i]))
+            {
+                i++;
+            }
+            
+            while(i<length&&isdigit(s[i]))
+            {
+                curVal=curVal*10+(s[i]-'0');
+                i++;
+                //cout<<curVal<<endl;
+            }
+            if(sign=='+')
+            {
+                
+                res+=preVal;
+                preVal=curVal;
+                //cout<<"res: "<<res<<",preVal:"<<preVal<<endl;
+            }
+            else
+                if(sign=='-')
+                {
+                    res+=preVal;
+                    preVal=-curVal;
+                }
+                else
+                    if(sign=='*')
+                    {
+                        preVal=preVal*curVal;
+                    }
+                    else
+                        if(sign=='/'){
+                            //cout<<"pre: "<<preVal<<','<<curVal<<','<<preVal/curVal<<endl;
+                            preVal=preVal/curVal;
+                            
+                        }
+            
+            while(i<length&&isspace(s[i]))
+            {
+                i++;
+            }
+            
+            if(i<length&&!isspace(s[i]))
+            {
+                sign=s[i];
+                i++;
+            }
+            
+            while(i<length&&isspace(s[i]))
+            {
+                i++;
+            }
+           
+           
+        }
+        
+        res+=preVal;
+        return res;
+    }
+};
+
+void testCalculate()
+{
+    string s=" 3+5 / 2 ";
+    SolutionCalculate2 solution;
+    int res=solution.calculate(s);
+    cout<<res<<endl;
+    
+}
+
+
+class NumArray {
+public:
+    vector<vector<int> > allnums;
+    int nsize;
+    NumArray(vector<int> &nums) {
+        int i,j;
+        nsize=(int)nums.size();
+        allnums.assign(nsize,vector<int>(nsize));
+        for(i=0;i<nsize;i++)
+        {
+            allnums[i][i]=nums[i];
+        }
+        for(i=0;i<nsize;i++)
+            for(j=i+1;j<nsize;j++)
+            {
+                allnums[i][j]=allnums[j][j]+allnums[i][j-1];
+            }
+        
+    }
+    
+    int sumRange(int i, int j) {
+        return allnums[i][j];
+    }
+};
+
+class solutionmaxProfit{
+public:
+    int maxProfit(vector<int>& prices){
+        int minPrice, maxProfit;
+        int nsize=(int)prices.size();
+        if(nsize<2)
+            return 0;
+        minPrice=prices[0];
+        maxProfit=0;
+        for(int i=1;i<nsize;i++)
+        {
+            if(maxProfit<(prices[i]-minPrice))
+                maxProfit=prices[i]-minPrice;
+            if(prices[i]<minPrice)
+                minPrice=prices[i];
+        }
+        return maxProfit;
+    }
+};
+
+class solutionmaxProfit2{
+public:
+    int maxProfit(vector<int>& prices) {
+        int minV = INT32_MAX, maxV = 0;
+        for (int i = 0; i < prices.size(); i++)
+            maxV = max(maxV, prices[i] - (minV = min(minV, prices[i])));
+        return maxV;
+    }
+};
+
+class SolutionmaxProfitBestTime {
+public:
+    int maxProfit(vector<int>& prices) {
+       
+        if(prices.size()<2)
+            return 0;
+        
+        int i,nsize=(int)prices.size();
+        int ret=0;
+        vector<int> buy(nsize,0);
+        vector<int> sell(nsize,0);
+        buy[0]=-prices[0];
+        
+        for(i=1;i<nsize;i++)
+        {
+            sell[i]=max(buy[i-1]+prices[i],sell[i-1]-prices[i-1]+prices[i]);
+            if(ret<sell[i])
+                ret=sell[i];
+            if(i==1)
+                buy[i]=buy[0]+prices[0]-prices[1];
+            else
+                buy[i]=max(sell[i-2]-prices[i],buy[i-1]+prices[i-1]-prices[i]);
+            
+        }
+        
+        return ret;
+        
+    }
+};
+
+/*
+ 1. profit1[i+1] means I must sell on day i+1, and there are 2 cases:
+ 
+ a. If I just sold on day i, then I have to buy again on day i and sell on day i+1
+ 
+ b. If I did nothing on day i, then I have to buy today and sell today
+ 
+ Taking both cases into account, profit1[i+1] = max(profit1[i]+prices[i+1]-prices[i], profit2[i])
+ 
+ 2. profit2[i+1] means I do nothing on day i+1, so it will be max(profit1[i], profit2[i])
+ */
+class solutionMaxProfit{
+public:
+    int maxProfit(vector<int>& prices)
+    {
+        int profit1=0, profit2=0;
+        for(int i=1; i<prices.size(); i++){
+            int copy=profit1;
+            profit1=max(profit1+prices[i]-prices[i-1], profit2);
+            profit2=max(copy, profit2);
+        }
+        return max(profit1, profit2);
+    }
+};
+
+class solutionmaxProfits{
+public:
+    int maxProfit(vector<int>& prices)
+    {
+        int nsize=(int)prices.size();
+        if(nsize<2)
+            return 0;
+        vector<int> state0(nsize,0), state1(nsize,0),state2(nsize,0);
+        
+        state0[0]=0;
+        state1[0]=-prices[0];
+        state2[0]=INT_MIN;
+        
+        for(int i=1;i<nsize;i++)
+        {
+            state0[i]=max(state0[i-1],state2[i-1]);
+            state1[i]=max(state1[i-1],state0[i-1]-prices[i]);
+            state2[i]=state1[i-1]+prices[i];
+        }
+        
+        return max(state0[nsize-1],state2[nsize-1]);
+        
+    }
+};
+
+class NumArray2{
+public:
+    vector<int> sums;
+    NumArray2(vector<int>& nums)
+    {
+        sums.insert(sums.begin(),nums.begin(),nums.end());
+        int nsize=(int)nums.size();
+        for(int i=1;i<nsize;i++)
+        {
+            sums[i] += sums[i-1];
+            
+        }
+        
+    }
+    int sumRange(int i,int j){
+        return i==0?sums[j]:sums[j]-sums[i-1];
+    }
+};
+
+void testNumArray(){
+    
+    vector<int> nums;
+    int testnums[]={-2,0,3,-5,2,-1};
+    
+    nums.assign(testnums,testnums+6);
+    NumArray mysolution(nums);
+    
+    cout<<mysolution.sumRange(0,2)<<endl;
+    cout<<mysolution.sumRange(2,5)<<endl;
+    cout<<mysolution.sumRange(0,5)<<endl;
+    
+}
+
+
+class NumMatrix {
+public:
+    vector<vector<int> > allnums;
+    NumMatrix(vector<vector<int>> &matrix) {
+        int rowsize=(int)matrix.size();
+        if(rowsize<1)
+            return;
+        int colsize=(int)matrix[0].size();
+        int i,j;
+        allnums.assign(rowsize, vector<int>(colsize));
+        allnums[0][0]=matrix[0][0];
+        
+        for(i=1;i<rowsize;i++)
+        {
+            allnums[i][0]=allnums[i-1][0]+matrix[i][0];
+        }
+        
+        for(i=1;i<colsize;i++)
+        {
+            allnums[0][i]=allnums[0][i-1]+matrix[0][i];
+        }
+        
+        for(i=1;i<rowsize;i++)
+            for(j=1;j<colsize;j++)
+            {
+                allnums[i][j]=allnums[i-1][j]+allnums[i][j-1]-allnums[i-1][j-1]+matrix[i][j];
+            }
+        
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        if((row1>=1)&&(col1>=1))
+            return allnums[row2][col2]-allnums[row1-1][col2]-allnums[row2][col1-1]+allnums[row1-1][col1-1];
+        else
+            if(row1>=1)
+                return  allnums[row2][col2]-allnums[row1-1][col2];
+            else
+                if(col1>=1)
+                    return allnums[row2][col2]-allnums[row2][col1-1];
+                else
+                    return allnums[row2][col2];
+    }
+};
+
+class NumMatrix2 {
+private:
+    int row, col;
+    vector<vector<int>> sums;
+public:
+    NumMatrix2(vector<vector<int>> &matrix) {
+        row = (int)matrix.size();
+        col = row>0 ?(int) matrix[0].size() : 0;
+        sums = vector<vector<int>>(row+1, vector<int>(col+1, 0));
+        for(int i=1; i<=row; i++) {
+            for(int j=1; j<=col; j++) {
+                sums[i][j] = matrix[i-1][j-1] +
+                sums[i-1][j] + sums[i][j-1] - sums[i-1][j-1] ;
+            }
+        }
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        return sums[row2+1][col2+1] - sums[row2+1][col1] - sums[row1][col2+1] + sums[row1][col1];
+    }
+};
+
+
+void testSumRegion()
+{
+    vector<vector<int> > currentMatrixs;
+    vector<int> a,b,c,d,e;
+    int a1[5]={3,0,1,4,2};
+    int b1[5]={5,6,3,2,1};
+    int c1[5]={1,2,0,1,5};
+    int d1[5]={4,1,0,1,7};
+    int e1[5]={1,0,3,0,5};
+    a.assign(a1,a1+5);
+    b.assign(b1,b1+5);
+    c.assign(c1,c1+5);
+    d.assign(d1,d1+5);
+    e.assign(e1,e1+5);
+    currentMatrixs.push_back(a);
+    currentMatrixs.push_back(b);
+    currentMatrixs.push_back(c);
+    currentMatrixs.push_back(d);
+    currentMatrixs.push_back(e);
+    
+    NumMatrix mySolution(currentMatrixs);
+    cout<<mySolution.sumRegion(2,1,4,3)<<endl;
+    cout<<mySolution.sumRegion(1,1,2,2)<<endl;
+    cout<<mySolution.sumRegion(1,2,2,4)<<endl;
+    
+}
+
+/*
+
+class SolutionmaxProduct2 {
+public:
+    int maxProduct(vector<int>& nums) {
+        vector<vector<int> > allNums;
+        int nsize=(int)nums.size();
+        allNums.assign(nsize,vector<int>(nsize,0));
+        for(int i=0;i<nsize;i++)
+            allNums[i][i]=nums[i];
+        for(int step=1;step<nsize;step++){
+            for(int i=0;i+step<nsize;i++){
+                int currentmax=max(allNums[i+1][i+step],allNums[i][i+step-1]);
+                currentmax=max(currentmax,allNums[i][i+step-1]*nums[i+step]);
+                allNums[i][i+step]=currentmax;
+                cout<<i<<','<<i+step<<'='<<allNums[i][i+step]<<endl;
+            }
+        }
+        return allNums[0][nsize-1];
+    }
+};
+ */
+
+class SolutionmaxProduct2{
+public:
+    int maxProduct(vector<int>& nums) {
+        if(nums.size() == 0) return 0;
+        long long curmax = nums[0], curmin = nums[0], res = nums[0];
+        long long premax;
+        for(int i=1; i<nums.size(); ++i){
+            premax = curmax;
+            curmax = max(curmax*nums[i], max(curmin*nums[i], (long long)nums[i]));
+            curmin = min(premax*nums[i], min(curmin*nums[i], (long long)nums[i]));
+            res = max(res, curmax);
+        }
+        return int(res);
+    }
+    
+
+    
+    int SolutionmaxProduct3(vector<int>& nums) {
+        if (nums.empty())
+            return 0;
+        
+        int ans = nums[0], cmin = ans, cmax = ans;
+        
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] >= 0) {
+                cmax = max(nums[i], cmax * nums[i]);
+                cmin = min(nums[i], cmin * nums[i]);
+            } else {
+                int tmp = cmax;
+                cmax = max(nums[i], cmin * nums[i]);
+                cmin = min(nums[i], tmp * nums[i]);
+            }
+            
+            ans = max(ans, cmax);
+        }
+        
+        return ans;
+    }
+
+
+};
+
+
+void testSolutionmaxProduct2()
+{
+    SolutionmaxProduct2 mysolution;
+    vector<int> nums;
+    int cnums[]={2,3,-2,4};
+    nums.assign(cnums,cnums+4);
+    cout<<mysolution.maxProduct(nums)<<endl;
+}
+
+
+class SolutionmaximalSquare2 {
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        if(matrix.size()==0) return 0;
+        int maxSq=0;
+        int nRow=(int)matrix.size();
+        int nCol=(int)matrix[0].size();
+        vector<vector<int>> dp(nRow+1,vector<int>(nCol+1,0));
+        //dp[i][j] represents max square ending at position (i-1, j-1)
+        for(int i=1;i<=nRow;++i){
+            for(int j=1;j<=nCol;++j){
+                if(matrix[i-1][j-1]=='1'){
+                    dp[i][j]=min(min(dp[i-1][j-1],dp[i-1][j]),dp[i][j-1])+1;
+                    maxSq=max(maxSq,dp[i][j]);
+                }
+            }
+        }
+        return maxSq*maxSq;
+    }
+};
+
+
+void testSquare()
+{
+    SolutionmaximalSquare2 mysolution;
+    vector<char> a(1,'1');
+    vector<vector<char> > allnums;
+    allnums.push_back(a);
+    cout<<mysolution.maximalSquare(allnums)<<endl;
+}
+TEST_CASE( "Factorials are computed", "[factorial]" ) {
+    testSquare();
+    //testSolutionmaxProduct2();
+    //testSumRegion();
+    //testNumArray();
+    //testCalculate();
+    //testSolutionreorderList();
+    //testSolutionoddEvenList();
+    //testSolutionfindRepeatedDnaSequences();
+    //findAllKs();
+    //testSolutiongetHint();
+    //testSolutionbulbSwitch();
+    //testSolutionnthUglyNumber();
+    //testmaxProduct();
+}
+
+
+/*
+ public int calculate(String s) {
+ if (s == null) return 0;
+ s = s.trim().replaceAll(" +", "");
+ int length = s.length();
+ 
+ int res = 0;
+ long preVal = 0; // initial preVal is 0
+ char sign = '+'; // initial sign is +
+ int i = 0;
+ while (i < length) {
+ long curVal = 0;
+ while (i < length && (int)s.charAt(i) <= 57 && (int)s.charAt(i) >= 48) { // int
+ curVal = curVal*10 + (s.charAt(i) - '0');
+ i++;
+ }
+ if (sign == '+') {
+ res += preVal;  // update res
+ preVal = curVal;
+ } else if (sign == '-') {
+ res += preVal;  // update res
+ preVal = -curVal;
+ } else if (sign == '*') {
+ preVal = preVal * curVal; // not update res, combine preVal & curVal and keep loop
+ } else if (sign == '/') {
+ preVal = preVal / curVal; // not update res, combine preVal & curVal and keep loop
+ }
+ if (i < length) { // getting new sign
+ sign = s.charAt(i);
+ i++;
+ }
+ }
+ res += preVal;
+ return res;
+ }
+ */

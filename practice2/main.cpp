@@ -9715,6 +9715,72 @@ public:
     }
 };
 
+class SolutioncoinChange
+{
+public:
+    int coinChange(vector<int>& coins, int amount)
+    {
+        vector<int> dp(amount + 1, -1);
+        dp[0] = 0;
+        
+        for (int i = 1; i <= amount; ++i)
+            for (auto & c : coins)
+                if (i - c >= 0 && dp[i - c] != -1)
+                    dp[i] = dp[i] > 0 ? min(dp[i], dp[i - c] + 1) : dp[i - c] + 1;
+        
+        return dp[amount];
+    }
+};
+
+class SolutioncoinChange2
+{
+public:
+    int coinChange(vector<int>& coins, int amount)
+    {
+        vector<int> dp(amount+1,-1);
+        dp[0]=0;
+        
+        for(int i=1; i<=amount;++i)
+            for(auto &c: coins)
+                if(i-c>=0 && dp[i-c]!=-1)
+                {
+                    if(dp[i]>0)
+                        dp[i]=min(dp[i],dp[i-c]+1);
+                    else
+                        dp[i]=dp[i-c]+1;
+                }
+        
+        
+        return dp[amount];
+    }
+};
+
+
+class SolutionisPalindromeNew {
+public:
+    bool isPalindrome(string s) {
+        std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+        int nsize=(int)s.size();
+        for(int i=0,j=nsize-1;i<j;i++,j--)
+        {
+           while(i<j&&!isalnum(s[i]))
+           {
+               i++;
+           }
+            
+            while(i<j&&!isalnum(s[j]))
+            {
+                j--;
+            }
+            
+            if(s[i]!=s[j])
+                return false;
+
+        }
+        
+        return true;
+    }
+};
 
 void testSquare()
 {

@@ -1,0 +1,123 @@
+Please use this Google doc to code during your interview. To free your hands for coding, we recommend that you use a headset or a phone with speaker option.
+
+i=(i+1)%10
+
+int n;
+class stockp{
+vector<int> stock;
+int inputsize;
+int currentindex;
+stockp()
+{
+	stock.assign(n,0);
+	inputsize=0;
+	currentindex=0;
+}
+int caculatemean(int stockprice)
+{
+	if(inputsize<n)
+	{
+		stock[inputsize]=stockprice;
+		inputsize++;
+		currentindex++;
+	}
+	else
+	{
+		stock[currentindex]=stockprice;
+		currentindex=(currentindex+1)%n;
+	}
+	int sum=0;
+	for(int i=0;i<inputsize;i++)
+		sum+=stock[i];
+	return sum/inputsize;
+}
+}
+
+Space complexity: O(n)
+Time complexity: 1+2+3+..n= O(n^2)
+
+
+class stockpNew{
+private:
+vector<int> stock;
+int inputsize;
+int currentindex;
+int sum;
+int n;
+public:
+stockpNew(int n)
+{
+	n=n;
+	inputsize=0;
+	currentindex=0;
+	sum=0;
+}
+int caculatemean(int stockprice)
+{
+	if(inputsize<n)
+	{
+		stock.push_back(stockprice);
+		inputsize++;
+		currentindex++;
+		sum+=stockprice;
+	}
+	else
+	{
+		sum+=stockprice-stock[currentindex];
+		stock[currentindex]=stockprice;
+		currentindex=(currentindex+1)%n;
+	}
+	
+	return sum/inputsize;
+}
+};
+
+Space complexity: O(n)
+Time complexity: 1+1+1+..1= O(n)
+
+1 1
+ 2 2       3 2 5 2
+4 3 5 3
+
+struct node{
+	int value;
+	vector<node* > children;
+}
+
+class nodelength{
+int maxlen;
+nodelength()
+{
+	maxlen=0;
+}
+int calulatelen(node* root)
+{
+	if(root==NULL)return 0;
+	int current=1;
+	maxlen=1;
+	calulatelen(root,root->val,1);
+	return maxlen;
+}
+int calulatelen(node* root,int fathervalue,int previouslen)
+{
+	int currentlen;
+	if(root->value>fathervalue)
+	{
+		currenlen=previouslen+1;
+		if(currenlen>maxlen)
+			maxlen=currenlen;
+	}
+	else
+		currenlen=1;
+
+	for(int i=0;i<root->children.size();i++)
+		calulatelen(root->children[i],root->value,currenlen);
+}
+
+
+}
+
+h, nodes
+Space: O(nodes)
+Time: O(nodes)
+

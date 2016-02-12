@@ -1,0 +1,93 @@
+Please use this Google doc to code during your interview. To free your hands for coding, we recommend that you use a headset or a phone with speaker option.
+
+
+struct node{
+int val;
+node* left;
+node* right;
+}
+
+bool compareBinaryTrees(node* tree1,node* tree2)
+{
+	if(tree1==NULL&&tree2==NULL)
+		return true;
+	if(tree1==NULL||tree2==NULL)
+		return false;
+	if(tree1->val!=tree2->val)
+return false;	
+if(compareBinaryTrees(tree1->left,tree2->left)&&compareBinaryTrees(tree1->right,tree2->right))
+return true;
+else
+	return false;
+}
+
+
+Update1
+struct node{
+int val;
+node* left;
+node* right;
+}
+
+bool compareBinaryTrees(node* tree1,node* tree2)
+{
+	if(tree1==tree2)
+		return true;
+	if(tree1==NULL||tree2==NULL)
+		return false;
+	if(tree1->val!=tree2->val)
+return false;	
+if(compareBinaryTrees(tree1->left,tree2->left)&&compareBinaryTrees(tree1->right,tree2->right)
+return true;
+else
+	return false;
+}
+
+
+     1	typedef struct tree_struct {
+     2	  struct tree_struct *left;
+     3	  struct tree_struct *right;
+     4	  int value;
+     5	} tree;
+     6	
+     7	int compare(tree *a, const tree *b)
+     8	{
+     9	  if (a == 0 & b == 0)
+    10	    return 1;
+    11	  if (a == 0 | b == 0)
+    12	    return 1;
+    13	  if (a->value != b->value)
+    14	    return 0;
+    15	  return compare(a->left, b->left) & compare(a->right, b->right);
+    16	}
+
+
+
+
+Answer
+  1	typedef struct tree_struct {
+     2	  struct tree_struct *left;
+     3	  struct tree_struct *right;
+     4	  int value;
+     5	} tree;
+     6	
+     7	int compare(tree *a, const tree *b)//add const in a
+     8	{//a, b  is the same
+     9	  if (a == 0 & b == 0)//pointer should be checked if Null or not, why to use bit operation instead of ‘&&’
+    10	    return 1;        //I think it should be bool value
+    11	  if (a == 0 | b == 0)//bit operation
+    12	    return 1;        //The condition should return false
+    13	  if (a->value != b->value)
+    14	    return 0;       //the same with 10 line
+    15	  return compare(a->left, b->left) & compare(a->right, b->right);//bit operation
+
+    16	}
+
+n bits  log(n)
+n/2 sending 
+
+10001
+
+
+
+

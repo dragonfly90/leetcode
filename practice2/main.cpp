@@ -9790,8 +9790,113 @@ void testSquare()
     allnums.push_back(a);
     cout<<mysolution.maximalSquare(allnums)<<endl;
 }
+
+
+
+// Below is the interface for Iterator, which is already defined for you.
+// **DO NOT** modify the interface for Iterator.
+class Iterator {
+    struct Data;
+    Data* data;
+public:
+    Iterator(const vector<int>& nums);
+    Iterator(const Iterator& iter);
+    virtual ~Iterator();
+    // Returns the next element in the iteration.
+    int next();
+    // Returns true if the iteration has more elements.
+    bool hasNext() const;
+};
+
+
+class PeekingIterator : public Iterator {
+private:
+    int value_next;
+    bool hasnext;
+public:
+    PeekingIterator(const vector<int>& nums) : Iterator(nums) {
+        hasnext = Iterator::hasNext();
+        if(hasnext)
+            value_next=Iterator::next();
+        // Initialize any member here.
+        // **DO NOT** save a copy of nums and manipulate it directly.
+        // You should only use the Iterator interface methods.
+        
+    }
+    
+    // Returns the next element in the iteration without advancing the iterator.
+    int peek() {
+        return value_next;
+    }
+    
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    int next() {
+        int previous=value_next;
+        hasnext=Iterator::hasNext();
+        if(hasnext)
+            value_next=Iterator::next();
+        return previous;
+    }
+    
+    bool hasNext() const {
+        return hasnext;
+    }
+};
+
+
+class PeekingIterator2 : public Iterator {
+public:
+    PeekingIterator2(const vector<int>& nums) : Iterator(nums) {
+        // Initialize any member here.
+        // **DO NOT** save a copy of nums and manipulate it directly.
+        // You should only use the Iterator interface methods.
+        
+    }
+    
+    // Returns the next element in the iteration without advancing the iterator.
+    int peek() {
+        if(hasNext()){
+            Iterator it(*this);
+            return it.next();
+        }
+        else
+            return 0;
+    }
+    
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    int next() {
+        return Iterator::next();
+    }
+    
+    bool hasNext() const {
+        return Iterator::hasNext();
+    }
+};
+
+#include<iterator>
+#include<list>
+
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSquare();
+    std::list<int> mylist;
+    for (int i=0; i<10; i++) mylist.push_back (i*10);
+    
+    std::list<int>::iterator it = mylist.begin();
+    
+    std::advance (it,5);
+    
+    std::cout << "The sixth element in mylist is: " << *it << '\n';
+    
+    
+    std::list<int>::iterator first = mylist.begin();
+    std::list<int>::iterator last = mylist.end();
+    
+    std::cout << "The distance is: " << std::distance(first,last) << '\n';
+    
+    
+    std::cout << "The last element is " << *std::prev(mylist.end()) << '\n';
+    //testSquare();
     //testSolutionmaxProduct2();
     //testSumRegion();
     //testNumArray();

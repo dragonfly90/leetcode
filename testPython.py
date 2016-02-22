@@ -65,3 +65,13 @@ class Solution2(object):
             value1, value2 = value2, []
         return -1
     
+import math
+a=0.9
+r=150
+ob=500
+for i in range(1,100):
+    r=a*r+(1-a)*ob
+    print i,r
+    if (r>250):
+        break
+       

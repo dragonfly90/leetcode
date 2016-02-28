@@ -9875,6 +9875,39 @@ public:
     }
 };
 
+/*
+ public class Solution {
+ public boolean increasingTriplet(int[] nums) {
+ int min = Integer.MAX_VALUE, secondMin = Integer.MAX_VALUE;
+ for(int num : nums){
+ if(num <= min) min = num;
+ else if(num < secondMin) secondMin = num;
+ else if(num > secondMin) return true;
+ }
+ return false;
+ }
+ }
+ */
+
+class SolutionincreasingTriplet {
+public:
+    bool increasingTriplet(vector<int>& nums) {
+        int minv=INT32_MAX;
+        int secondminv=INT32_MAX;
+        for(auto num:nums){
+            if(num <= minv)
+                minv=num;
+            else
+                if(num<secondminv)
+                    secondminv=num;
+                else
+                    if(num>secondminv)
+                return true;
+        }
+        return false;
+    }
+};
+
 #include<iterator>
 #include<list>
 

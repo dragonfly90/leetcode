@@ -9908,15 +9908,148 @@ public:
     }
 };
 
+
+class Solutioncount {
+public:
+    vector<int> count;
+    vector<int> countSmaller(vector<int>& nums) {
+        vector<int> res;
+        vector<int> indexes;
+        
+        count.assign(nums.size(),0);
+        indexes.assign(indexes.size(),0);
+        
+        for(int i=0; i<nums.size(); i++){
+            indexes[i] = i;
+        }
+        
+        mergesort(nums,indexes,0,(int)nums.size()-1);
+        
+        for(int i = 0; i<count.size();i++){
+            res.push_back(count[i]);
+        }
+        
+        return res;
+    }
+    
+private:
+    void mergesort(vector<int>& nums, vector<int>& indexes, int start, int end){
+        
+        int mid = (start + end) / 2;
+        mergesort(nums, indexes, start, mid);
+        mergesort(nums, indexes, mid + 1, end);
+        
+        merge(nums, indexes, start, end);
+    }
+    
+    
+    void merge(vector<int>& nums, vector<int>& indexes, int start, int end){
+        int mid = (start + end) / 2;
+        int left_index = start;
+        int right_index = mid+1;
+        int rightcount = 0;
+        vector<int> new_indexes ;
+        new_indexes.assign(end - start + 1,0);
+        
+        int sort_index = 0;
+        while(left_index <= mid && right_index <= end){
+            if(nums[indexes[right_index]] < nums[indexes[left_index]]){
+                new_indexes[sort_index] = indexes[right_index];
+                rightcount++;
+                right_index++;
+            }else{
+                new_indexes[sort_index] = indexes[left_index];
+                count[indexes[left_index]] += rightcount;
+                left_index++;
+            }
+            sort_index++;
+        }
+        while(left_index <= mid){
+            new_indexes[sort_index] = indexes[left_index];
+            count[indexes[left_index]] += rightcount;
+            left_index++;
+            sort_index++;
+        }
+        while(right_index <= end){
+            new_indexes[sort_index++] = indexes[right_index++];
+        }
+        for(int i = start; i <= end; i++){
+            indexes[i] = new_indexes[i - start];
+        }
+    }
+
+};
+
+/*
+ int[] count;
+ public List<Integer> countSmaller(int[] nums) {
+ List<Integer> res = new ArrayList<Integer>();
+ 
+ count = new int[nums.length];
+ int[] indexes = new int[nums.length];
+ for(int i = 0; i < nums.length; i++){
+ indexes[i] = i;
+ }
+ mergesort(nums, indexes, 0, nums.length - 1);
+ for(int i = 0; i < count.length; i++){
+ res.add(count[i]);
+ }
+ return res;
+ }
+ private void mergesort(int[] nums, int[] indexes, int start, int end){
+ if(end <= start){
+ return;
+ }
+ int mid = (start + end) / 2;
+ mergesort(nums, indexes, start, mid);
+ mergesort(nums, indexes, mid + 1, end);
+ 
+ merge(nums, indexes, start, end);
+ }
+ private void merge(int[] nums, int[] indexes, int start, int end){
+ int mid = (start + end) / 2;
+ int left_index = start;
+ int right_index = mid+1;
+ int rightcount = 0;
+ int[] new_indexes = new int[end - start + 1];
+ 
+ int sort_index = 0;
+ while(left_index <= mid && right_index <= end){
+ if(nums[indexes[right_index]] < nums[indexes[left_index]]){
+ new_indexes[sort_index] = indexes[right_index];
+ rightcount++;
+ right_index++;
+ }else{
+ new_indexes[sort_index] = indexes[left_index];
+ count[indexes[left_index]] += rightcount;
+ left_index++;
+ }
+ sort_index++;
+ }
+ while(left_index <= mid){
+ new_indexes[sort_index] = indexes[left_index];
+ count[indexes[left_index]] += rightcount;
+ left_index++;
+ sort_index++;
+ }
+ while(right_index <= end){
+ new_indexes[sort_index++] = indexes[right_index++];
+ }
+ for(int i = start; i <= end; i++){
+ indexes[i] = new_indexes[i - start];
+ }
+ }
+ */
+
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
     std::list<int> mylist;
     for (int i=0; i<10; i++) mylist.push_back (i*10);
-    
+ 
     std::list<int>::iterator it = mylist.begin();
-    
+ 
     std::advance (it,5);
     
     std::cout << "The sixth element in mylist is: " << *it << '\n';

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "E9D16A66D2B9CF23C634DBFC469266C8B1B631B7",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E9D16A66D2B9CF23C634DBFC469266C8B1B631B7" : 0,
+    "818289A2122EE3D59A1276F4F74700DD821BF7CF" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "81A410D4-7921-43E6-971F-605F07973892",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E9D16A66D2B9CF23C634DBFC469266C8B1B631B7" : "practice2",
+    "818289A2122EE3D59A1276F4F74700DD821BF7CF" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "practice2",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "practice2.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dragonfly90\/leetcodePractice.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "818289A2122EE3D59A1276F4F74700DD821BF7CF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dragonfly90\/leetcode.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E9D16A66D2B9CF23C634DBFC469266C8B1B631B7"
+    }
+  ]
+}

@@ -9908,7 +9908,6 @@ public:
     }
 };
 
-
 class Solutioncount {
 public:
     vector<int> count;
@@ -10041,27 +10040,451 @@ private:
  }
  */
 
+
+class SolutionCountBits {
+public:
+    vector<int> countBits(int num) {
+        vector<int> countBitsResult;
+        int currentBits;
+        int currentBin;
+        for(int i = 0; i <= num; i++)
+        {
+            currentBits = 0;
+            currentBin = i;
+            while(currentBin!=0)
+            {
+                currentBits+=currentBin%2;
+                currentBin/=2;
+            }
+            
+            countBitsResult.push_back(currentBits);
+        }
+        
+        return countBitsResult;
+    }
+};
+
+class SolutionCountBits2 {
+    vector<int> countBits(int num) {
+        vector<int> allBits;
+        vector<int> dp(num+1,0);
+        dp[1] = 1;
+        int power2 = 2, idx = 2;
+        while(idx <= num){
+            if(idx == power2){
+                power2 *= 2;
+                dp[idx] = 1;
+                idx++;
+            }else{
+                dp[idx] = 1 + dp[idx - power2/2];
+                idx++;
+            }
+        }
+        return dp;
+    }
+};
+
+
+class SolutionfindMinHeightTrees {
+public:
+    vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+        
+        vector<unordered_set<int>> adjacent(n);
+        for (pair<int, int> p : edges) {
+            adjacent[p.first].insert(p.second);
+            adjacent[p.second].insert(p.first);
+        }
+        
+        vector<int> current;
+        if (n == 1) {
+            current.push_back(0);
+            return current;
+        }
+       
+        for (int i = 0; i < n; ++i) {
+            if (adjacent[i].size() == 1) {
+                current.push_back(i);
+            }
+        }
+        
+        while (true) {
+            vector<int> next;
+            for (int node : current) {
+                for (int neighbor : adjacent[node]) {
+                    adjacent[neighbor].erase(node);
+                    if (adjacent[neighbor].size() == 1) next.push_back(neighbor);
+                }
+            }
+            if (next.empty()) return current;
+            current = next;
+        }
+    }
+};
+
+
+class SolutionreverseString {
+public:
+    string reverseString(string s) {
+        int nlen =(int) s.length();
+        for(int i=0; i<nlen/2;i++)
+        {
+            swap(s, i, nlen-1-i);
+        }
+        return s;
+        
+    }
+    
+    void swap(string& s, int i, int j)
+    {
+        char temp=s[j];
+        s[j]=s[i];
+        s[i]=temp;
+        
+    }
+};
+
+
+class SolutiontopKFrequent {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int,int> all;
+        vector<int> cnums;
+        
+        
+        for(int i = 0;i<nums.size();i++)
+        {
+            
+            if(all.find(nums[i])==all.end())
+                all[nums[i]]=1;
+            else
+                all[nums[i]]+=1;
+        }
+        
+        vector<vector<int>> buckets(nums.size() + 1);
+        for (auto p : all)
+            buckets[p.second].push_back(p.first);
+        
+        for (int i =(int) buckets.size() - 1; i >= 0 && cnums.size() < k; --i) {
+            for (int num : buckets[i]) {
+                cnums.push_back(num);
+                if (cnums.size() == k)
+                    break;
+            }
+        }
+        
+        return cnums;
+    }
+};
+
+void testSolutiontopKFrequent(){
+    SolutiontopKFrequent solution;
+    vector<int> nums;
+    int k=2;
+    nums.push_back(1);
+    nums.push_back(2);
+    vector<int> newi=solution.topKFrequent(nums,k);
+}
+
+class classintegerBreak{
+public:
+    int integerBreak(int n) {
+        if(n==2) return 1;
+        if(n==3) return 2;
+        int sum = 1;
+        while(n>4){
+            sum*=3;
+            n-=3;
+        }
+        sum*=n;
+        
+        return sum;
+    }
+};
+
+void testintegerBreak()
+{
+    classintegerBreak integerBreakSolution;
+    cout<<integerBreakSolution.integerBreak(10)<<endl;
+}
+
+
+class SolutionintegerBreak2 {
+public:
+    int integerBreak(int n) {
+        
+        if (n <= 2)
+            return 1;
+        
+        vector<int> maxArr(n+1, 0);
+        
+        /** For a number i: write i as a sum of integers, then take the product of those integers.
+         maxArr[i] = maximum of all the possible products */
+        
+        maxArr[1] = 0;
+        maxArr[2] = 1; // 2=1+1 so maxArr[2] = 1*1
+        
+        for (int i=3; i<=n; i++) {
+            for (int j=1; j<i; j++) {
+                /** Try to write i as: i = j + S where S=i-j corresponds to either one number or a sum of two or more numbers
+                 
+                 Assuming that j+S corresponds to the optimal solution for maxArr[i], we have two cases:
+                 (1) i is the sum of two numbers, i.e. S=i-j is one number, and so maxArr[i]=j*(i-j)
+                 (2) i is the sum of at least three numbers, i.e. S=i-j is a sum of at least 2 numbers,
+                 and so the product of the numbers in this sum for S is maxArr[i-j]
+                 (=maximum product after breaking up i-j into a sum of at least two integers):
+                 maxArr[i] = j*maxArr[i-j]
+                 */
+                maxArr[i] = max(maxArr[i], max(j*(i-j), j*maxArr[i-j]));
+            }
+        }
+        return maxArr[n];
+    }
+};
+
+class SolutionisPowerOfFour {
+public:
+    bool isPowerOfFour(int num) {
+        if (num & num - 1) return false;
+        if (num & 0x55555555) return true;
+        return true;
+    }
+};
+
+
+class SolutionfindLadders{
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, unordered_set<string> &dict) {
+        vector<vector<string> > paths;
+        vector<string> path(1, beginWord);
+        for(auto i:path)
+            cout<<i<<endl;
+        
+        if (beginWord == endWord)  //corner case;
+        {
+            paths.push_back(path);
+            return paths;
+        }
+        unordered_set<string> forward, backward;
+        forward.insert(beginWord);
+        backward.insert(endWord);
+        unordered_map<string, vector<string> > tree;
+        bool reversed = false; //make sure the tree generating direction is consistent, since we have to start from the smaller set to accelerate;
+        if (buildTree(forward, backward, dict, tree, reversed))
+            getPath(beginWord, endWord, tree, path, paths);
+        return paths;
+        
+    }
+private:
+    bool buildTree(unordered_set<string> &forward, unordered_set<string> &backward, unordered_set<string> &dict, unordered_map<string, vector<string> > &tree, bool reversed)
+    {
+        if (forward.empty()) return false;
+        if (forward.size() > backward.size())
+            return buildTree(backward, forward, dict, tree, !reversed);
+        for (auto &word: forward) dict.erase(word);
+        for (auto &word: backward) dict.erase(word);
+        unordered_set<string> nextLevel;
+        bool done = false; //in case of invalid further searching;
+        for (auto &it: forward) //traverse each word in the forward -> the current level of the tree;
+        {
+            string word = it;
+            for (auto &c: word)
+            {
+                char c0 = c; //store the original;
+                for (c = 'a'; c <= 'z'; ++c) //try each case;
+                {
+                    if (c != c0) //avoid futile checking;
+                    {
+                        if (backward.count(word))  //using count is an accelerating method;
+                        {
+                            done = true;
+                            !reversed ? tree[it].push_back(word) : tree[word].push_back(it); //keep the tree generation direction consistent;
+                        }
+                        else if (!done && dict.count(word))
+                        {
+                            nextLevel.insert(word);
+                            !reversed ? tree[it].push_back(word) : tree[word].push_back(it);
+                        }
+                    }
+                }
+                c = c0; //restore the word;
+            }
+        }
+        return done || buildTree(nextLevel, backward, dict, tree, reversed);
+    }
+    
+    void getPath(string &beginWord, string &endWord, unordered_map<string, vector<string> > &tree, vector<string> &path, vector<vector<string> > &paths) //using reference can accelerate;
+    {
+        if (beginWord == endWord) paths.push_back(path); //till the end;
+        else
+        {
+            for (auto &it: tree[beginWord])
+            {
+                path.push_back(it);
+                getPath(it, endWord, tree, path, paths); //DFS retrieving the path;
+                path.pop_back();
+            }
+        }
+    }
+};
+
+
+void testSolutionfindLadders()
+{
+    
+    SolutionfindLadders solution;
+    string a="S";
+    string b="S";
+    unordered_set<string> K;
+    vector<vector<string>> temp=solution.findLadders(a,b, K);
+    
+}
+
+
+class SolutionfindLadders2{
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, unordered_set<string> &dict) {
+        vector<vector<string> > res;
+        unordered_map<string, vector<string> > nodeNeighbors;// Neighbors for every node
+        unordered_map<string, int> distance;// Distance of every node from the start node
+        vector<string> solution;
+        
+        dict.insert(endWord);
+        bfs(beginWord, endWord, dict, nodeNeighbors, distance);
+        dfs(beginWord, endWord, dict, nodeNeighbors, distance, solution, res);
+        return res;
+        
+    }
+
+private:
+    void bfs(string beginWord, string endWord, unordered_set<string> dict, unordered_map<string, vector<string> > nodeNeighbors, unordered_map<string,int> distance) {
+    }
+    
+    void dfs(string beginWord, string endWord, unordered_set<string> dict, unordered_map<string, vector<string>> nodeNeighbors, unordered_map<string,int> distance,
+             vector<string> solution, vector<vector<string> > res)
+    {
+        
+    }
+    
+};
+
+
+class Solutionintersection {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> allnums;
+        vector<int> currentnums;
+        for(auto i:nums1)
+            if(allnums.find(i)==allnums.end())
+                allnums.insert(i);
+        for(auto i:nums2)
+        {
+            if(allnums.find(i)!=allnums.end())
+                currentnums.push_back(i);
+        }
+        return currentnums;
+    }
+};
+
+/*
+ public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+ List<List<String>> res = new ArrayList<List<String>>();
+ HashMap<String, ArrayList<String>> nodeNeighbors = new HashMap<String, ArrayList<String>>();// Neighbors for every node
+ HashMap<String, Integer> distance = new HashMap<String, Integer>();// Distance of every node from the start node
+ ArrayList<String> solution = new ArrayList<String>();
+ 
+ dict.add(end);
+ bfs(start, end, dict, nodeNeighbors, distance);
+ dfs(start, end, dict, nodeNeighbors, distance, solution, res);
+ return res;
+ }
+ 
+ // BFS: Trace every node's distance from the start node (level by level).
+ private void bfs(String start, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance) {
+ for (String str : dict)
+ nodeNeighbors.put(str, new ArrayList<String>());
+ 
+ Queue<String> queue = new LinkedList<String>();
+ queue.offer(start);
+ distance.put(start, 0);
+ 
+ while (!queue.isEmpty()) {
+ int count = queue.size();
+ boolean foundEnd = false;
+ for (int i = 0; i < count; i++) {
+ String cur = queue.poll();
+ int curDistance = distance.get(cur);
+ ArrayList<String> neighbors = getNeighbors(cur, dict);
+ 
+ for (String neighbor : neighbors) {
+ nodeNeighbors.get(cur).add(neighbor);
+ if (!distance.containsKey(neighbor)) {// Check if visited
+ distance.put(neighbor, curDistance + 1);
+ if (end.equals(neighbor))// Found the shortest path
+ foundEnd = true;
+ else
+ queue.offer(neighbor);
+ }
+ }
+ }
+ 
+ if (foundEnd)
+ break;
+ }
+ }
+ 
+ // Find all next level nodes.
+ private ArrayList<String> getNeighbors(String node, Set<String> dict) {
+ ArrayList<String> res = new ArrayList<String>();
+ char chs[] = node.toCharArray();
+ 
+ for (char ch ='a'; ch <= 'z'; ch++) {
+ for (int i = 0; i < chs.length; i++) {
+ if (chs[i] == ch) continue;
+ char old_ch = chs[i];
+ chs[i] = ch;
+ if (dict.contains(String.valueOf(chs))) {
+ res.add(String.valueOf(chs));
+ }
+ chs[i] = old_ch;
+ }
+ 
+ }
+ return res;
+ }
+ 
+ // DFS: output all paths with the shortest distance.
+ private void dfs(String cur, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance, ArrayList<String> solution, List<List<String>> res) {
+ solution.add(cur);
+ if (end.equals(cur)) {
+ res.add(new ArrayList<String>(solution));
+ }
+ else {
+ for (String next : nodeNeighbors.get(cur)) {
+ if (distance.get(next) == distance.get(cur) + 1) {
+ dfs(next, end, dict, nodeNeighbors, distance, solution, res);
+ }
+ }
+ }
+ solution.remove(solution.size() - 1);
+ }
+ */
+
+
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    std::list<int> mylist;
-    for (int i=0; i<10; i++) mylist.push_back (i*10);
- 
-    std::list<int>::iterator it = mylist.begin();
- 
-    std::advance (it,5);
-    
-    std::cout << "The sixth element in mylist is: " << *it << '\n';
-    
-    
-    std::list<int>::iterator first = mylist.begin();
-    std::list<int>::iterator last = mylist.end();
-    
-    std::cout << "The distance is: " << std::distance(first,last) << '\n';
-    
-    
-    std::cout << "The last element is " << *std::prev(mylist.end()) << '\n';
+    testSolutionfindLadders();
+    //testintegerBreak();
+    //testSolutiontopKFrequent();
+    //SolutionreverseString mysolution;
+    //cout<<mysolution.reverseString("hello")<<endl;
+    //SolutionCountBits mysolution;
+    //vector<int> myVectors = mysolution.countBits(2);
+    //for(auto i: myVectors)
+    //{
+    //    cout<<i<<endl;
+    //}
     //testSquare();
     //testSolutionmaxProduct2();
     //testSumRegion();

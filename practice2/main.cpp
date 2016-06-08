@@ -10468,13 +10468,266 @@ public:
  solution.remove(solution.size() - 1);
  }
  */
+/*
+ public int[] intersection(int[] nums1, int[] nums2) {
+ if (nums1.length == 0 || nums2.length == 0)
+ return new int[0];
+ Set<Integer> set = new HashSet<>();
+ Set<Integer> result = new HashSet<>();
+ for (int i = 0; i < nums2.length; i++) {
+ set.add(nums2[i]);
+ }
+ for (int i = 0; i < nums1.length; i++) {
+ if (set.contains(nums1[i])) {
+ result.add(nums1[i]);
+ }
+ }
+ int[] intersection = new int[result.size()];
+ int j = 0;
+ Iterator<Integer> it = result.iterator();
+ while(it.hasNext()) {
+ intersection[j] = it.next();
+ j++;
+ }
+ return intersection;
+ }
+ */
 
+/*
+ public int rob(TreeNode root) {
+ Map<TreeNode, Integer> map = new HashMap<>();
+ return robSub(root, map);
+ }
+ 
+ private int robSub(TreeNode root, Map<TreeNode, Integer> map) {
+ if (root == null) return 0;
+ if (map.containsKey(root)) return map.get(root);
+ 
+ int val = 0;
+ 
+ if (root.left != null) {
+ val += robSub(root.left.left, map) + robSub(root.left.right, map);
+ }
+ 
+ if (root.right != null) {
+ val += robSub(root.right.left, map) + robSub(root.right.right, map);
+ }
+ 
+ val = Math.max(val + root.val, robSub(root.left, map) + robSub(root.right, map));
+ map.put(root, val);
+ 
+ return val;
+ }
+ */
+class SolutionrobTree {
+public:
+    int rob(TreeNode* root) {
+        vector<int> res = robSub(root);
+        return max(res[0], res[1]);
+    }
+    
+    vector<int> robSub(TreeNode* root) {
+        
+        if (root == NULL) return vector<int>(2);
+        
+        vector<int> left =robSub(root->left);
+        vector<int> right =robSub(root->right);
+        
+        vector<int> res(2,0);
+        
+        res[0] = max(left[0], left[1]) + max(right[0], right[1]);
+        res[1] = root->val + left[0] + right[0];
+        return res;
+    }
+
+};
+
+class SolutionreverseVowels2 {
+public:
+    string reverseVowels(string s) {
+        if (s.length() < 2) return s;
+        string vowels="aeiouAEIOU";
+        int i = 0, j = (int)s.length()-1;
+        
+        while (i < j)
+        {
+            while (vowels.find(s[i])==-1 && i<j) i++;
+            while (vowels.find(s[j])==-1 && i<j) j--;
+            swap(s[i++],s[j--]);
+        }
+        return s;
+    }
+};
+    
+class SolutionreverseVowels {
+public:
+    string reverseVowels(string s) {
+        vector<int> vowelposition;
+        for(int i=0; i<s.length();i++)
+        {
+            if(s[i]=='a'||s[i]=='e'||s[i]=='i'||s[i]=='o'||s[i]=='u'||s[i]=='A'||s[i]=='E'||s[i]=='I'||s[i]=='O'||s[i]=='U')
+                vowelposition.push_back(i);
+        }
+        
+        //cout<<vowelposition.size()<<endl;
+        int j,k;
+        for(j=0,k=(int)vowelposition.size()-1;j<=k;j++,k--)
+        {
+            swap(s,vowelposition[j],vowelposition[k]);
+            //cout<<j<<' '<<s<<endl;
+        }
+        //cout<<s<<endl;
+        
+        return s;
+    }
+    
+    void swap(string& s, int j, int k)
+    {
+        
+        char temp=s[j];
+        s[j]=s[k];
+        s[k]=temp;
+        //cout<<s<<endl;
+    }
+};
+
+void testSolutionreverseVowels(){
+    SolutionreverseVowels solution;
+    string current="leetcode";
+    string temp=solution.reverseVowels(current);
+    cout<<temp<<endl;
+}
+
+
+
+class SolutionminPatches {
+public:
+    int minPatches(vector<int>& nums, int n) {
+        int cnt=0, i=0;
+        long long maxNum=0;
+        while(maxNum<n){
+            if(i<nums.size()&&nums[i]<=maxNum+1)
+                maxNum+=nums[i+1];
+            else{
+                maxNum+=maxNum+1;
+                cnt++;
+            }
+        }
+        return cnt;
+        
+    }
+};
+
+struct node{
+    int val,allnodes,leftCnt;
+    node *left, *right;
+    node(int x){
+        val=x;
+        allnodes=1;
+        leftCnt=0;
+        left=NULL;
+        right=NULL;
+    }
+};
+
+class SolutioncountSmaller {
+public:
+    vector<int> countSmaller(vector<int>& nums) {
+        vector<int> countnums;
+        int numsize = (int)nums.size();
+        countnums.assign(numsize,0);
+        
+        if(numsize<=1)
+            return countnums;
+        
+        node* root = new node(nums[numsize-1]);
+        for(int i=numsize-2;i>=0;i--){
+            countnums[i]=insert(root,nums[i]);
+        }
+        
+        return countnums;
+    }
+    
+    int insert(node* root, int x){
+        if(root->val==x){
+            root->allnodes++;
+            return root->leftCnt;
+        }
+        else
+            if(root->val>x){
+                root->leftCnt++;
+                if(root->left==NULL){
+                    root->left = new node(x);
+                    return 0;
+                }
+                else
+                    return insert(root->left,x);
+            }
+            else
+                if(root->right==NULL){
+                    root->right = new node(x);
+                    return root->leftCnt+root->allnodes;
+                }
+                else
+                    return root->leftCnt+root->allnodes+insert(root->right,x);
+    }
+};
+
+void testSolutioncountSmaller()
+{
+    SolutioncountSmaller solution;
+    int numarray[]={5,2,6,1};
+    vector<int> nums;
+    nums.insert(nums.begin(),numarray,numarray+4);
+    vector<int> searchnums=solution.countSmaller(nums);
+    for(auto i:searchnums)
+        cout<<i<<endl;
+    
+}
+
+
+  struct Interval {
+      int start;
+      int end;
+      Interval() : start(0), end(0) {}
+      Interval(int s, int e) : start(s), end(e) {}
+  };
+
+
+class SummaryRanges {
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) {
+        
+    }
+    
+    vector<Interval> getIntervals() {
+        
+    }
+};
+
+
+ class SolutionmySqrt {
+    int mySqrt(int x) {
+        if(x<4) return x==0? 0: 1;
+        int res =2*mySqrt(x/4);
+        if((res+1)*(res+1)<=x&&(res+1)*(res+1)>=0)
+            return res+1;
+        return res;
+    }
+ };
 
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSolutionfindLadders();
+    testSolutioncountSmaller();
+    //testSolutionfindLadders();
+    //testSolutionreverseVowels();
     //testintegerBreak();
     //testSolutiontopKFrequent();
     //SolutionreverseString mysolution;

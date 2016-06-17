@@ -10686,17 +10686,11 @@ void testSolutioncountSmaller()
 }
 
 
-  struct Interval {
-      int start;
-      int end;
-      Interval() : start(0), end(0) {}
-      Interval(int s, int e) : start(s), end(e) {}
-  };
 
-
+/*
 class SummaryRanges {
 public:
-    /** Initialize your data structure here. */
+ 
     SummaryRanges() {
         
     }
@@ -10706,12 +10700,144 @@ public:
     }
     
     vector<Interval> getIntervals() {
+        return vector<Interval>();
+    }
+};
+*/
+
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+};
+
+
+//Definition for an interval.
+class SolutioninsertInterval {
+public:
+public:
+    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+        vector<Interval> allsums;
+        int state=0;
+        for(int i=0;i<intervals.size();i++)
+        {
+            
+            if(overlap(intervals[i], newInterval))
+            {
+                newInterval=merge(intervals[i], newInterval);
+                state=1;
+            }
+            else
+            {
+                if(newInterval.end<intervals[i].start&&state!=2)
+                {
+                    allsums.push_back(newInterval);
+                    state=2;
+                }
+                if(state==1)
+                {
+                    allsums.push_back(newInterval);
+                    state=2;
+                }
+                allsums.push_back(intervals[i]);
+                
+            }
+            
+        }
         
+        if(state!=2)
+            allsums.push_back(newInterval);
+        
+        return allsums;
+    }
+    
+    bool overlap(Interval originalInterval, Interval newInterval){
+        if(newInterval.start<=originalInterval.end&&newInterval.end>=originalInterval.start)
+            return true;
+        else
+            return false;
+    }
+    
+    Interval merge(Interval originalInterval, Interval& newInterval){
+        int minVal=min(originalInterval.start,newInterval.start);
+        int maxVal=max(originalInterval.end,newInterval.end);
+        return Interval(minVal,maxVal);
     }
 };
 
 
- class SolutionmySqrt {
+class Solutionmerge {
+public:
+    vector<Interval> merge(vector<Interval>& intervals) {
+        int n=(int)intervals.size();
+        int* starts=new int[n];
+        int* ends=new int[n];
+        for(int i=0;i<n;i++){
+            starts[i]=intervals[i].start;
+            ends[i]=intervals[i].end;
+        }
+        sort(starts,starts+n);
+        sort(ends,ends+n);
+        vector<Interval> res;
+        
+        for(int i=0,j=0;i<n;i++){
+            if(i==n-1||starts[i+1]>ends[i]){
+                res.push_back(Interval(starts[j],ends[i]));
+            }
+            j=i+1;
+        }
+        
+        return res;
+    }
+};
+
+/*
+ public List<Interval> merge(List<Interval> intervals) {
+ // sort start&end
+ int n = intervals.size();
+ int[] starts = new int[n];
+ int[] ends = new int[n];
+ for (int i = 0; i < n; i++) {
+ starts[i] = intervals.get(i).start;
+ ends[i] = intervals.get(i).end;
+ }
+ Arrays.sort(starts);
+ Arrays.sort(ends);
+ // loop through
+ List<Interval> res = new ArrayList<Interval>();
+ for (int i = 0, j = 0; i < n; i++) { // j is start of interval.
+ if (i == n - 1 || starts[i + 1] > ends[i]) {
+ res.add(new Interval(starts[j], ends[i]));
+ j = i + 1;
+ }
+ }
+ return res;
+ }
+ */
+
+
+void testSolutioninsertInterval()
+{
+    Interval a=Interval(1,2);
+    Interval b=Interval(3,5);
+    Interval c=Interval(6,7);
+    Interval d=Interval(8,10);
+    Interval e=Interval(12,16);
+    Interval f=Interval(4,9);
+    vector<Interval> allarray;
+    allarray.push_back(a);
+    allarray.push_back(b);
+    allarray.push_back(c);
+    allarray.push_back(d);
+    allarray.push_back(e);
+    SolutioninsertInterval solution;
+    vector<Interval> newarrays=solution.insert(allarray,f);
+    for(auto i: newarrays)
+        cout<<i.start<<','<<i.end<<endl;
+}
+
+class SolutionmySqrt {
     int mySqrt(int x) {
         if(x<4) return x==0? 0: 1;
         int res =2*mySqrt(x/4);
@@ -10719,13 +10845,85 @@ public:
             return res+1;
         return res;
     }
- };
+};
+
+
+ class NestedInteger {
+      public:
+        // Return true if this NestedInteger holds a single integer, rather than a nested list.
+         bool isInteger() const;
+    
+         // Return the single integer that this NestedInteger holds, if it holds a single integer
+         // The result is undefined if this NestedInteger holds a nested list
+         int getInteger() const;
+    
+         // Return the nested list that this NestedInteger holds, if it holds a nested list
+         // The result is undefined if this NestedInteger holds a single integer
+         const vector<NestedInteger> &getList() const;
+};
+
+class NestedIterator {
+    vector<int> all;
+    int currentpos;
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        currentpos=0;
+        recursive(nestedList);
+    }
+    
+    void recursive(vector<NestedInteger>& k)
+    {
+        for(auto& i:k)
+        {
+            if(i.isInteger())
+                all.push_back(i.getInteger());
+            else
+                for(auto j:i.getList())
+                {
+                    recursive(j);
+                }
+            
+        }
+    }
+    
+    void recursive(NestedInteger& k)
+    {
+        if(k.isInteger())
+            all.push_back(k.getInteger());
+        else
+        {
+            for(auto i:k.getList())
+            {
+                recursive(i);
+            }
+        }
+    }
+    
+    int next() {
+        if(currentpos<all.size())
+            return all[currentpos++];
+        else
+            return -1;
+    }
+    
+    bool hasNext() {
+        if(currentpos<all.size())
+            return true;
+        else
+            return false;
+    }
+};
+
+
+
+
 
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSolutioncountSmaller();
+    testSolutioninsertInterval();
+    //testSolutioncountSmaller();
     //testSolutionfindLadders();
     //testSolutionreverseVowels();
     //testintegerBreak();

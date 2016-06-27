@@ -10915,14 +10915,326 @@ public:
 };
 
 
+class Codec {
+public:
+    
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        queue<TreeNode*> allnodes;
+        allnodes.push(root);
+        string result="";
+        while(!allnodes.empty()){
+            TreeNode* head=allnodes.front();
+            allnodes.pop();
+            if(head!=NULL){
+                result+= to_string(head->val)+" ";
+                allnodes.push(head->left);
+                allnodes.push(head->right);
+            }
+            else{
+                result+="null ";
+            }
+        }
+        return result;
+    }
+    
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        istringstream in(data);
+        vector<TreeNode *> allnodes;
+        string tmp;
+        
+        while(in>>tmp){
+            if(tmp!="null"){
+                allnodes.push_back(new TreeNode(stoi(tmp)));
+            }
+            else{
+                allnodes.push_back(NULL);
+            }
+        }
+        int pos=0, offset=1;
+        while(offset < allnodes.size()){
+            if(allnodes[pos]!=NULL){
+                allnodes[pos]->left=allnodes[offset++];
+                if(offset<allnodes.size()) allnodes[pos]->right=allnodes[offset++];
+            }
+            pos+=1;
+        }
+        return allnodes[0];
+    }
+};
 
 
+class SolutionconvertToTitle {
+public:
+    string convertToTitle(int n) {
+        string current;
+        if(n<1)
+            return current;
+        int temp=n-1;
+        while(temp>=0)
+        {
+            int k=temp%26;
+            if(k>0)
+                current.push_back('A'+k);
+            else
+                current.push_back('A');
+            temp=temp/26-1;
+        }
+        
+        reverse(current.begin(),current.end());
+        return current;
+        /*
+         if(n<1) return "";
+         int len = 0;
+         for(int i=n-1; i>=0; i=i/26-1) len++;
+         char *Title = (char*)malloc(sizeof(char)*len);
+         for(int i=n-1; i>=0; i=i/26-1) Title[--len] = i%26 + 'A';
+         return Title;
+         */
+    }
+};
+
+void testSolutionconvertToTitle(){
+    SolutionconvertToTitle solution;
+    string tempstr=solution.convertToTitle(28);
+    cout<<tempstr<<endl;
+}
+/*
+ class Solution(object):
+ def convertToTitle(self, n):
+ """
+ :type n: int
+ :rtype: str
+ """
+ res = ''
+ base = ord('A')
+ while n:
+ n, r = divmod(n - 1, 26)
+ res = '{}{}'.format(chr(base + r), res)
+ return res
+*/
+
+void testisstring(){
+    std::string stringvalues = "125 320 512 750 333";
+    std::istringstream iss (stringvalues);
+    
+    vector<string> tokens;
+    copy(istream_iterator<string>(iss),
+         istream_iterator<string>(),
+         back_inserter(tokens));
+    
+    for(auto i:tokens)
+        cout<<i<<endl;
+    
+    //iss >> setws(","); // set comma to a whitespace character
+    /*
+    for (int n=0; n<5; n++)
+    {
+        int val;
+        iss >> val;
+        std::cout << val*2 << '\n';
+    }
+     */
+
+}
+
+
+class minstackvalue{
+public:
+    minstackvalue(int currentc,int minvaluec)
+    {
+        current=currentc;
+        minvalue=minvaluec;
+    }
+    int current;
+    int minvalue;
+};
+
+class MinStack {
+    stack<minstackvalue> mystack;
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+        while(!mystack.empty())
+            mystack.pop();
+    }
+    
+    void push(int x) {
+        if(mystack.empty())
+        {
+            mystack.push(minstackvalue(x,x));
+            return;
+        }
+        
+        if(x<mystack.top().minvalue)
+            mystack.push(minstackvalue(x,x));
+        else
+            mystack.push(minstackvalue(x,mystack.top().minvalue));
+    }
+    
+    void pop() {
+        mystack.pop();
+    }
+    
+    int top() {
+        return mystack.top().current;
+    }
+    
+    int getMin() {
+        return mystack.top().minvalue;
+    }
+};
+
+void testMinStack()
+{
+    MinStack minStack;
+    cout<<"start"<<endl;
+    minStack.push(-2);
+    cout<<"step 1"<<endl;
+    minStack.push(0);
+    cout<<"step 2"<<endl;
+    minStack.push(-3);
+    cout<<"step 3"<<endl;
+    cout<<minStack.getMin()<<endl;  // --> Returns -3.
+    minStack.pop();
+    cout<<minStack.top()<<endl;      //--> Returns 0.
+    cout<<minStack.getMin()<<endl;   //--> Returns -2.
+    
+}
+
+
+class SolutioncountNodes {
+public:
+    int countNodes(TreeNode* root) {
+        if (root == NULL) {
+            return 0;
+        }
+        int l = Height(root->left);
+        int r = Height(root->right);
+        if (l == r) {
+            return countNodes(root->right) + (1<<l);
+        }
+        return countNodes(root->left) + (1<<r);
+    }
+    
+    int Height(TreeNode* node) {
+        int h = 0;
+        while (node != NULL) {
+            h++;
+            node = node->left;
+        }
+        return h;
+    }
+    
+    /*
+     
+     public int countNodes(TreeNode root) {
+     if (root == null) {
+     return 0;
+     }
+     int l = leftHeight(root.left);
+     int r = leftHeight(root.right);
+     if (l == r) { // left side is full
+     return countNodes(root.right) + (1<<l);
+     }
+     return countNodes(root.left) + (1<<r);
+     }
+     
+     private int leftHeight(TreeNode node) {
+     int h = 0;
+     while (node != null) {
+     h++;
+     node = node.left;
+     }
+     return h;
+     }
+     */
+};
+
+
+class SummaryRanges2 {
+    vector<Interval> myvectors;
+    
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges2() {
+        //myvectors.clear();
+    }
+    
+    void addNum(int val) {
+        auto Cmp = [](Interval a, Interval b){ return a.start<b.start; };
+        cout<<"2"<<endl;
+        auto it = lower_bound(myvectors.begin(), myvectors.end(), Interval(val,val), Cmp);
+        cout<<"3"<<endl;
+        int start = val, end = val;
+        cout<<it->start<<','<<it->end<<endl;
+        if(it != myvectors.begin() && (it-1)->end+1 >= val) it--;
+        
+        cout<<it->start<<','<<it->end<<endl;
+        
+        while(it != myvectors.end() && val+1 >= it->start && val-1<= it->end)
+        {
+            start = min(start,it->start);
+            end = max(end, it->end);
+            it=myvectors.erase(it);
+        }
+        myvectors.insert(it, Interval(start,end));
+    }
+    
+    vector<Interval> getIntervals() {
+        return myvectors;
+    }
+    
+    /*
+     
+     void addNum(int val) {
+     auto Cmp = [](Interval a, Interval b) { return a.start < b.start; };
+     auto it = lower_bound(vec.begin(), vec.end(), Interval(val, val), Cmp);
+     int start = val, end = val;
+     if(it != vec.begin() && (it-1)->end+1 >= val) it--;
+     while(it != vec.end() && val+1 >= it->start && val-1 <= it->end)
+     {
+     start = min(start, it->start);
+     end = max(end, it->end);
+     it = vec.erase(it);
+     }
+     vec.insert(it,Interval(start, end));
+     }
+     
+     vector<Interval> getIntervals() {
+     return vec;
+     }
+     
+     
+     */
+};
+
+void testSummaryRanges()
+{
+    SummaryRanges2 myrange;
+    
+    myrange.addNum(1);
+    cout<<"1"<<endl;
+    //myrange.addNum(3);
+    //myrange.addNum(7);
+    //myrange.addNum(2);
+    //myrange.addNum(6);
+    
+}
 
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSolutioninsertInterval();
+    testSummaryRanges();
+    
+    //testMinStack();
+    
+    //testSolutionconvertToTitle();
+    
+    //testisstring();
+    //testSolutioninsertInterval();
     //testSolutioncountSmaller();
     //testSolutionfindLadders();
     //testSolutionreverseVowels();

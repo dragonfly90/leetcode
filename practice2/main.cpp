@@ -5716,23 +5716,137 @@ public:
 class SolutionmaximalRectangle {
 public:
     int maximalRectangle(vector<vector<char>>& matrix) {
+        if(matrix.empty() || matrix[0].empty()) {
+            return 0;
+        }
         
-        int m=(int)matrix.size();
-        if(m==0)return 0;
-        int n=(int)matrix[0].size();
-        if(n==0)return 0;
+        int m = (int)matrix.size();
+        int n = (int)matrix[0].size();
         
-        
-        
-        //a[m,n]=
-        for(int i=0;i<m;i++)
-            for(int i=0;i<n;i++)
-            {
-                
+        vector<vector<int> > height(m, vector<int>(n, 0));
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(matrix[i][j] == '0') {
+                    height[i][j] = 0;
+                } else {
+                    height[i][j] = (i == 0) ? 1 : height[i - 1][j] + 1;
+                }
             }
-        return 0;
+        }
+        
+        int maxArea = 0;
+        for(int i = 0; i < m; i++) {
+            maxArea = max(maxArea, largestRectangleArea(height[i]));
+        }
+        return maxArea;
+    }
+    
+    int largestRectangleArea(vector<int> &height) {
+        vector<int> s;
+        height.push_back(0);
+        
+        int sum = 0;
+        int i = 0;
+        while(i < height.size()) {
+            if(s.empty() || height[i] > height[s.back()]) {
+                s.push_back(i);
+                i++;
+            } else {
+                int t = s.back();
+                s.pop_back();
+                sum = max(sum, height[t] * (s.empty() ? i : i - s.back() - 1));
+            }
+        }
+        
+        return sum;
+    }
+
+};
+
+#include<list>
+class Graph
+{
+    int V;    // No. of vertices
+    list<int> *adj;    // Pointer to an array containing adjacency lists
+    bool isCyclicUtil(int v, bool visited[], bool *rs);  // used by isCyclic()
+public:
+    Graph(int V);   // Constructor
+    void addEdge(int v, int w);   // to add an edge to graph
+    bool isCyclic();    // returns true if there is a cycle in this graph
+};
+
+Graph::Graph(int V)
+{
+    this->V = V;
+    adj = new list<int>[V];
+}
+
+void Graph::addEdge(int v, int w)
+{
+    adj[v].push_back(w); // Add w to v’s list.
+}
+
+
+bool Graph::isCyclicUtil(int v, bool visited[], bool *recStack)
+{
+    if(visited[v] == false)
+    {
+        // Mark the current node as visited and part of recursion stack
+        visited[v] = true;
+        recStack[v] = true;
+        
+        // Recur for all the vertices adjacent to this vertex
+        list<int>::iterator i;
+        for(i = adj[v].begin(); i != adj[v].end(); ++i)
+        {
+            if ( !visited[*i] && isCyclicUtil(*i, visited, recStack) )
+                return true;
+            else if (recStack[*i])
+                return true;
+        }
+        
+    }
+    recStack[v] = false;  // remove the vertex from recursion stack
+    return false;
+}
+
+// Returns true if the graph contains a cycle, else false.
+// This function is a variation of DFS() in http://www.geeksforgeeks.org/archives/18212
+bool Graph::isCyclic()
+{
+    // Mark all the vertices as not visited and not part of recursion
+    // stack
+    bool *visited = new bool[V];
+    bool *recStack = new bool[V];
+    for(int i = 0; i < V; i++)
+    {
+        visited[i] = false;
+        recStack[i] = false;
+    }
+    
+    // Call the recursive helper function to detect cycle in different
+    // DFS trees
+    for(int i = 0; i < V; i++)
+        if (isCyclicUtil(i, visited, recStack))
+            return true;
+    
+    return false;
+}
+
+class SolutioncanFinish {
+public:
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        Graph g(numCourses);
+        for(int i=0;i<prerequisites.size();i++)
+        {
+            g.addEdge(prerequisites[i].first,prerequisites[i].second);
+        }
+        return !g.isCyclic();
     }
 };
+
+
+
 
 /*
 int main(int argc, const char * argv[]) {
@@ -11104,6 +11218,7 @@ void testMinStack()
 }
 
 
+
 class SolutioncountNodes {
 public:
     int countNodes(TreeNode* root) {
@@ -11159,16 +11274,23 @@ class SummaryRanges2 {
 public:
     /** Initialize your data structure here. */
     SummaryRanges2() {
-        //myvectors.clear();
+        myvectors.clear();
     }
     
     void addNum(int val) {
+        if(myvectors.empty())
+        {
+            myvectors.push_back(Interval(val,val));
+            return;
+        }
+            
         auto Cmp = [](Interval a, Interval b){ return a.start<b.start; };
-        cout<<"2"<<endl;
+        //cout<<"2"<<endl;
         auto it = lower_bound(myvectors.begin(), myvectors.end(), Interval(val,val), Cmp);
-        cout<<"3"<<endl;
+        //cout<<"3"<<endl;
+        //cout<<it->start<<','<<it->end<<endl;
         int start = val, end = val;
-        cout<<it->start<<','<<it->end<<endl;
+       
         if(it != myvectors.begin() && (it-1)->end+1 >= val) it--;
         
         cout<<it->start<<','<<it->end<<endl;
@@ -11216,21 +11338,1005 @@ void testSummaryRanges()
     
     myrange.addNum(1);
     cout<<"1"<<endl;
-    //myrange.addNum(3);
+    myrange.addNum(3);
     //myrange.addNum(7);
     //myrange.addNum(2);
     //myrange.addNum(6);
     
 }
 
+int countNumbersWithUniqueDigits(int n) {
+    if(n==0)    return 1;
+    int total = 10;
+    while(n>1){
+        int r=9;
+        for(int i=1;i<n;i++)
+            r*=10-i;
+        total+=r;
+        n--;
+    }
+    return total;
+}
+
+
+class Solutionintersect2 {
+public:
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        unordered_map<int, int> nums1set;
+        unordered_map<int, int> nums2set;
+        unordered_map<int, int> intersectnums;
+        vector<int> allnums;
+        
+        for(auto i:nums1)
+        {
+            if(nums1set.find(i)==nums1set.end())
+                nums1set[i]=1;
+            else
+            {
+                ((nums1set.find(i))->second)++;
+            }
+        }
+        
+        for(auto i:nums2)
+        {
+            if(nums2set.find(i)==nums2set.end())
+                nums2set[i]=1;
+            else
+            {
+                ((nums2set.find(i))->second)++;
+            }
+        }
+        
+        /*
+        for(auto i:nums1set)
+        {
+            cout<<"------1---------"<<endl;
+            cout<<i.first<<','<<i.second<<endl;
+            cout<<"-----end--------"<<endl;
+        }
+         */
+        
+        for(auto i:nums1set)
+        {
+            if(nums2set.find(i.first)!=nums2set.end())
+            {
+                intersectnums[i.first]=min(i.second,nums2set[i.first]);
+            }
+        }
+        
+        for(auto i:intersectnums)
+        {
+            for(int j=0;j<i.second;j++)
+                allnums.push_back(i.first);
+        }
+        
+        return allnums;
+    }
+};
+
+void testSolutionintersect2(){
+    Solutionintersect2 solution;
+    int a[]={1,2,2,1};
+    vector<int> b1,b2;
+    b1.assign(a,a+4);
+    b2.assign(a+1,a+3);
+    vector<int> intersectnums=solution.intersect(b1,b2);
+    for(auto i:intersectnums)
+        cout<<i<<endl;
+}
+
+void testcountNumbersWithUniqueDigits(){
+    cout<<countNumbersWithUniqueDigits(2)<<endl;
+    cout<<countNumbersWithUniqueDigits(3)<<endl;
+}
+
+/*
+ public List<String> removeInvalidParentheses(String s) {
+ List<String> ans = new ArrayList<>();
+ remove(s, ans, 0, 0, new char[]{'(', ')'});
+ return ans;
+ }
+ 
+ public void remove(String s, List<String> ans, int last_i, int last_j,  char[] par) {
+ for (int stack = 0, i = last_i; i < s.length(); ++i) {
+ if (s.charAt(i) == par[0]) stack++;
+ if (s.charAt(i) == par[1]) stack--;
+ if (stack >= 0) continue;
+ for (int j = last_j; j <= i; ++j)
+ if (s.charAt(j) == par[1] && (j == last_j || s.charAt(j - 1) != par[1]))
+ remove(s.substring(0, j) + s.substring(j + 1, s.length()), ans, i, j, par);
+ return;
+ }
+ String reversed = new StringBuilder(s).reverse().toString();
+ if (par[0] == '(') // finished left to right
+ remove(reversed, ans, 0, 0, new char[]{')', '('});
+ else // finished right to left
+ ans.add(reversed);
+ }
+ */
+
+class SolutionlongestIncreasingPath {
+    vector<vector<int> > allintegers;
+    
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int longestdepth=0;
+        int m=(int)matrix.size();
+        if(m==0)
+            return 0;
+        int n=(int)matrix[0].size();
+        if(n==0)
+            return 0;
+        allintegers.assign(m,vector<int>(n,-1));
+        
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+            {
+                int depth = dfsearch(matrix,i,j,m,n);
+                if(depth>longestdepth)
+                    longestdepth=depth;
+            }
+        return longestdepth;
+    }
+    
+    int dfsearch(vector<vector<int>>& matrix,int i, int j,int& m, int& n){
+        int updown;
+        if(i<0||i>=m||j<0||j>=n)
+            return 0;
+        else
+        {
+            if(allintegers[i][j]!=-1)
+                return allintegers[i][j];
+            
+            updown=1;
+            if(j>=1&&matrix[i][j-1]>matrix[i][j])
+                updown=dfsearch(matrix,i,j-1,m,n)+1;
+            if(j<n-1&&matrix[i][j+1]>matrix[i][j])
+                updown=max(updown,dfsearch(matrix,i,j+1,m,n)+1);
+            if(i>=1&&matrix[i-1][j]>matrix[i][j])
+                updown=max(updown,dfsearch(matrix, i-1, j, m, n)+1);
+            if(i<m-1&&matrix[i+1][j]>matrix[i][j])
+                updown=max(updown,dfsearch(matrix,i+1,j,m,n)+1);
+            
+            cout<<i<<','<<j<<": "<<updown<<endl;
+            allintegers[i][j]=updown;
+            return updown;
+        }
+        
+        
+    }
+};
+
+
+void testSolutionlongestIncreasingPath(){
+    vector<vector<int> > all;
+    int a[]={9,9,4};
+    int b[]={6,6,8};
+    int c[]={2,1,1};
+    vector<int> all1,all2,all3;
+    all1.assign(a,a+3);
+    all2.assign(b,b+3);
+    all3.assign(c,c+3);
+    all.push_back(all1);
+    all.push_back(all2);
+    all.push_back(all3);
+    
+    SolutionlongestIncreasingPath solution;
+    int length=solution.longestIncreasingPath(all);
+    cout<<length<<endl;
+    
+}
+
+void testSolutionlongestIncreasingPath2(){
+    vector<vector<int> > all;
+    int a[]={1,2};
+    vector<int> all1;
+    
+    all1.assign(a,a+2);
+  
+    all.push_back(all1);
+  
+    
+    SolutionlongestIncreasingPath solution;
+    int length=solution.longestIncreasingPath(all);
+    cout<<length<<endl;
+    
+}
+
+
+class SolutiongetSum {
+public:
+    int getSum(int a, int b) {
+        int carry;
+        while (b != 0) {
+            carry = a & b; //carry
+            a = a ^ b; //add
+            b = carry << 1;
+        }
+        return a;
+    }
+};
+
+class SolutionisValidSerialization {
+public:
+    bool isValidSerialization(string preorder) {
+        if(preorder.empty())
+            return false;
+        int diff = 1;
+        int i=0;
+        while (i<preorder.size()) {
+            if(preorder[i]=='#')
+                diff--;
+            else
+                diff++;
+            if(diff==0)
+                break;
+            while(i<preorder.size()&&preorder[i++]!=',');
+        }
+        return diff==0&&i==(preorder.size()-1);
+    }
+};
+
+class isValidSerializationsolution2{
+
+public:
+    bool isValidSerialization(string preorder) {
+        if(preorder.empty())
+            return false;
+        int diff = 1;
+        int i=0;
+        while (i<preorder.size()) {
+            if(--diff<0)
+                return false;
+            if(preorder[i]=='#')
+                diff+=2;
+            while(i<preorder.size()&&preorder[i++]!=',');
+        }
+
+        return diff == 0;
+    }
+};
+
+
+class SolutionnumIslands {
+private:
+    vector<vector<int> > label;
+    int islandnumber;
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        islandnumber=0;
+        
+        int m=(int)grid.size();
+        if(m==0)
+            return 0;
+        int n=(int)grid[0].size();
+        if(n==0)
+            return 0;
+        
+        label.assign(m,vector<int>(n,0));
+        
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+            {
+             
+                bfsearch(grid,i,j,0,m,n);
+                
+            }
+        
+        return islandnumber;
+    }
+    
+    void bfsearch(vector<vector<char>>& grid,int i,int j,int k,int& m, int& n)
+    {
+        if(grid[i][j]=='0')
+            return;
+        
+        if(k!=0&&label[i][j]==k)
+            return;
+        
+        if(k==0&&label[i][j]==0)
+        {
+            islandnumber++;
+            label[i][j]=islandnumber;
+        }
+        
+        if(k!=0&&label[i][j]==0)
+            label[i][j]=k;
+        
+        k=label[i][j];
+        if(i>0)
+            bfsearch(grid,i-1,j,k,m,n);
+        if(i<m-1)
+            bfsearch(grid,i+1, j, k, m, n);
+        if(j>0)
+            bfsearch(grid, i, j-1, k, m, n);
+        if(j<n-1)
+            bfsearch(grid, i, j+1, k, m, n);
+        return;
+        
+    }
+};
+
+
+void testSolutionnumIslands(){
+    SolutionnumIslands mysolution;
+    vector<vector<char> > grids{{'1','1','0','0','0'},
+        {'1','1','0','0','0'},
+        {'0','0','1','0','0'},
+        {'0','0','0','1','1'}};
+    int numofislands=mysolution.numIslands(grids);
+    cout<<numofislands<<endl;
+    
+}
+
+
+class SolutionmaxSlidingWindow {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        int m=(int)nums.size();
+        vector<int> max_left, max_right;
+        if(nums.empty()||m<=0)
+            return vector<int>();
+        
+        max_left.assign(m,0);
+        max_right.assign(m,0);
+        max_left[0] = nums[0];
+        max_right[m-1] = nums[m-1];
+        
+        for (int i = 1; i < m; i++) {
+            max_left[i] = (i % k == 0) ? nums[i] : max(max_left[i - 1], nums[i]);
+            
+            int j = m - i - 1;
+            max_right[j] = (j % k == 0) ? nums[j] : max(max_right[j + 1], nums[j]);
+        }
+        
+        vector<int>sliding_max;
+        sliding_max.assign(m-k+1,0);
+       
+        for (int i = 0, j = 0; i + k <= m; i++) {
+            sliding_max[j++] = max(max_right[i], max_left[i + k - 1]);
+        }
+        
+        return sliding_max;
+        
+    }
+};
+
+
+class SolutionlargestDivisibleSubset {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+       
+        sort(nums.begin(), nums.end());
+        int numsize = (int)nums.size();
+        
+        vector<int> T(numsize, 0);
+        vector<int> parent(numsize, 0);
+        
+        int maxnum = 0;
+        int maxindex = 0;
+        
+        
+        for(int i = (int)numsize - 1; i >= 0; --i)
+        {
+        
+            for(int j = i; j < numsize; ++j)
+            {
+                if(nums[j] % nums[i] == 0 && T[i] < 1 + T[j])
+                {
+                    T[i] = 1 + T[j];
+                    parent[i] = j;
+                    
+                    if(T[i] > maxnum)
+                    {
+                        maxnum = T[i];
+                        maxindex = i;
+                    }
+                }
+            }
+        }
+        
+        vector<int> result;
+        
+        for(int i = 0; i < maxnum; ++i)
+        {
+            result.push_back(nums[maxindex]);
+            maxindex = parent[maxindex];
+        }
+
+        return result;
+    }
+    
+};
+
+
+class SolutionsuperPow {
+public:
+    int powmod(int a,int k){
+        int result=1;
+        for(int i=0;i<k;i++)
+            result=(result*a)%1337;
+        return result;
+    }
+    int superPow(int a, vector<int>& b) {
+        if(b.empty())
+            return 1;
+        int lastdigit=b.back();
+        b.pop_back();
+        return powmod(superPow(a%1337, b),10)*powmod(a%1337,lastdigit)%1337;
+
+    }
+};
+
+//Definition for undirected graph.
+struct UndirectedGraphNode {
+      int label;
+      vector<UndirectedGraphNode *> neighbors;
+      UndirectedGraphNode(int x) : label(x) {};
+  };
+
+
+/*
+ class Solution {
+ public:
+ UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+ if (!node) return NULL;
+ UndirectedGraphNode* copy = new UndirectedGraphNode(node -> label);
+ mp[node] = copy;
+ queue<UndirectedGraphNode*> toVisit;
+ toVisit.push(node);
+ while (!toVisit.empty()) {
+ UndirectedGraphNode* cur = toVisit.front();
+ toVisit.pop();
+ for (UndirectedGraphNode* neigh : cur -> neighbors) {
+ if (mp.find(neigh) == mp.end()) {
+ UndirectedGraphNode* neigh_copy = new UndirectedGraphNode(neigh -> label);
+ mp[neigh] = neigh_copy;
+ toVisit.push(neigh);
+ }
+ mp[cur] -> neighbors.push_back(mp[neigh]);
+ }
+ }
+ return copy;
+ }
+ private:
+ unordered_map<UndirectedGraphNode*, UndirectedGraphNode*> mp;
+ };
+ */
+
+class SolutionUndirectedGraphNode {
+private:
+    unordered_map<UndirectedGraphNode*, UndirectedGraphNode*> mp;
+    
+public:
+    UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+        if(!node) return NULL;
+        UndirectedGraphNode* copy = new UndirectedGraphNode(node->label);
+        mp[node]=copy;
+        queue<UndirectedGraphNode* > toVisit;
+        toVisit.push(node);
+        while (!toVisit.empty()) {
+            UndirectedGraphNode* cur = toVisit.front();
+            toVisit.pop();
+            for (UndirectedGraphNode* neigh : cur -> neighbors) {
+                if (mp.find(neigh) == mp.end()) {
+                    UndirectedGraphNode* neigh_copy = new UndirectedGraphNode(neigh -> label);
+                    mp[neigh] = neigh_copy;
+                    toVisit.push(neigh);
+                }
+                mp[cur] -> neighbors.push_back(mp[neigh]);
+            }
+        }
+        
+        return copy;
+        
+    }
+};
+
+void SolutionUndirectedGraphNodecas()
+{
+    SolutionUndirectedGraphNode mysolution;
+    UndirectedGraphNode* seed=NULL;
+    UndirectedGraphNode* cseed=mysolution.cloneGraph(seed);
+    if(cseed==NULL)
+        cout<<1<<endl;
+    
+}
+
+
+std::string trim(const std::string& str,
+                 const std::string& whitespace = " \t")
+{
+    const auto strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return ""; // no content
+    
+    const auto strEnd = str.find_last_not_of(whitespace);
+    const auto strRange = strEnd - strBegin + 1;
+    
+    return str.substr(strBegin, strRange);
+}
+
+
+
+
+
+
+class SolutionisNumber{
+public:
+    bool isInt(string s) {
+        try {
+            long long l = stol(s);
+        } catch (exception& e) {
+            return false;
+        }
+        return true;
+    }
+    
+    bool isDouble(string s) {
+        try {
+            double d = stod(s);
+        } catch (exception& e) {
+            return false;
+        }
+        return true;
+    }
+    
+    bool isNumber(string s) {
+        return isInt(s) || isDouble(s);
+    }
+    
+};
+
+void trimstr(){
+    const std::string foo = " 1.0 ";
+    string resultstr=trim(foo);
+    cout<<resultstr<<endl;
+    cout<<stod("0e")<<endl;
+}
+
+
+class SolutionfindMedianSortedArrays {
+public:
+    double findKth(vector<int>& nums1, vector<int>& nums2, int st1, int st2, int k) {
+
+        if (st1 >= nums1.size()) {
+            return nums2[st2 + k - 1];
+        }
+        if (st2 >= nums2.size()) {
+            return nums1[st1 + k - 1];
+        }
+      
+        if (k == 1) return min(nums1[st1], nums2[st2]);
+        int A_key = st1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[st1 + k / 2 - 1];
+        int B_key = st2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[st2 + k / 2 - 1];
+        if (A_key < B_key){
+            return findKth(nums1, nums2, st1 + k / 2, st2, k - k / 2);
+        } else {
+            return findKth(nums1, nums2, st1, st2 + k / 2, k - k / 2);
+        }
+        
+    }
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int sum = (int)nums1.size() + (int)nums2.size();
+        double ret;
+        
+        if (sum & 1) {
+            ret = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+        } else {
+            ret = ((findKth(nums1, nums2, 0, 0, sum / 2)) +
+                   findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+        }
+        return ret;
+    }
+};
+
+
+
+class SolutionfindLaddersOrighin {
+public:
+    int ladderLength(string beginWord, string endWord, unordered_set<string>& wordDict) {
+        wordDict.insert(endWord);
+        queue<string> toVisit;
+        addNextWords(beginWord, wordDict, toVisit);
+        int dist = 2;
+        while (!toVisit.empty()) {
+            int num = (int)toVisit.size();
+            for (int i = 0; i < num; i++) {
+                string word = toVisit.front();
+                toVisit.pop();
+                if (word == endWord) return dist;
+                addNextWords(word, wordDict, toVisit);
+            }
+            dist++;
+        }
+        return dist;
+    }
+private:
+    void addNextWords(string word, unordered_set<string>& wordDict, queue<string>& toVisit) {
+        wordDict.erase(word);
+        for (int p = 0; p < (int)word.length(); p++) {
+            char letter = word[p];
+            for (int k = 0; k < 26; k++) {
+                word[p] = 'a' + k;
+                if (wordDict.find(word) != wordDict.end()) {
+                    toVisit.push(word);
+                    wordDict.erase(word);
+                }
+            }
+            word[p] = letter;
+        }
+    }
+};
+
+
+class SolutionladderLength2 {
+public:
+    vector<vector<string> > ladderLength(string beginWord, string endWord, unordered_set<string>& wordList) {
+        wordList.insert(endWord);
+        queue<string> toVisit;
+        queue<vector<string> > allstrings;
+        vector<string> stringvectors;
+        vector<vector<string> > allvectors;
+        stringvectors.push_back(beginWord);
+        
+        addNextWords(beginWord, wordList, toVisit, allstrings,stringvectors);
+        bool firstVector=true;
+        int minlength=0;
+        
+        int dist = 2;
+        while (!toVisit.empty()) {
+            int num = (int)toVisit.size();
+            for (int i = 0; i < num; i++) {
+                string word = toVisit.front();
+                toVisit.pop();
+                vector<string> currentstring=allstrings.front();
+                allstrings.pop();
+                
+                if (word == endWord)
+                {
+                    currentstring.push_back(word);
+                    if(firstVector)
+                    {
+                        allvectors.push_back(currentstring);
+                        firstVector=false;
+                    }
+                    else
+                    {
+                        if(dist==minlength)
+                            allvectors.push_back(currentstring);
+                    }
+                    
+                }
+                else
+                    addNextWords(word, wordList, toVisit,allstrings,currentstring);
+            }
+            if(!allvectors.empty())
+                return allvectors;
+            
+            dist++;
+        }
+        return allvectors;
+    }
+private:
+    void addNextWords(string word, unordered_set<string>& wordDict, queue<string>& toVisit,  queue<vector<string> >& allstrings, vector<string> stringvectors) {
+        wordDict.erase(word);
+        for (int p = 0; p < (int)word.length(); p++) {
+            char letter = word[p];
+            for (int k = 0; k < 26; k++) {
+                word[p] = 'a' + k;
+                if (wordDict.find(word) != wordDict.end()) {
+                    stringvectors.push_back(word);
+                    allstrings.push(stringvectors);
+                    toVisit.push(word);
+                    wordDict.erase(word);
+                }
+            }
+            word[p] = letter;
+        }
+    }
+};
+
+class SolutiongetMoneyAmount {
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int> > need(n+1,vector<int>(n+1,0));
+        for(int lo=n;lo>0;lo--)
+            for(int hi=lo+1;hi<n+1;hi++)
+            {
+                for(int x=lo;x<hi;x++)
+                    if(x+max(need[lo][x-1],need[x+1][hi])<need[lo][hi])
+                        need[lo][hi]=x+max(need[lo][x-1],need[x+1][hi]);
+            }
+    
+        return need[1][n];
+    }
+};
+
+class SolutionsummaryRanges{
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        vector<string> all;
+        string current;
+        int before=-1;
+        for(int i=0;i<nums.size();i++)
+        {
+            if(before==-1||nums[i]==before+1)
+            {
+                current=current+"->"+to_string(nums[i]);
+                before=nums[i];
+                /*
+                 convert int to string
+                 int a=10;
+                 char* intStr=itoa(a);
+                 string str=string(intStr);
+                 
+                 int a=10;
+                 stringstream ss;
+                 ss<<a;
+                 string str=ss.str();
+                 */
+            }
+            else
+            {
+                all.push_back(current);
+                current=to_string(nums[i]);
+                before=nums[i];
+            }
+        }
+        return all;
+        
+    }
+};
+
+class MedianFinderfindMedian {
+private:
+    std::priority_queue<int, std::vector<int>, std::greater<int> > my_min_heap;
+    std::priority_queue<int> my_max_heap;
+    
+public:
+    
+    // Adds a number into the data structure.
+    void addNum(int num) {
+        int mintop;
+        int maxtop;
+        if(my_max_heap.empty())
+            my_max_heap.push(num);
+        else
+        {
+            if(my_min_heap.empty())
+            {
+                maxtop=my_max_heap.top();
+                if(maxtop>num)
+                {
+                    my_min_heap.push(my_max_heap.top());
+                    my_max_heap.pop();
+                    my_max_heap.push(num);
+                }
+                else
+                {
+                    my_min_heap.push(num);
+                }
+                    
+            }
+            else
+            {
+                if(num>my_max_heap.top())
+                {
+                    
+                        if(my_max_heap.size()>my_min_heap.size())
+                            my_min_heap.push(num);
+                        else
+                        {
+                            if(my_min_heap.top()>=num)
+                                my_max_heap.push(num);
+                            else
+                            {
+                                my_max_heap.push(my_min_heap.top());
+                                my_min_heap.pop();
+                                my_min_heap.push(num);
+                            }
+                        }
+                }
+                else
+                {
+                    if(my_max_heap.size()<=my_min_heap.size())
+                    {
+                        my_max_heap.push(num);
+                    }
+                    else
+                    {
+                        if(num>my_max_heap.top())
+                            my_min_heap.push(num);
+                        else
+                        {
+                            my_min_heap.push(my_max_heap.top());
+                            my_max_heap.pop();
+                            my_max_heap.push(num);
+                        }
+                    }
+                    
+                }
+                
+            }
+        }
+    }
+    
+    // Returns the median of current data stream
+    double findMedian() {
+        if(my_max_heap.size()>my_min_heap.size())
+            return my_max_heap.top();
+        else
+            return double(my_max_heap.top()+my_min_heap.top())/2;
+    }
+};
+
+
+
+class SolutionwiggleMaxLength{
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int flag=0, count=1;
+        for(int i=1;i<nums.size();i++){
+            if(nums[i]>nums[i-1]&&(flag==-1||i==1)){
+                count++;
+                flag=1;
+            }
+            else
+                if(nums[i]<nums[i-1]&&(flag==1||i==0)){
+                    count++;
+                    flag=-1;
+                }
+        }
+        
+        return nums.size()==0?0:count;
+        
+    }
+};
+
+class SolutionmaxPathSum {
+    /*
+     int maxValue;
+     
+     public int maxPathSum(TreeNode root) {
+     maxValue = Integer.MIN_VALUE;
+     maxPathDown(root);
+     return maxValue;
+     }
+     
+     private int maxPathDown(TreeNode node) {
+     if (node == null) return 0;
+     int left = Math.max(0, maxPathDown(node.left));
+     int right = Math.max(0, maxPathDown(node.right));
+     maxValue = Math.max(maxValue, left + right + node.val);
+     return Math.max(left, right) + node.val;
+     }
+     */
+    int maxValue;
+public:
+    int maxPathSum(TreeNode* root) {
+        maxValue=INT_MIN;
+        maxPathDown(root);
+        return maxValue;
+    }
+    int maxPathDown(TreeNode* root){
+        if(root==NULL)
+            return 0;
+        int left=max(0,maxPathDown(root->left));
+        int right=max(0,maxPathDown(root->right));
+        maxValue=max(maxValue,left+right+root->val);
+        return max(left,right)+root->val;
+    }
+};
+
+class SolutiongetPermutation {
+public:
+    int allint(int n)
+    {
+        int sum=1;
+        for(int i=1;i<=n;i++)
+            sum*=i;
+        return sum;
+    }
+    
+    string getPermutation2( int n,int k, vector<int> currentv)
+    {
+        
+        string returns;
+        if(n<=0)
+            return returns;
+        int current=allint(n-1);
+        if(k<current)
+        {
+            
+            
+            string str = to_string(currentv[0]);
+            currentv.erase(currentv.begin());
+            //cout<<str<<endl;
+            returns=str+getPermutation2(n-1, k,currentv);
+        }
+        else
+        {
+            int j=k/current;
+            int i=k%current;
+            string str=to_string(currentv[j]);
+            currentv.erase(currentv.begin()+j);
+            returns=str+getPermutation2(n-1, i,currentv);
+ 
+        }
+        return returns;
+    }
+    
+    string getPermutation(int n, int k) {
+        vector<int> currentv;
+        for(int i=1;i<=n;i++)
+            currentv.push_back(i);
+        return getPermutation2(n,k-1,currentv);
+        
+    }
+};
+
+void testSolutiongetPermutation(){
+    SolutiongetPermutation mypermutation;
+    string mystring=mypermutation.getPermutation(2,2);
+    cout<<mystring<<endl;
+}
+
+
+class SolutionrecoverTree {
+    TreeNode* firstElement;
+    TreeNode* secondElement;
+    TreeNode* prevElement;
+    
+public:
+    void recoverTree(TreeNode* root) {
+        firstElement=NULL;
+        secondElement=NULL;
+        prevElement=new TreeNode(INT_MIN);
+        
+        traverse(root);
+        int temp = firstElement->val;
+        firstElement->val = secondElement->val;
+        secondElement->val = temp;
+    }
+    
+private:
+    void traverse(TreeNode* root) {
+        
+        if (root == NULL)
+            return;
+        
+        traverse(root->left);
+        
+        if (firstElement == NULL && prevElement->val >= root->val) {
+            firstElement = prevElement;
+        }
+    
+        if (firstElement != NULL && prevElement->val >= root->val) {
+            secondElement = root;
+        }
+        prevElement = root;
+        
+        traverse(root->right);
+
+    }
+};
+
+
 #include<iterator>
 #include<list>
 
 TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    testSummaryRanges();
+    testSolutiongetPermutation();
     
+    //SolutionUndirectedGraphNodecas();
+    //testSolutionnumIslands();
+    //testSolutionlongestIncreasingPath2();
+    //testSolutionintersect2();
+    //testcountNumbersWithUniqueDigits();
+    
+    //testSummaryRanges();
     //testMinStack();
-    
     //testSolutionconvertToTitle();
     
     //testisstring();

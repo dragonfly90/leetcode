@@ -54,31 +54,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "practice2/main.cpp"
-            timestampString = "461056255.387968"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5695"
-            endingLineNumber = "5695"
-            landmarkName = "largestRectangleArea(vector&lt;int&gt;&amp; height)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "practice2/main.cpp"
-            timestampString = "461963202.625887"
+            timestampString = "491082959.89214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5948"
-            endingLineNumber = "5948"
+            startingLineNumber = "6062"
+            endingLineNumber = "6062"
             landmarkName = "class SolutionrotateRight"
             landmarkType = "3">
          </BreakpointContent>
@@ -90,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "practice2/main.cpp"
-            timestampString = "476236571.129169"
+            timestampString = "491082959.89214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8391"
-            endingLineNumber = "8391"
+            startingLineNumber = "8505"
+            endingLineNumber = "8505"
             landmarkName = "countPrimes(int n)"
             landmarkType = "5">
          </BreakpointContent>
